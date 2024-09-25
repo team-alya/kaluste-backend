@@ -1,14 +1,17 @@
 import express, { Request, Response } from "express";
-import { imageUploadHandler } from "../utils/middleware";
+import { imageUploadHandler, imageValidator } from "../utils/middleware";
 
 const router = express.Router();
 
-router.post("/", imageUploadHandler("image"), (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No image was uploaded" });
+router.post(
+  "/",
+  imageUploadHandler(),
+  imageValidator,
+  (req: Request, res: Response) => {
+    console.log(req.file);
+    return res.send("Image was uploaded");
+    // Send req.file / req.file.buffer to imageService for base64 encoding and Gemini analysis
   }
-  console.log(req.file);
-  return res.send("Image was uploaded");
-});
+);
 
 export default router;
