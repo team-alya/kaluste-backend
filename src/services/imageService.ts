@@ -52,7 +52,7 @@ const createPrompt = (requestId: string) =>
 
 const parseResponse = (responseText: string): ImageAnalysisResponse => {
   const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
-  return JSON.parse(cleanedText);
+  return JSON.parse(cleanedText) as ImageAnalysisResponse;
 };
 
 const analyzeBase64Image = async (
@@ -69,7 +69,7 @@ const analyzeBase64Image = async (
     const response = result.response;
     const text = response.text();
 
-    const parsedResponse: any = parseResponse(text);
+    const parsedResponse = parseResponse(text);
 
     if (validateImageAnalysisResponse(parsedResponse)) {
       const { request_id, ...resultWithoutRequestId } = parsedResponse;
