@@ -2,7 +2,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import { ImageAnalysisResponse, NoReqIDResponse } from "../types";
-import { validateImageAnalysisResponse } from "../utils/middleware";
 
 dotenv.config();
 
@@ -71,15 +70,10 @@ const analyzeBase64Image = async (
 
     const parsedResponse = parseResponse(text);
 
-    if (validateImageAnalysisResponse(parsedResponse)) {
-      const { request_id, ...resultWithoutRequestId } = parsedResponse;
+    return parsedResponse;
 
-      return resultWithoutRequestId;
-    } else {
-      return { error: "Invalid response format from the AI model" };
-    }
-  } catch (error) {
-    return { error: "An unexpected error occurred during image analysis." };
+  } catch (error: unknown) {
+    return { error: `An unexpected error occurred during image analysis. Message: ${error}` };
   }
 };
 
