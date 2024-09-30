@@ -7,7 +7,7 @@
 Create an .env file in the root folder with the following values:
 - GEMINI_API_KEY
 
-### Inititalize server
+### Initialize server
 ```
 npm run i
 ```
