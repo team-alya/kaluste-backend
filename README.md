@@ -1,6 +1,26 @@
 # kaluste-backend
 Älyä-hankkeessa KalusteArvio-projektin palvelin ja tekoälyliittymät
 
+## Installation
+
+### Enviromental variables
+Create an .env file in the root folder with the following values:
+- GEMINI_API_KEY
+
+### Inititalize server
+```
+npm run i
+```
+#### Run in development mode
+```
+npm run dev
+```
+#### Run in production mode
+```
+npm run build
+npm run start
+```
+
 ## API Documentation
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
