@@ -44,3 +44,20 @@ npm run start
 
 ### Testing with Postman
 ![api_image_postman](https://github.com/user-attachments/assets/538d506f-8d67-4b6b-af5b-67b7f1b1fabf)
+
+| HTTP | Route      | Description | Response |
+| ---- | ---------- | ----------- | -------- |
+| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and sell probality.
+
+````
+{
+    "message": "Price estimate was analyzed",
+    "result": {
+        "highest_price": 500,
+        "lowest_price": 300,
+        "average_price": 400,
+        "description": "Aeron chairs are popular and      sought-after in the second-hand market.  A 5-year-old chair in good condition is likely to sell well, especially if it comes with all the original features. The gray color is a classic and versatile choice. The price range is based on similar listings on popular online marketplaces in Finland.",
+        "sell_probability": "High"
+    }
+}
+````
