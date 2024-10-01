@@ -12,7 +12,7 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const imageBase64 = req.file!.buffer.toString("base64");
-      const furnitureDetails = JSON.parse(req.body.metadata);
+      const furnitureDetails = JSON.parse(req.body.furnitureDetails);
       const analysisResult = await analyzePriceEstimate(imageBase64, furnitureDetails);
         res
         .status(200)
