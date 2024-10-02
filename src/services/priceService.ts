@@ -21,12 +21,25 @@ const createPrompt = (furnitureDetails: FurnitureDetails) => `
   The condition is ${furnitureDetails.condition}. The age is ${furnitureDetails.age} years.
 
   Provide a price estimate for my piece of furniture in the second-hand market, based on this description and the photo. The second-hand market is based in Finland.
-  Return 3 prices and 1 description as a JSON object with the fields: highest_price, lowest_price, average_price, description, and sell_probability.
-  The sell_probability should estimate how probable the item will sell and which price is most likely to succeed. Format the response as a consistent JSON object.
+  Return 3 prices and 1 description as a JSON object with the fields: highest_price, lowest_price, average_price, description, and price_suggestion.
+  The price_suggestion should return what price is most likely to sell the item and the probability of selling it at that price. 
+  Format the response as a consistent JSON object.
+
+  Example response format:
+  {
+    "highest_price": high price in euros,
+    "lowest_price": low price in euros,
+    "average_price": average price in euros,
+    "description": "The piece of furniture is in excellent condition and is a rare model.",
+    "price_suggestion": "The chair is most likely to sell for around x euros with a x% probability."
+  }
 `;
 
 const parsePriceResponse = (responseText: string) => {
-  const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
+  const cleanedText = responseText
+  .replace(/```json\n?|\n?```/g, "")
+  .replace(/\s+/g, ' ')
+  .trim(); 
   return JSON.parse(cleanedText) as PriceAnalysisResponse;
 };
 
