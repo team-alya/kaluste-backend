@@ -47,17 +47,17 @@ npm run start
 
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and sell probality.
+| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and price suggestion with sell probality.
 
 ````
 {
     "message": "Price estimate was analyzed",
     "result": {
-        "highest_price": 500,
-        "lowest_price": 300,
-        "average_price": 400,
-        "description": "Aeron chairs are popular and      sought-after in the second-hand market.  A 5-year-old chair in good condition is likely to sell well, especially if it comes with all the original features. The gray color is a classic and versatile choice. The price range is based on similar listings on popular online marketplaces in Finland.",
-        "sell_probability": "High"
+        "highest_price": 550,
+        "lowest_price": 400,
+        "average_price": 475,
+        "description": "The Aeron chair is a popular model known for its ergonomic design and durability. The gray color is a common option, and the chair is in good condition, which is likely to be appealing to buyers. However, it is 5 years old, which may influence the price.",
+        "price_suggestion": "The chair is most likely to sell for around 450 euros with a 70% probability."
     }
 }
 ````
