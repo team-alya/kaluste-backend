@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { imageUploadHandler } from "../utils/middleware";
-import analyzeBase64Image from "../services/imageService";
+import analyzeImageOpenAI from "../services/imageServiceOpenAI";
+import analyzeImageGemini from "../services/imageServiceGemini";
 
 const router = express.Router();
 
@@ -12,9 +13,20 @@ router.post(
       return res.status(400).json({ error: "No image was uploaded" });
     }
     try {
-      const imageBase64 = req.file.buffer.toString("base64");
+      // const imageBase64 = req.file.buffer.toString("base64");
 
-      const analysisResult = await analyzeBase64Image(imageBase64);
+      const openaiPromise = await analyzeImageOpenAI(req.file.buffer);
+      const geminiPromise = await analyzeImageGemini(req.file.buffer);
+
+      const [openaiResult, geminiResult] = await Promise.all([
+        openaiPromise,
+        geminiPromise,
+      ]);
+
+      const analysisResult = {
+        openai: openaiResult,
+        gemini: geminiResult,
+      };
 
       return res
         .status(200)

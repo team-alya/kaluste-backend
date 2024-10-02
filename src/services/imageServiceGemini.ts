@@ -1,20 +1,24 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
-import { ImageAnalysisResponse, NoReqIDResponse } from "../types";
-import { validateImageAnalysisResponse } from "../utils/middleware";
+import { parseResponse } from "../utils/parseResponse";
+import { ImageAnalysisResponse } from "../types";
+import { resizeImage } from "../utils/resizeImage";
 
 dotenv.config();
 
+// Load API-key from environment variables
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 if (!GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY is not set in the environment variables");
 }
 
+// Initialize the Gemini API client
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+// Function to create a prompt for the AI, including the request_id and instructions
 const createPrompt = (requestId: string) =>
   `
     Request ID: ${requestId}
@@ -50,37 +54,40 @@ const createPrompt = (requestId: string) =>
     }
   `;
 
-const parseResponse = (responseText: string): ImageAnalysisResponse => {
-  const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
-  return JSON.parse(cleanedText);
-};
-
-const analyzeBase64Image = async (
-  imageBase64: string
-): Promise<NoReqIDResponse | { error: string }> => {
+// Function to analyze the provided image using Gemini model, extracting furniture details
+const analyzeImageGemini = async (
+  imagePath: Buffer
+): Promise<ImageAnalysisResponse | { error: string }> => {
   const requestId = uuidv4();
   const prompt = createPrompt(requestId);
-
   try {
+    // Get resized and optimized image
+    const optimizedBase64Img = await resizeImage(imagePath);
+
+    // Send image and prompt to Gemini for analysis
     const result = await model.generateContent([
       { text: prompt },
-      { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
+      { inlineData: { mimeType: "image/jpeg", data: optimizedBase64Img } },
     ]);
+
+    // Ensure that a response was received
+    if (!result) {
+      throw new Error("No content returned from Gemini API");
+    }
+
+    // Parse the response
     const response = result.response;
     const text = response.text();
-
     const parsedResponse: any = parseResponse(text);
 
-    if (validateImageAnalysisResponse(parsedResponse)) {
-      const { request_id, ...resultWithoutRequestId } = parsedResponse;
-
-      return resultWithoutRequestId;
-    } else {
-      return { error: "Invalid response format from the AI model" };
-    }
+    return parsedResponse;
   } catch (error) {
-    return { error: "An unexpected error occurred during image analysis." };
+    if (error instanceof Error) {
+      return { error: error.message };
+    } else {
+      return { error: "An unexpected error occurred during image analysis." };
+    }
   }
 };
 
-export default analyzeBase64Image;
+export default analyzeImageGemini;
