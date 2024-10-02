@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 // might need uuid still if it's needed to send request_id to frontend
 import { zodResponseFormat } from "openai/helpers/zod";
 import dedent from "dedent";
-import { FurnitureAnalysis } from "../schema";
-import { resizeImage } from "../utils/resizeImage";
+import { FurnitureAnalysis } from "../../schema";
+import { resizeImage } from "../../utils/resizeImage";
 
 const prompt = dedent` 
 Analyze the furniture in the image and provide the following information:

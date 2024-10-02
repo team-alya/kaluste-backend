@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { imageUploadHandler } from "../utils/middleware";
-import analyzeImageOpenAI from "../services/imageServiceOpenAI";
-import analyzeImageGemini from "../services/imageServiceGemini";
+import analyzeImageOpenAI from "../services/OpenAI/imageServiceOpenAI";
+import analyzeImageGemini from "../services/Gemini/imageServiceGemini";
 
 const router = express.Router();
 
