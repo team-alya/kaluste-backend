@@ -24,19 +24,3 @@ export interface PriceAnalysisResponse {
   description: string;
   sell_probability: number;
 }
-
-export interface FurnitureDetails {
-  type: string;
-  brand: string;
-  model: string;
-  color: string;
-  dimensions: Dimensions;
-  age: number;
-  condition: string;
-}
-
-interface Dimensions {
-  length: number;
-  width: number;
-  height: number;
-}

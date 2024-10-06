@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
-import { PriceAnalysisResponse, FurnitureDetails} from "../types";
+import { PriceAnalysisResponse, NoReqIDResponse} from "../types";
 
 dotenv.config();
 
@@ -13,7 +13,7 @@ if (!GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const createPrompt = (furnitureDetails: FurnitureDetails) => `
+const createPrompt = (furnitureDetails: NoReqIDResponse): string => `
   Description of the piece of furniture in the photo:
 
   The type of the furniture is ${furnitureDetails.type}. The maker of the furniture is ${furnitureDetails.brand} and its model is ${furnitureDetails.model}.
@@ -35,7 +35,7 @@ const createPrompt = (furnitureDetails: FurnitureDetails) => `
   }
 `;
 
-const parsePriceResponse = (responseText: string) => {
+const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
   const cleanedText = responseText
   .replace(/```json\n?|\n?```/g, "")
   .replace(/\s+/g, ' ')
@@ -43,7 +43,10 @@ const parsePriceResponse = (responseText: string) => {
   return JSON.parse(cleanedText) as PriceAnalysisResponse;
 };
 
-const analyzePriceEstimate = async (imageBase64: string, furnitureDetails: FurnitureDetails) => {
+const analyzePriceEstimate = async (
+  imageBase64: string, 
+  furnitureDetails: NoReqIDResponse
+): Promise<PriceAnalysisResponse | { error: string }> => {
   const prompt = createPrompt(furnitureDetails);
 
   try {
@@ -51,14 +54,18 @@ const analyzePriceEstimate = async (imageBase64: string, furnitureDetails: Furni
       { text: prompt },
       { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
     ]);
-    const response = result.response;
-    const text = response.text();
+
+    const response = await result.response;
+    const text = await response.text();
 
     const parsedResponse = parsePriceResponse(text);
     
     return parsedResponse;
 
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
     return { error: "An unexpected error occurred during price analysis." };
   }
 };

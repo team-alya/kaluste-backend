@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { imageUploadHandler, imageValidator } from "../utils/middleware";
+import { imageUploadHandler, imageValidator, validateFurnitureDetails } from "../utils/middleware";
 import analyzePriceEstimate from "../services/priceService";
 
 
@@ -9,6 +9,7 @@ router.post(
   "/",
   imageUploadHandler(),
   imageValidator,
+  validateFurnitureDetails,
   async (req: Request, res: Response) => {
     try {
       const imageBase64 = req.file!.buffer.toString("base64");
