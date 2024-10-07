@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
 import { imageUploadHandler, imageValidator } from "../utils/middleware";
-// import { FurnitureDetails } from "../types";
 import analyzeRepairEstimate from "../services/repairService";
 
 const router = express.Router();

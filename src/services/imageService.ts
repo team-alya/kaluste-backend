@@ -63,9 +63,12 @@ const analyzeBase64Image = async (
     const parsedResponse = parseResponse(text);
 
     return parsedResponse;
-
   } catch (error: unknown) {
-    return { error: `An unexpected error occurred during image analysis. Message: ${error}` };
+    return {
+      error: `An unexpected error occurred during image analysis. Message: ${
+        (error as Error).message
+      }`,
+    };
   }
 };
 

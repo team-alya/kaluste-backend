@@ -24,25 +24,9 @@ export interface PriceAnalysisResponse {
   description: string;
   sell_probability: number;
 }
- 
+
 export interface RepairAnalysisResponse {
   repair_instructions: string;
   recycle_instructions: string;
   suggestion: string;
-}
-
-export interface FurnitureDetails {
-  type: string;
-  brand: string;
-  model: string;
-  color: string;
-  dimensions: Dimensions;
-  age: number;
-  condition: string;
-}
-
-interface Dimensions {
-  length: number;
-  width: number;
-  height: number;
 }
