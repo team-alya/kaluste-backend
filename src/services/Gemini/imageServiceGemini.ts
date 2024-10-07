@@ -16,7 +16,9 @@ if (!GEMINI_API_KEY) {
 
 // Initialize the Gemini API client
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+});
 
 // Function to create a prompt for the AI, including the request_id and instructions
 const createPrompt = (requestId: string) =>
@@ -32,29 +34,27 @@ const createPrompt = (requestId: string) =>
     - age: Estimated age in years (as a number)
     - condition: Overall state of the furniture (e.g., Excellent, Good, Fair, Poor)
 
-    Important notes:
-    - Respond with a JSON object. The first field should be request_id.
-    - If you can't determine specific details or a specific detail is not explicitly visible in the image, use "Unknown" for text fields or 0 for numeric fields.
-    - Provide your best estimate for dimensions and age, even if not certain.
-    - Ensure all text values start with a capital letter.
-    - Do not include any markdown formatting or additional explanation.
-    - If there's no furniture visible in the image, return an object with an 'error' field explaining this.
+    Respond with a JSON object. The first field should be request_id.
+    Ensure all text values start with a capital letter.
+    Provide your best estimate for dimensions and age, even if not certain.
+    Do not include any markdown formatting or additional explanation.
+    If there's no furniture visible in the image, return an object with an 'error' field explaining this.
 
     Example response format:
-    {
-      "request_id": "${requestId}",
-      "type": "Sofa",
-      "brand": "West Elm",
-      "model": "Hamilton",
-      "color": "Gray",
-      "dimensions": {
-        "length": 218,
-        "width": 94,
-        "height": 90
-      },
-      "age": 3,
-      "condition": "Excellent"
-    }
+      {
+        "request_id": "${requestId}",
+        "type": "Sofa",
+        "brand": "West Elm",
+        "model": "Hamilton",
+        "color": "Gray",
+        "dimensions": {
+          "length": 218,
+          "width": 94,
+          "height": 90
+        },
+        "age": 3,
+        "condition": "Excellent"
+      }
   `;
 
 // Function to analyze the provided image using Gemini model, extracting furniture details
