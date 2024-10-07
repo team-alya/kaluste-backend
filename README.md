@@ -24,7 +24,7 @@ npm run start
 ## API Documentation
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the values shown in the example below 
+| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the values shown in the example below |
 ```
 {
       "request_id": "1eb766f2-b72f-473c-bb53-ab45d5d66433",
@@ -47,9 +47,8 @@ npm run start
 
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and price suggestion with sell probality.
-
-````
+| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and price suggestion with sell probality. |
+```
 {
     "message": "Price estimate was analyzed",
     "result": {
@@ -60,4 +59,18 @@ npm run start
         "price_suggestion": "The chair is most likely to sell for around 450 euros with a 70% probability."
     }
 }
-````
+```
+
+| HTTP | Route | Description | Response |
+| ---- | ----- | ----------- | -------- |
+| POST | /api/repair | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The reponse is a JSON object containing repair suggestions and instructions. |
+```
+{
+      "message": "Repair need was analyzed",
+      "result": {
+            "repair_instructions": "An example text",
+            "recycle_instructions": "An example text",
+            "suggestion": "An example text"
+      }
+}
+```
