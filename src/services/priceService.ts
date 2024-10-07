@@ -1,16 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
 import { PriceAnalysisResponse, FurnitureDetails} from "../types";
+import { GEMINI_API_KEY } from "../utils/constants";
 
-dotenv.config();
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not set in the environment variables");
-}
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const createPrompt = (furnitureDetails: FurnitureDetails) => `
