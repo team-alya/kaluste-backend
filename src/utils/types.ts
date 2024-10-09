@@ -1,16 +1,14 @@
-interface Dimensions {
-  length: number;
-  width: number;
-  height: number;
-}
-
 export interface FurnitureDetails {
   request_id: string;
   type: string;
   brand: string;
   model: string;
   color: string;
-  dimensions: Dimensions;
+  dimensions: {
+    length: number;
+    width: number;
+    height: number;
+  };
   age: number;
   condition: string;
 }
