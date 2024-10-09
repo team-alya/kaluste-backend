@@ -1,21 +1,22 @@
-// TODO: add types
-export interface ImageAnalysisResponse {
+interface Dimensions {
+  length: number;
+  width: number;
+  height: number;
+}
+
+export interface FurnitureDetails {
   request_id: string;
   type: string;
   brand: string;
   model: string;
   color: string;
-  dimensions: {
-    length: number;
-    width: number;
-    height: number;
-  };
+  dimensions: Dimensions;
   age: number;
   condition: string;
 }
 
 // might not need this, if frontend uses request_id to maintain conversation with user
-export type NoReqIDResponse = Omit<ImageAnalysisResponse, "request_id">;
+export type NoReqIDResponse = Omit<FurnitureDetails, "request_id">;
 
 export interface PriceAnalysisResponse {
   highest_price: number;

@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import cors from "cors";
 import "dotenv/config";
 import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
@@ -12,6 +13,7 @@ if (!GEMINI_API_KEY) {
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/ping", (_req: Request, res: Response) => {

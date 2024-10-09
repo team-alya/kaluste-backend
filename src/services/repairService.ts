@@ -1,11 +1,11 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GEMINI_API_KEY } from "../utils/constants";
-import { ImageAnalysisResponse, RepairAnalysisResponse } from "../types";
+import { FurnitureDetails, RepairAnalysisResponse } from "../utils/types";
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const createPrompt = (furnitureDetails: ImageAnalysisResponse) => `
+const createPrompt = (furnitureDetails: FurnitureDetails) => `
   Description of the piece of furniture in the photo:
 
   The type of the furniture is ${furnitureDetails.type}. The maker of the furniture is ${furnitureDetails.brand} and its model is ${furnitureDetails.model}.
@@ -32,7 +32,7 @@ const parseRepairResponse = (responseText: string) => {
 
 const analyzeRepairEstimate = async (
   imageBase64: string,
-  furnitureDetails: ImageAnalysisResponse
+  furnitureDetails: FurnitureDetails
 ) => {
   const prompt = createPrompt(furnitureDetails);
 

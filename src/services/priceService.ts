@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { PriceAnalysisResponse, NoReqIDResponse } from "../types";
+import { PriceAnalysisResponse, NoReqIDResponse } from "../utils/types";
 import { GEMINI_API_KEY } from "../utils/constants";
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);

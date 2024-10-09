@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
-import { imageUploadHandler, imageValidator } from "../utils/middleware";
+import {
+  imageUploadHandler,
+  imageValidator,
+  furnitureDetailsParser,
+} from "../utils/middleware";
 import analyzeRepairEstimate from "../services/repairService";
+import { FurnitureDetails } from "../utils/types";
 
 const router = express.Router();
 
@@ -9,13 +14,17 @@ router.post(
   "/",
   imageUploadHandler(),
   imageValidator,
-  async (req: Request, res: Response) => {
+  furnitureDetailsParser,
+  async (
+    req: Request<unknown, unknown, { furniture: FurnitureDetails }>,
+    res: Response
+  ) => {
     try {
       const imageBase64 = req.file!.buffer.toString("base64");
-      const furnitureDetails = JSON.parse(req.body.furnitureDetails);
+      const furniture = req.body.furniture;
       const analysisResult = await analyzeRepairEstimate(
         imageBase64,
-        furnitureDetails
+        furniture
       );
       res
         .status(200)

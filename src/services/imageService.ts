@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { v4 as uuidv4 } from "uuid";
-import { ImageAnalysisResponse, NoReqIDResponse } from "../types";
+import { FurnitureDetails, NoReqIDResponse } from "../utils/types";
 import { GEMINI_API_KEY } from "../utils/constants";
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
@@ -41,9 +41,9 @@ const createPrompt = (requestId: string) =>
     }
   `;
 
-const parseResponse = (responseText: string): ImageAnalysisResponse => {
+const parseResponse = (responseText: string): FurnitureDetails => {
   const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
-  return JSON.parse(cleanedText) as ImageAnalysisResponse;
+  return JSON.parse(cleanedText) as FurnitureDetails;
 };
 
 const analyzeBase64Image = async (

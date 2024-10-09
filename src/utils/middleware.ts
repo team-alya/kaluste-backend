@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import { NoReqIDResponse } from "../types";
+import { FurnitureDetails, NoReqIDResponse } from "./types";
+import { furnitureDetailsSchema } from "./schemas";
 
 export const imageUploadHandler = () => {
   return multer({ storage: multer.memoryStorage() }).single("image");
@@ -13,7 +14,9 @@ export const imageValidator = (
 ) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No file was uploaded" });
+      return res
+        .status(400)
+        .json({ error: "Image was not included in the request" });
     }
     if (!req.file.mimetype.includes("image")) {
       return res.status(400).json({ error: "Uploaded file is not an image" });
@@ -62,18 +65,41 @@ export const validateFurnitureDetails = (
     }
 
     if (missingFields.length > 0) {
-      return res
-        .status(400)
-        .json({
-          error: `The following fields are missing or incomplete: ${missingFields.join(
-            ", "
-          )}`,
-        });
+      return res.status(400).json({
+        error: `The following fields are missing or incomplete: ${missingFields.join(
+          ", "
+        )}`,
+      });
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
       return res.status(400).json({ error: error.message });
     }
+  }
+  return next();
+};
+
+export const furnitureDetailsParser = (
+  req: Request<
+    unknown,
+    unknown,
+    { furnitureDetails: string; furniture: FurnitureDetails }
+  >,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body.furnitureDetails) {
+      return res
+        .status(400)
+        .json({ error: "Furniture details were not included in the request" });
+    }
+    const furnitureDetails: unknown = JSON.parse(req.body.furnitureDetails);
+    const parsedFurniture: FurnitureDetails =
+      furnitureDetailsSchema.parse(furnitureDetails);
+    req.body.furniture = parsedFurniture;
+  } catch (error: unknown) {
+    return res.status(400).json({ error });
   }
   return next();
 };
