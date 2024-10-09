@@ -12,7 +12,7 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const imageBase64 = req.file!.buffer.toString("base64");
-      const furnitureDetails = req.body.furnitureDetails;
+      const furnitureDetails = JSON.parse(req.body.furnitureDetails);
       const analysisResult = await analyzeRepairEstimate(
         imageBase64,
         furnitureDetails

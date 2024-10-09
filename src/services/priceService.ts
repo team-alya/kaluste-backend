@@ -51,7 +51,6 @@ const analyzePriceEstimate = async (
     const text = response.text();
 
     const parsedResponse = parsePriceResponse(text);
-
     return parsedResponse;
   } catch (error: unknown) {
     if (error instanceof Error) {
