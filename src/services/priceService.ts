@@ -1,16 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
-import { PriceAnalysisResponse, NoReqIDResponse} from "../types";
+import { PriceAnalysisResponse, NoReqIDResponse } from "../utils/types";
+import { GEMINI_API_KEY } from "../utils/constants";
 
-dotenv.config();
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not set in the environment variables");
-}
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const createPrompt = (furnitureDetails: NoReqIDResponse): string => `
@@ -37,14 +29,14 @@ const createPrompt = (furnitureDetails: NoReqIDResponse): string => `
 
 const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
   const cleanedText = responseText
-  .replace(/```json\n?|\n?```/g, "")
-  .replace(/\s+/g, ' ')
-  .trim(); 
+    .replace(/```json\n?|\n?```/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
   return JSON.parse(cleanedText) as PriceAnalysisResponse;
 };
 
 const analyzePriceEstimate = async (
-  imageBase64: string, 
+  imageBase64: string,
   furnitureDetails: NoReqIDResponse
 ): Promise<PriceAnalysisResponse | { error: string }> => {
   const prompt = createPrompt(furnitureDetails);
@@ -55,13 +47,11 @@ const analyzePriceEstimate = async (
       { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
     ]);
 
-    const response = await result.response;
-    const text = await response.text();
+    const response = result.response;
+    const text = response.text();
 
     const parsedResponse = parsePriceResponse(text);
-    
     return parsedResponse;
-
   } catch (error: unknown) {
     if (error instanceof Error) {
       return { error: error.message };

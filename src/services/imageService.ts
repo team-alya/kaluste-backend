@@ -1,17 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
-import { ImageAnalysisResponse, NoReqIDResponse } from "../types";
+import { FurnitureDetails, NoReqIDResponse } from "../utils/types";
+import { GEMINI_API_KEY } from "../utils/constants";
 
-dotenv.config();
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not set in the environment variables");
-}
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const createPrompt = (requestId: string) =>
@@ -49,9 +41,9 @@ const createPrompt = (requestId: string) =>
     }
   `;
 
-const parseResponse = (responseText: string): ImageAnalysisResponse => {
+const parseResponse = (responseText: string): FurnitureDetails => {
   const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
-  return JSON.parse(cleanedText) as ImageAnalysisResponse;
+  return JSON.parse(cleanedText) as FurnitureDetails;
 };
 
 const analyzeBase64Image = async (
@@ -71,9 +63,12 @@ const analyzeBase64Image = async (
     const parsedResponse = parseResponse(text);
 
     return parsedResponse;
-
   } catch (error: unknown) {
-    return { error: `An unexpected error occurred during image analysis. Message: ${error}` };
+    return {
+      error: `An unexpected error occurred during image analysis. Message: ${
+        (error as Error).message
+      }`,
+    };
   }
 };
 
