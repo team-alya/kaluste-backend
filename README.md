@@ -66,11 +66,11 @@ npm run start
 | POST | /api/repair | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The reponse is a JSON object containing repair suggestions and instructions. |
 ```
 {
-      "message": "Repair need was analyzed",
-      "result": {
-            "repair_instructions": "An example text",
-            "recycle_instructions": "An example text",
-            "suggestion": "An example text"
-      }
+    "message": "Repair need was analyzed",
+    "result": {
+        "repair_instructions": "The chair is in excellent condition and does not need repair. If there are any minor scratches or blemishes, you can use a wood polish or stain to touch them up.",
+        "recycle_instructions": "In Finland, you can recycle wooden furniture by taking it to a recycling center or contacting a waste management company. They will typically collect and process the wood for reuse or recycling. You can also donate the chair to a charity or sell it through a secondhand market.",
+        "suggestion": "The chair is in excellent condition. You can keep using it as it is."
+    }
 }
 ```
