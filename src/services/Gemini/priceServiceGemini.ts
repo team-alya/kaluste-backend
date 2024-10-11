@@ -1,11 +1,11 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { PriceAnalysisResponse, NoReqIDResponse } from "../utils/types";
-import { GEMINI_API_KEY } from "../utils/constants";
+import { PriceAnalysisResponse, FurnitureDetails } from "../../utils/types";
+import { GEMINI_API_KEY } from "../../utils/constants";
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const createPrompt = (furnitureDetails: NoReqIDResponse): string => `
+const createPrompt = (furnitureDetails: FurnitureDetails): string => `
   Description of the piece of furniture in the photo:
 
   The type of the furniture is ${furnitureDetails.type}. The maker of the furniture is ${furnitureDetails.brand} and its model is ${furnitureDetails.model}.
@@ -37,7 +37,7 @@ const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
 
 const analyzePriceEstimate = async (
   imageBase64: string,
-  furnitureDetails: NoReqIDResponse
+  furnitureDetails: FurnitureDetails
 ): Promise<PriceAnalysisResponse | { error: string }> => {
   const prompt = createPrompt(furnitureDetails);
 

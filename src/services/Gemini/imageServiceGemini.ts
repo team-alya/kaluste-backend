@@ -1,15 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { v4 as uuidv4 } from "uuid";
-import { FurnitureDetails, NoReqIDResponse } from "../utils/types";
-import { GEMINI_API_KEY } from "../utils/constants";
+import { FurnitureDetails } from "../../utils/types";
+import { GEMINI_API_KEY } from "../../utils/constants";
+import { resizeImage } from "../../utils/resizeImage";
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const createPrompt = (requestId: string) =>
+// Function to create a prompt for the AI, including instructions
+const createPrompt = () =>
   `
-    Request ID: ${requestId}
-
     Analyze the furniture in the image and provide the following information:
     - type: The category of furniture (e.g., chair, table, sofa)
     - brand: The manufacturer or designer of the furniture
@@ -19,48 +18,59 @@ const createPrompt = (requestId: string) =>
     - age: Estimated age in years (as a number)
     - condition: Overall state of the furniture (e.g., Excellent, Good, Fair, Poor)
 
-    Respond with a JSON object. The first field should be request_id.
+    Respond with a JSON object.
     Ensure all text values start with a capital letter.
+    Provide your best estimate for dimensions and age, even if not certain.
     Do not include any markdown formatting or additional explanation.
     If there's no furniture visible in the image, return an object with an 'error' field explaining this.
 
     Example response format:
-    {
-      "request_id": "${requestId}",
-      "type": "Sofa",
-      "brand": "West Elm",
-      "model": "Hamilton",
-      "color": "Gray",
-      "dimensions": {
-        "length": 218,
-        "width": 94,
-        "height": 90
-      },
-      "age": 3,
-      "condition": "Excellent"
-    }
+      {
+        "type": "Sofa",
+        "brand": "West Elm",
+        "model": "Hamilton",
+        "color": "Gray",
+        "dimensions": {
+          "length": 218,
+          "width": 94,
+          "height": 90
+        },
+        "age": 3,
+        "condition": "Excellent"
+      }
   `;
 
-const parseResponse = (responseText: string): FurnitureDetails => {
+const parseImageResponse = (responseText: string): FurnitureDetails => {
   const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
   return JSON.parse(cleanedText) as FurnitureDetails;
 };
 
-const analyzeBase64Image = async (
-  imageBase64: string
-): Promise<NoReqIDResponse | { error: string }> => {
-  const requestId = uuidv4();
-  const prompt = createPrompt(requestId);
+// Function to analyze the provided image using Gemini model, extracting furniture details
+const analyzeImageGemini = async (
+  imagePath: Buffer
+): Promise<FurnitureDetails | { error: string }> => {
 
+  const prompt = createPrompt();
   try {
+    // Get resized and optimized image
+    const optimizedBase64Img = await resizeImage(imagePath);
+
+    // Send image and prompt to Gemini for analysis
     const result = await model.generateContent([
       { text: prompt },
-      { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
+      { inlineData: { mimeType: "image/jpeg", data: optimizedBase64Img } },
     ]);
+
+    // Ensure that a response was received
+    if (!result) {
+      throw new Error("No content returned from Gemini API");
+    }
+
+    // Parse the response
     const response = result.response;
     const text = response.text();
 
-    const parsedResponse = parseResponse(text);
+    const parsedResponse = parseImageResponse(text);
 
     return parsedResponse;
   } catch (error: unknown) {
@@ -72,4 +82,4 @@ const analyzeBase64Image = async (
   }
 };
 
-export default analyzeBase64Image;
+export default analyzeImageGemini;

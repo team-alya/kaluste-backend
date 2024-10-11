@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const furnitureDetailsSchema = z.object({
-  request_id: z.string(),
   type: z.string(),
   brand: z.string(),
   model: z.string(),

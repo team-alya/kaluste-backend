@@ -1,5 +1,4 @@
 export interface FurnitureDetails {
-  request_id: string;
   type: string;
   brand: string;
   model: string;
@@ -12,9 +11,6 @@ export interface FurnitureDetails {
   age: number;
   condition: string;
 }
-
-// might not need this, if frontend uses request_id to maintain conversation with user
-export type NoReqIDResponse = Omit<FurnitureDetails, "request_id">;
 
 export interface PriceAnalysisResponse {
   highest_price: number;

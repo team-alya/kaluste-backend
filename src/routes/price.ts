@@ -5,7 +5,7 @@ import {
   imageValidator,
   validateFurnitureDetails,
 } from "../utils/middleware";
-import analyzePriceEstimate from "../services/priceService";
+import analyzePriceEstimate from "../services/Gemini/priceServiceGemini";
 
 const router = express.Router();
 

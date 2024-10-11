@@ -27,7 +27,6 @@ npm run start
 | POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the values shown in the example below |
 ```
 {
-      "request_id": "1eb766f2-b72f-473c-bb53-ab45d5d66433",
       "type": "Sofa",
       "brand": "West Elm",
       "model": "Hamilton",

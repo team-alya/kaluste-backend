@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import { FurnitureDetails, NoReqIDResponse } from "./types";
+import { FurnitureDetails } from "./types";
 import { furnitureDetailsSchema } from "./schemas";
 
 export const imageUploadHandler = () => {
@@ -35,7 +35,7 @@ export const validateFurnitureDetails = (
   next: NextFunction
 ) => {
   try {
-    const furnitureDetails: NoReqIDResponse = JSON.parse(
+    const furnitureDetails: FurnitureDetails = JSON.parse(
       req.body.furnitureDetails
     );
     const requiredFields = [
