@@ -1,30 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
-import { v4 as uuidv4 } from "uuid";
-import { parseResponse } from "../../utils/parseResponse";
-import { ImageAnalysisResponse } from "../../types";
+import { FurnitureDetails } from "../../utils/types";
+import { GEMINI_API_KEY } from "../../utils/constants";
 import { resizeImage } from "../../utils/resizeImage";
 
-dotenv.config();
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// Load API-key from environment variables
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not set in the environment variables");
-}
-
-// Initialize the Gemini API client
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-});
-
-// Function to create a prompt for the AI, including the request_id and instructions
-const createPrompt = (requestId: string) =>
+// Function to create a prompt for the AI, including instructions
+const createPrompt = () =>
   `
-    Request ID: ${requestId}
-
     Analyze the furniture in the image and provide the following information:
     - type: The category of furniture (e.g., chair, table, sofa)
     - brand: The manufacturer or designer of the furniture
@@ -34,7 +18,7 @@ const createPrompt = (requestId: string) =>
     - age: Estimated age in years (as a number)
     - condition: Overall state of the furniture (e.g., Excellent, Good, Fair, Poor)
 
-    Respond with a JSON object. The first field should be request_id.
+    Respond with a JSON object.
     Ensure all text values start with a capital letter.
     Provide your best estimate for dimensions and age, even if not certain.
     Do not include any markdown formatting or additional explanation.
@@ -42,7 +26,6 @@ const createPrompt = (requestId: string) =>
 
     Example response format:
       {
-        "request_id": "${requestId}",
         "type": "Sofa",
         "brand": "West Elm",
         "model": "Hamilton",
@@ -57,12 +40,17 @@ const createPrompt = (requestId: string) =>
       }
   `;
 
+const parseImageResponse = (responseText: string): FurnitureDetails => {
+  const cleanedText = responseText.replace(/```json\n?|\n?```/g, "").trim();
+  return JSON.parse(cleanedText) as FurnitureDetails;
+};
+
 // Function to analyze the provided image using Gemini model, extracting furniture details
 const analyzeImageGemini = async (
   imagePath: Buffer
-): Promise<ImageAnalysisResponse | { error: string }> => {
-  const requestId = uuidv4();
-  const prompt = createPrompt(requestId);
+): Promise<FurnitureDetails | { error: string }> => {
+
+  const prompt = createPrompt();
   try {
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
@@ -81,15 +69,16 @@ const analyzeImageGemini = async (
     // Parse the response
     const response = result.response;
     const text = response.text();
-    const parsedResponse: any = parseResponse(text);
+
+    const parsedResponse = parseImageResponse(text);
 
     return parsedResponse;
-  } catch (error) {
-    if (error instanceof Error) {
-      return { error: error.message };
-    } else {
-      return { error: "An unexpected error occurred during image analysis." };
-    }
+  } catch (error: unknown) {
+    return {
+      error: `An unexpected error occurred during image analysis. Message: ${
+        (error as Error).message
+      }`,
+    };
   }
 };
 

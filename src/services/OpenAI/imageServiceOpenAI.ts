@@ -1,9 +1,6 @@
 import OpenAI from "openai";
-import dotenv from "dotenv";
-// import { v4 as uuidv4 } from "uuid";
-// might need uuid still if it's needed to send request_id to frontend
-import { zodResponseFormat } from "openai/helpers/zod";
 import dedent from "dedent";
+import { zodResponseFormat } from "openai/helpers/zod";
 import { FurnitureAnalysis } from "../../schema";
 import { resizeImage } from "../../utils/resizeImage";
 
@@ -23,8 +20,6 @@ Important notes:
 - If no furniture is visible in the image, return an object with an 'error' field explaining this.
 - Ensure all text values start with a capital letter.
 `;
-
-dotenv.config();
 
 // Load API-key from environment variables
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

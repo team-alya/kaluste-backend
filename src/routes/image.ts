@@ -1,38 +1,38 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
-import { imageUploadHandler } from "../utils/middleware";
-import analyzeImageOpenAI from "../services/OpenAI/imageServiceOpenAI";
+import { imageUploadHandler, imageValidator } from "../utils/middleware";
 import analyzeImageGemini from "../services/Gemini/imageServiceGemini";
+import analyzeImageOpenAI from "../services/OpenAI/imageServiceOpenAI";
 
 const router = express.Router();
 
 router.post(
   "/",
-  imageUploadHandler("image"),
+  imageUploadHandler(),
+  imageValidator,
   async (req: Request, res: Response) => {
-    if (!req.file) {
-      return res.status(400).json({ error: "No image was uploaded" });
-    }
     try {
-      // const imageBase64 = req.file.buffer.toString("base64");
+      const geminiPromise = await analyzeImageGemini(req.file!.buffer);
+      const openaiPromise = await analyzeImageOpenAI(req.file!.buffer);
 
-      const openaiPromise = await analyzeImageOpenAI(req.file.buffer);
-      const geminiPromise = await analyzeImageGemini(req.file.buffer);
-
-      const [openaiResult, geminiResult] = await Promise.all([
-        openaiPromise,
+      const [geminiResult, openaiResult] = await Promise.all([
         geminiPromise,
+        openaiPromise,
       ]);
 
       const analysisResult = {
-        openai: openaiResult,
         gemini: geminiResult,
+        openai: openaiResult,
       };
 
       return res
         .status(200)
         .json({ message: "Image was analyzed", result: analysisResult });
-    } catch (error) {
-      return res.status(500).json({ error: "Failed to analyze image" });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      }
+      return res.status(500).json({ error: "An unexpected error occurred." });
     }
   }
 );
