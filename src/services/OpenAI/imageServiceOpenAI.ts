@@ -1,24 +1,30 @@
 import OpenAI from "openai";
 import dedent from "dedent";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { FurnitureAnalysis } from "../../schema";
 import { resizeImage } from "../../utils/resizeImage";
+import { furnitureDetailsSchema } from "../../utils/schemas";
 
 const prompt = dedent` 
-Analyze the furniture in the image and provide the following information:
-1. Type: Identify the category of furniture (e.g., chair, table, sofa).
-2. Brand: Specify the manufacturer or designer if identifiable/visible. If not fully certain, use "Unknown".
-3. Model: Provide the specific model name or number if visible. If not identifiable/visible, use "Unspecified".
-4. Color: Describe the primary color of the furniture.
-5. Dimensions: Estimate the length, width, and height in centimeters.
-6. Age: Estimate the age of the furniture in years. If uncertain, provide a range or best guess.
-7. Condition: Assess the overall state (Excellent, Good, Fair, Poor).
+ Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
 
-Important notes:
-- If you can't determine specific details or a specific detail is not explicitly visible in the image, use "Unknown" for text fields or 0 for numeric fields.
-- Provide your best estimate for dimensions and age, even if not certain.
-- If no furniture is visible in the image, return an object with an 'error' field explaining this.
-- Ensure all text values start with a capital letter.
+    - merkki: Huonekalun valmistaja tai suunnittelija (esim. "Ikea", "Artek"). Jos ei tunnistettavissa, palauta "Tuntematon"
+    - malli: Spesifi mallinimi tai -numero (esim. "Eames Lounge Chair", "Poäng"). Jos ei tunnistettavissa, palauta "Tuntematon"
+    - väri: Huonekalun pääväri tai selkein näkyvä väri (esim. "musta", "beige")
+    - mitat: Olio, jolla on arvoina pituus, leveys ja korkeus senttimetreinä (älä sisällytä 'cm' arvoihin)
+    - materiaalit: Lista materiaaleista, jotka ovat näkyvissä huonekalussa (esim. ["Puu", "Alumiini", "Kangas"])
+    - kunto: Huonekalun kunto arvioituna yhdellä seuraavista: "Erinomainen", "Hyvä", "Kohtalainen", "Huono"
+
+    Palauta vastaus JSON-muotoisena oliona
+
+    Varmista, että kaikki tekstiarvot alkavat isolla alkukirjaimella.
+    Jos et pysty tunnistamaan jotakin huonekalun yksityiskohtaa tai yksityiskohtaa ei ole selvästi näkyvissä, palauta "Tuntematon" tekstikentille.
+    Anna aina paras arviosi mitoille, vaikka et ole täysin varma.
+
+    Jos kuvassa ei ole huonekaluja tai huonekalua ei voi tunnistaa, palauta olio, jossa on seuraava muoto:
+    {
+      "virhe": "Huonekalua ei voitu tunnistaa tai kuvassa ei ole huonekaluja.
+    }
+
 `;
 
 // Load API-key from environment variables
@@ -64,7 +70,7 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
         },
       ],
       response_format: zodResponseFormat(
-        FurnitureAnalysis,
+        furnitureDetailsSchema,
         "furniture_analysis"
       ),
     });
@@ -77,7 +83,7 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
     }
 
     // Parse the response to be in the format defined in zod schema
-    const furnitureAnalysis = FurnitureAnalysis.parse(
+    const furnitureAnalysis = furnitureDetailsSchema.parse(
       JSON.parse(messageContent)
     );
 

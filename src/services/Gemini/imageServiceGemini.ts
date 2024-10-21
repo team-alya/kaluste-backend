@@ -9,34 +9,38 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // Function to create a prompt for the AI, including instructions
 const createPrompt = () =>
   `
-    Analyze the furniture in the image and provide the following information:
-    - type: The category of furniture (e.g., chair, table, sofa)
-    - brand: The manufacturer or designer of the furniture
-    - model: The specific model name or number
-    - color: The primary color of the furniture
-    - dimensions: An object with length, width, and height in centimeters (do not include 'cm' in the values)
-    - age: Estimated age in years (as a number)
-    - condition: Overall state of the furniture (e.g., Excellent, Good, Fair, Poor)
+    Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
 
-    Respond with a JSON object.
-    Ensure all text values start with a capital letter.
-    Provide your best estimate for dimensions and age, even if not certain.
-    Do not include any markdown formatting or additional explanation.
-    If there's no furniture visible in the image, return an object with an 'error' field explaining this.
+    - merkki: Huonekalun valmistaja tai suunnittelija (esim. "Ikea", "Artek")
+    - malli: Spesifi mallinimi tai -numero (esim. "Eames Lounge Chair", "Poäng")
+    - väri: Huonekalun pääväri tai selkein näkyvä väri (esim. "musta", "beige")
+    - mitat: Olio, jolla on arvoina pituus, leveys ja korkeus senttimetreinä (älä sisällytä 'cm' arvoihin)
+    - materiaalit: Lista materiaaleista, jotka ovat näkyvissä huonekalussa (esim. ["Puu", "Alumiini", "Kangas"])
+    - kunto: Huonekalun kunto arvioituna yhdellä seuraavista: "Erinomainen", "Hyvä", "Kohtalainen", "Huono"
 
-    Example response format:
+    Palauta vastaus JSON-muotoisena oliona
+
+    Varmista, että kaikki tekstiarvot alkavat isolla alkukirjaimella.
+    Jos et pysty tunnistamaan jotakin huonekalun yksityiskohtaa tai yksityiskohtaa ei ole selvästi näkyvissä, palauta "Tuntematon" tekstikentille.
+    Anna paras arviosi mitoille, vaikka et ole täysin varma.
+
+    Jos kuvassa ei ole huonekaluja tai huonekalua ei voi tunnistaa, palauta olio, jossa on seuraava muoto:
+    {
+      "virhe": "Huonekalua ei voitu tunnistaa tai kuvassa ei ole huonekaluja.
+    }
+
+    Esimerkkivastauksen muoto:
       {
-        "type": "Sofa",
-        "brand": "West Elm",
-        "model": "Hamilton",
-        "color": "Gray",
-        "dimensions": {
-          "length": 218,
-          "width": 94,
-          "height": 90
+        "merkki": "West Elm",
+        "malli": "Hamilton",
+        "väri": "Harmaa",
+        "mitat": {
+          "pituus": 218,
+          "leveys": 94,
+          "korkeus": 90
         },
-        "age": 3,
-        "condition": "Excellent"
+        "materiaalit": ["Nahka"]
+        "kunto": "Erinomainen",
       }
   `;
 
