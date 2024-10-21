@@ -1,8 +1,8 @@
-import OpenAI from "openai";
 import dedent from "dedent";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { FurnitureAnalysis } from "../../schema";
 import { resizeImage } from "../../utils/resizeImage";
+import openai from "../../configs/openai";
 
 const prompt = dedent` 
 Analyze the furniture in the image and provide the following information:
@@ -21,21 +21,6 @@ Important notes:
 - Ensure all text values start with a capital letter.
 `;
 
-// Load API-key from environment variables
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-if (!OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY is not set in the environment variables");
-}
-
-// Initialize OpenAI API client
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-});
-
-// Define OpenAI model
-const openaiModel = "gpt-4o-2024-08-06";
-
 // Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
 const analyzeImageOpenAI = async (imagePath: Buffer) => {
   try {
@@ -43,8 +28,8 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
     const optimizedBase64Img = await resizeImage(imagePath);
 
     // Send request to OpenAI
-    const response = await openai.chat.completions.create({
-      model: openaiModel,
+    const response = await openai.client.chat.completions.create({
+      model: openai.model,
       messages: [
         {
           role: "user",

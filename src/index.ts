@@ -4,10 +4,13 @@ import "dotenv/config";
 import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
 import repairRouter from "./routes/repair";
-import { GEMINI_API_KEY } from "./utils/constants";
+import { GEMINI_API_KEY, OPENAI_API_KEY } from "./utils/constants";
 
 if (!GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY is not set in the environment variables");
+}
+if (!OPENAI_API_KEY) {
+  throw new Error("OPENAI_API_KEY is not set in the environment variables");
 }
 
 const app = express();
