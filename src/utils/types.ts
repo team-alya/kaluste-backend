@@ -1,15 +1,14 @@
 export interface FurnitureDetails {
-  type: string;
-  brand: string;
-  model: string;
-  color: string;
-  dimensions: {
-    length: number;
-    width: number;
-    height: number;
+  merkki: string;
+  malli: string;
+  väri: string;
+  mitat: {
+    pituus: number;
+    leveys: number;
+    korkeus: number;
   };
-  age: number;
-  condition: string;
+  materiaalit: string[];
+  kunto: string;
 }
 
 export interface PriceAnalysisResponse {

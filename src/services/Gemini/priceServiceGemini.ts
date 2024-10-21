@@ -1,9 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import gemini from "../../configs/gemini";
 import { PriceAnalysisResponse, FurnitureDetails } from "../../utils/types";
-import { GEMINI_API_KEY } from "../../utils/constants";
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const createPrompt = (furnitureDetails: FurnitureDetails): string => `
   Description of the piece of furniture in the photo:
@@ -42,7 +38,7 @@ const analyzePriceEstimate = async (
   const prompt = createPrompt(furnitureDetails);
 
   try {
-    const result = await model.generateContent([
+    const result = await gemini.model.generateContent([
       { text: prompt },
       { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
     ]);

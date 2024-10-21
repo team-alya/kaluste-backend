@@ -1,10 +1,6 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FurnitureDetails } from "../../utils/types";
-import { GEMINI_API_KEY } from "../../utils/constants";
 import { resizeImage } from "../../utils/resizeImage";
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+import gemini from "../../configs/gemini";
 
 // Function to create a prompt for the AI, including instructions
 const createPrompt = () =>
@@ -53,14 +49,13 @@ const parseImageResponse = (responseText: string): FurnitureDetails => {
 const analyzeImageGemini = async (
   imagePath: Buffer
 ): Promise<FurnitureDetails | { error: string }> => {
-
   const prompt = createPrompt();
   try {
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
 
     // Send image and prompt to Gemini for analysis
-    const result = await model.generateContent([
+    const result = await gemini.model.generateContent([
       { text: prompt },
       { inlineData: { mimeType: "image/jpeg", data: optimizedBase64Img } },
     ]);

@@ -50,17 +50,17 @@ export const validateFurnitureDetails = (
       (field) => !(furnitureDetails as any)[field]
     );
 
-    if (!furnitureDetails.dimensions) {
-      missingFields.push("dimensions (length, width, height)");
+    if (!furnitureDetails.mitat) {
+      missingFields.push("mitat (pituus, leveys, korkeus)");
     } else {
       const dimensionFields = ["length", "width", "height"];
       const missingDimensions = dimensionFields.filter((dim) => {
-        const value = (furnitureDetails.dimensions as any)[dim];
+        const value = (furnitureDetails.mitat as any)[dim];
         return value === undefined || typeof value !== "number" || value <= 0;
       });
 
       if (missingDimensions.length > 0) {
-        missingFields.push(`dimensions (${missingDimensions.join(", ")})`);
+        missingFields.push(`mitat (${missingDimensions.join(", ")})`);
       }
     }
 
