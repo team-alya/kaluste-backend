@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/core": "^0.7.0",
     "@eslint/js": "^9.11.0",
     "@stylistic/eslint-plugin": "^2.8.0",
     "@types/cors": "^2.8.17",
@@ -27,13 +28,15 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.19.0",
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
     "dedent": "^1.5.3",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "multer": "^1.4.5-lts.1",
     "openai": "^4.65.0",
     "sharp": "^0.33.5",
-    "cors": "^2.8.5",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
   }
