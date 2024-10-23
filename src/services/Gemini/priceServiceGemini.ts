@@ -2,24 +2,22 @@ import gemini from "../../configs/gemini";
 import { PriceAnalysisResponse, FurnitureDetails } from "../../utils/types";
 
 const createPrompt = (furnitureDetails: FurnitureDetails): string => `
-  Description of the piece of furniture in the photo:
+  Kuvassa näkyvän huonekalun kuvaus:
 
-  The type of the furniture is ${furnitureDetails.type}. The maker of the furniture is ${furnitureDetails.brand} and its model is ${furnitureDetails.model}.
-  The color of the furniture is ${furnitureDetails.color}. The approximate dimensions are ${furnitureDetails.dimensions.length}x${furnitureDetails.dimensions.width}x${furnitureDetails.dimensions.height} cm.
-  The condition is ${furnitureDetails.condition}. The age is ${furnitureDetails.age} years.
+  Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
+  Huonekalun väri on ${furnitureDetails.väri}. Huonekalun arvioidut mitat ovat ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm.
+  Huonekalussa on käytetty ${furnitureDetails.materiaalit} materiaaleja. Huonekalun kunto on ${furnitureDetails.kunto}.
 
-  Provide a price estimate for my piece of furniture in the second-hand market, based on this description and the photo. The second-hand market is based in Finland.
-  Return 3 prices and 1 description as a JSON object with the fields: highest_price, lowest_price, average_price, description, and price_suggestion.
-  The price_suggestion should return what price is most likely to sell the item and the probability of selling it at that price. 
-  Format the response as a consistent JSON object.
+  Anna hinta-arvio huonekalulle käytettyjen tavaroiden markkinoilla annetun kuvauksen ja kuvan perusteella. Kyseessä olevat käytettyjen tavaroiden markkinat sijaitsevat Suomessa. 
+  Palauta 2 hintaa ja 1 lista myyntikanavista JSON-oliona sisältäen seuraavat arvot: korkein_hinta, alin_hinta, myyntikanavat.
+  myyntikanavat tulisi olla lista, joka sisältää merkkijonoja kanavista, joilla käyttäjä voisi myydä huonekalun (esim. Tori, Mjuk)
+  Muotoile vastaus JSON oliona.
 
-  Example response format:
+  Esimerkkivastausmuoto:
   {
-    "highest_price": high price in euros,
-    "lowest_price": low price in euros,
-    "average_price": average price in euros,
-    "description": "The piece of furniture is in excellent condition and is a rare model.",
-    "price_suggestion": "The chair is most likely to sell for around x euros with a x% probability."
+    "korkein_hinta": korkein hinta euroina,
+    "alin_hinta": alin hinta euroina,
+    "myyntikanavat": ["Tori", "Mjuk"]
   }
 `;
 

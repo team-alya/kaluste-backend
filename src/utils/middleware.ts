@@ -39,12 +39,12 @@ export const validateFurnitureDetails = (
       req.body.furnitureDetails
     );
     const requiredFields = [
-      "type",
-      "brand",
-      "model",
-      "color",
-      "age",
-      "condition",
+      "merkki",
+      "malli",
+      "väri",
+      "mitat",
+      "materiaalit",
+      "kunto",
     ];
     const missingFields = requiredFields.filter(
       (field) => !(furnitureDetails as any)[field]
@@ -53,7 +53,7 @@ export const validateFurnitureDetails = (
     if (!furnitureDetails.mitat) {
       missingFields.push("mitat (pituus, leveys, korkeus)");
     } else {
-      const dimensionFields = ["length", "width", "height"];
+      const dimensionFields = ["pituus", "leveys", "korkeus"];
       const missingDimensions = dimensionFields.filter((dim) => {
         const value = (furnitureDetails.mitat as any)[dim];
         return value === undefined || typeof value !== "number" || value <= 0;

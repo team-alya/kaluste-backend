@@ -12,15 +12,12 @@ export interface FurnitureDetails {
 }
 
 export interface PriceAnalysisResponse {
-  highest_price: number;
-  lowest_price: number;
-  average_price: number;
-  description: string;
-  sell_probability: number;
+  korkein_hinta: number;
+  alin_hinta: number;
+  myyntikanavat: string[];
 }
 
 export interface RepairAnalysisResponse {
-  repair_instructions: string;
-  recycle_instructions: string;
-  suggestion: string;
+  korjaus_ohjeet: string;
+  kierrätys_ohjeet: string;
 }
