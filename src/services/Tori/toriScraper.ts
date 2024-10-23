@@ -33,18 +33,29 @@ const fetchProductDetails = async (links: string[]) => {
             const condition = $('section[aria-label="Lisätietoja"] p:contains("Kunto") b').text();
             const scriptContent = $('#advertising-initial-state').html();
             let price = '';
+            let bool = false;
             if (scriptContent) {
                 const jsonData = JSON.parse(scriptContent);
-                price = jsonData.config?.adServer?.gam?.targeting?.find(
+                const priceItem = jsonData.config?.adServer?.gam?.targeting?.find(
                     (item: { key: string; value: string[] }) => item.key === 'obj_price'
-                )?.value[0];
+                );
+                if (priceItem?.value[0]) {
+                    price =  priceItem.value[0];
+                    bool = true;
+                }
             }
 
-            if (condition && price.length > 0) {
+            if (condition && bool) {
                 if (hash.has(condition)) {
                     hash.set(condition, [...(hash.get(condition) || []), parseInt(price)]);
                 } else {
                     hash.set(condition, [parseInt(price)]);
+                }
+            } else if (!condition && bool) {
+                if (hash.has('Kunto ei tiedossa')) {
+                    hash.set('Kunto ei tiedossa', [...(hash.get('Kunto ei tiedossa') || []), parseInt(price)]);
+                } else {
+                    hash.set('Kunto ei tiedossa', [parseInt(price)]);
                 }
             }
         }
@@ -61,23 +72,24 @@ const fetchProductDetails = async (links: string[]) => {
 }
 
 const calcAvgPerCondition = (hash: Map<string, number[]>) => {
-    let avgHash = new Map<string, number>();
+    let avgHash = new Map<string, [number, number]>();
     hash.forEach((value, key) => {
         let sum = 0;
         value.forEach((price) => {
             sum += price;
         });
-        avgHash.set(key, sum / value.length);
+        avgHash.set(key, [Math.round(sum / value.length), value.length]);
     });
     return avgHash;
 }
 
+// Returns a map with the average price per condition and the number of products in that condition
 const getAvgPricesPerCondition = async (link: string) => {
     try {
         const productPages = await fetchProductPages(link);
         if (Array.isArray(productPages)) {
             const pricesPerCodition = await fetchProductDetails(productPages);
-            if (pricesPerCodition instanceof Map && pricesPerCodition.size > 0) { 
+            if (pricesPerCodition instanceof Map && pricesPerCodition.size > 0) {
                 return calcAvgPerCondition(pricesPerCodition);
             } else {
                 console.error('No prices found');
@@ -98,9 +110,19 @@ const getAvgPricesPerCondition = async (link: string) => {
     }
 }
 
+const generateToriLink = (brand: string, model: string) => {
+    let baseUrl = 'https://www.tori.fi/recommerce/forsale/search?';
+    let searchQueryParams = [];
+    searchQueryParams.push('q=' + encodeURIComponent(brand + ' ' + model));
+    searchQueryParams.push('trade_type=1');
+    baseUrl += searchQueryParams.join('&');
+    return baseUrl;
+}
+
 async function test() {
+    const testLink = generateToriLink('Ikea', 'Markus');
     console.log('toriScraper');
-    const testLink = 'https://www.tori.fi/recommerce/forsale/search?product_category=2.78.5196.215&q=herman+miller&trade_type=1';
+    console.log(testLink);
     const response = await getAvgPricesPerCondition(testLink);
     console.log(response);
 }
