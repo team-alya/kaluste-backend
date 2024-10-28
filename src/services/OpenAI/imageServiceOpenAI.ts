@@ -3,6 +3,10 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { resizeImage } from "../../utils/resizeImage";
 import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
+import { ChatCompletionMessageParam } from "openai/resources";
+import { FurnitureDetails } from "../../utils/types";
+import { v4 as uuidv4 } from "uuid";
+import analyzePrice from "./priceServiceOpenAI";
 
 const prompt = dedent` 
  Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
@@ -27,33 +31,50 @@ const prompt = dedent`
 
 `;
 
+const conversationHistory: {
+  [key: string]: ChatCompletionMessageParam[];
+} = {};
+
 // Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
-const analyzeImageOpenAI = async (imagePath: Buffer) => {
+const analyzeImageOpenAI = async (
+  imagePath: Buffer
+): Promise<FurnitureDetails | { error: string }> => {
   try {
+    const requestId = uuidv4();
+
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
+
+    conversationHistory[requestId] = Array<ChatCompletionMessageParam>();
+
+    // Add user prompt to conversation history
+    conversationHistory[requestId].push({
+      role: "user",
+      content: prompt,
+    });
+
+    // Add user image to conversation history
+    conversationHistory[requestId].push({
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: prompt,
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: `data:image/jpeg;base64,${optimizedBase64Img}`,
+            detail: "auto",
+          },
+        },
+      ],
+    });
 
     // Send request to OpenAI
     const response = await openai.client.chat.completions.create({
       model: openai.model,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: prompt,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${optimizedBase64Img}`,
-                detail: "auto",
-              },
-            },
-          ],
-        },
-      ],
+      messages: conversationHistory[requestId],
       response_format: zodResponseFormat(
         furnitureDetailsSchema,
         "furniture_analysis"
@@ -72,6 +93,15 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
       JSON.parse(messageContent)
     );
 
+    conversationHistory[requestId].push({
+      role: "assistant",
+      content: JSON.stringify(furnitureAnalysis),
+    });
+
+    const priceRes = analyzePrice(requestId);
+
+    console.log(priceRes);
+
     return furnitureAnalysis;
   } catch (error) {
     // Handle any errors during the request
@@ -83,4 +113,4 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
   }
 };
 
-export default analyzeImageOpenAI;
+export default { analyzeImageOpenAI, conversationHistory };
