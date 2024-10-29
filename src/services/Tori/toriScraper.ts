@@ -80,12 +80,13 @@ const calcAvgPerCondition = (hash: Map<string, number[]>) => {
         });
         avgHash.set(key, [Math.round(sum / value.length), value.length]);
     });
-    return avgHash;
+    return JSON.stringify(Object.fromEntries(avgHash));
 }
 
-// Returns a map with the average price per condition and the number of products in that condition
-const getAvgPricesPerCondition = async (link: string) => {
+// Returns JSON with the average price per condition and the number of products in that condition
+const getAvgPricesPerCondition = async (brand: string, model: string) => {
     try {
+        const link = generateToriLink(brand, model);
         const productPages = await fetchProductPages(link);
         if (Array.isArray(productPages)) {
             const pricesPerCodition = await fetchProductDetails(productPages);
@@ -119,13 +120,4 @@ const generateToriLink = (brand: string, model: string) => {
     return baseUrl;
 }
 
-async function test() {
-    const testLink = generateToriLink('Ikea', 'Markus');
-    console.log('toriScraper');
-    console.log(testLink);
-    const response = await getAvgPricesPerCondition(testLink);
-    console.log(response);
-}
-test();
-
-export default fetchProductPages;
+export default getAvgPricesPerCondition;
