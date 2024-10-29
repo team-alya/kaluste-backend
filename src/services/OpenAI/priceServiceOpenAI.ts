@@ -1,11 +1,9 @@
 import dedent from "dedent";
 import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
 import imageServiceOpenAI from "./imageServiceOpenAI";
+import openai from "../../configs/openai";
 
-const createPrompt = (
-  requestId: string,
-  furnitureDetails: FurnitureDetails
-): string => dedent`
+const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
   Kuvassa näkyvän huonekalun kuvaus:
 
   Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
@@ -25,16 +23,76 @@ const createPrompt = (
   }
 `;
 
-const analyzePrice = async (
-  requestId: string
-): Promise<PriceAnalysisResponse | { error: string }> => {
+const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
+  const cleanedText = responseText
+    .replace(/```json\n?|\n?```/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return JSON.parse(cleanedText) as PriceAnalysisResponse;
+};
+
+const analyzePrice = async (requestId: string, imageBase64: string) => {
   const conversationItem = imageServiceOpenAI.conversationHistory[requestId][2];
 
-  const furnitureDetails = JSON.parse(
-    conversationItem.content
-  ) as FurnitureDetails;
+  if (!conversationItem || !conversationItem.content) {
+    return { error: "No valid furniture analysis found in context" };
+  }
 
-  const prompt = createPrompt(requestId, furnitureDetails);
+  if (typeof conversationItem.content !== "string") {
+    return { error: "Invalid content format" };
+  }
+
+  const furnitureDetails: FurnitureDetails = JSON.parse(
+    conversationItem.content
+  );
+
+  const prompt = createPrompt(furnitureDetails);
+
+  try {
+    const result = await openai.client.chat.completions.create({
+      model: openai.model,
+      messages: [
+        {
+          role: "system",
+          content: "You are a furniture price analysis assistant.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${imageBase64}`,
+                detail: "auto",
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const responseContent = result.choices[0].message.content;
+
+    if (responseContent === null) {
+      return { error: "Error analyzing price" };
+    }
+
+    const parsedResponse = parsePriceResponse(responseContent);
+
+    imageServiceOpenAI.conversationHistory[requestId].push({
+      role: "assistant",
+      content: JSON.stringify(parsedResponse),
+    });
+
+    return parsedResponse;
+  } catch (error) {
+    console.error("Error analyzing price: ", error);
+    return { error: "Error analyzing price" };
+  }
 };
 
 export default analyzePrice;

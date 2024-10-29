@@ -2,7 +2,7 @@
 import express, { Request, Response } from "express";
 import { imageUploadHandler, imageValidator } from "../utils/middleware";
 import analyzeImageGemini from "../services/Gemini/imageServiceGemini";
-import analyzeImageOpenAI from "../services/OpenAI/imageServiceOpenAI";
+import imageServiceOpenAI from "../services/OpenAI/imageServiceOpenAI";
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const geminiPromise = await analyzeImageGemini(req.file!.buffer);
-      const openaiPromise = await analyzeImageOpenAI(req.file!.buffer);
+      const openaiPromise = await imageServiceOpenAI.analyzeImageOpenAI(req.file!.buffer);
 
       const [geminiResult, openaiResult] = await Promise.all([
         geminiPromise,

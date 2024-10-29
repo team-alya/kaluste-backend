@@ -45,7 +45,7 @@ const analyzeImageOpenAI = async (
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
 
-    conversationHistory[requestId] = Array<ChatCompletionMessageParam>();
+    conversationHistory[requestId] = [];
 
     // Add user prompt to conversation history
     conversationHistory[requestId].push({
@@ -98,9 +98,9 @@ const analyzeImageOpenAI = async (
       content: JSON.stringify(furnitureAnalysis),
     });
 
-    const priceRes = analyzePrice(requestId);
+    const priceRes = await analyzePrice(requestId, optimizedBase64Img);
 
-    console.log(priceRes);
+    console.log("Response from analyzePrice: ", priceRes);
 
     return furnitureAnalysis;
   } catch (error) {
