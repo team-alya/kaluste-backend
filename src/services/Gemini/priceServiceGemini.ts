@@ -1,8 +1,8 @@
 import gemini from "../../configs/gemini";
-import { PriceAnalysisResponse, FurnitureDetails } from "../../utils/types";
+import { PriceAnalysisResponse, FurnitureDetails, ToriPrices } from "../../utils/types";
 import getAvgPricesPerCondition from "../Tori/toriScraper";
 
-const createPrompt = (furnitureDetails: FurnitureDetails, toriPrices: any): string => `
+const createPrompt = (furnitureDetails: FurnitureDetails, toriPrices: ToriPrices): string => `
   Kuvassa näkyvän huonekalun kuvaus:
 
   Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
@@ -37,10 +37,11 @@ const analyzePriceEstimate = async (
   imageBase64: string,
   furnitureDetails: FurnitureDetails
 ): Promise<PriceAnalysisResponse | { error: string }> => {
-  const toriPrices = await getAvgPricesPerCondition(furnitureDetails.merkki, furnitureDetails.malli);
-  const prompt = createPrompt(furnitureDetails, toriPrices);
-
   try {
+    const toriPrices = await getAvgPricesPerCondition(furnitureDetails.merkki, furnitureDetails.malli);
+    const prompt = !('error' in toriPrices) 
+      ? createPrompt(furnitureDetails, toriPrices) 
+      : createPrompt(furnitureDetails, {});
     const result = await gemini.model.generateContent([
       { text: prompt },
       { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },

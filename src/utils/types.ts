@@ -21,3 +21,7 @@ export interface RepairAnalysisResponse {
   korjaus_ohjeet: string;
   kierrätys_ohjeet: string;
 }
+
+export interface ToriPrices {
+   [key: string]: [number, number];
+}

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { ToriPrices } from '../../utils/types';
 
-const fetchProductPages = async (link: string) => {
+const fetchProductPages = async (link: string): Promise<string [] | {error: string;}> => {
     try {
         const response = await axios.get(link);
         const $ = cheerio.load(response.data);
@@ -24,7 +25,7 @@ const fetchProductPages = async (link: string) => {
     }
 };
 
-const fetchProductDetails = async (links: string[]) => {
+const fetchProductDetails = async (links: string[]): Promise<Map<string, number[]> | []>  => {
     let hash = new Map<string, number[]>();
     try {
         for (const link of links) {
@@ -71,24 +72,28 @@ const fetchProductDetails = async (links: string[]) => {
     }
 }
 
-const calcAvgPerCondition = (hash: Map<string, number[]>) => {
-    let avgHash = new Map<string, [number, number]>();
+const calcAvgPerCondition = (hash: Map<string, number[]>): ToriPrices => {
+    let avgHash: ToriPrices = {};
     hash.forEach((value, key) => {
         let sum = 0;
         value.forEach((price) => {
             sum += price;
         });
-        avgHash.set(key, [Math.round(sum / value.length), value.length]);
+        avgHash[key] = [Math.round(sum / value.length), value.length];
     });
-    return JSON.stringify(Object.fromEntries(avgHash));
+    return avgHash;
 }
 
 // Returns JSON with the average price per condition and the number of products in that condition
-const getAvgPricesPerCondition = async (brand: string, model: string) => {
+const getAvgPricesPerCondition = async (brand: string, model: string): Promise<ToriPrices | { error: string; }>=> {
     try {
         const link = generateToriLink(brand, model);
         const productPages = await fetchProductPages(link);
         if (Array.isArray(productPages)) {
+            if (productPages.length === 0) {
+                console.error('No products found');
+                return { error: 'No products found' };
+            }
             const pricesPerCodition = await fetchProductDetails(productPages);
             if (pricesPerCodition instanceof Map && pricesPerCodition.size > 0) {
                 return calcAvgPerCondition(pricesPerCodition);
@@ -111,7 +116,7 @@ const getAvgPricesPerCondition = async (brand: string, model: string) => {
     }
 }
 
-const generateToriLink = (brand: string, model: string) => {
+const generateToriLink = (brand: string, model: string): string => {
     let baseUrl = 'https://www.tori.fi/recommerce/forsale/search?';
     let searchQueryParams = [];
     searchQueryParams.push('q=' + encodeURIComponent(brand + ' ' + model));
