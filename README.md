@@ -62,7 +62,7 @@ npm run start
 
 | HTTP | Route | Description | Response |
 | ---- | ----- | ----------- | -------- |
-| POST | /api/repair | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The reponse is a JSON object containing repair suggestions and instructions. |
+| POST | /api/repair | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing repair suggestions and instructions. |
 ```
 {
     "message": "Repair need was analyzed",
@@ -71,5 +71,15 @@ npm run start
         "recycle_instructions": "In Finland, you can recycle wooden furniture by taking it to a recycling center or contacting a waste management company. They will typically collect and process the wood for reuse or recycling. You can also donate the chair to a charity or sell it through a secondhand market.",
         "suggestion": "The chair is in excellent condition. You can keep using it as it is."
     }
+}
+```
+
+
+| HTTP | Route | Description | Response |
+| ---- | ----- | ----------- | -------- |
+| POST | /api/chat | First send a request to api/image and copy the requestId which is printed in console. Then send a JSON object to this route with the request body containing requestId and question as strings. | The response is a JSON object containing the answer to sent question. |
+```
+{
+    "answer": "Kun myyt kalustetta verkossa, huomioi hyvä tuotekuvaus, jossa kerrot selkeästi merkin, mitat, materiaalit, kunnon ja värin. Käytä laadukkaita kuvia eri kulmista. Aseta kilpailukykyinen hinta perustuen kuntoon ja markkinahintoihin. Valitse sopiva myyntikanava, kuten Tori tai Mjuk, ja varmista turvallinen maksutapa. Ole rehellinen ja vastaa ostajien kysymyksiin nopeasti."
 }
 ```

@@ -103,3 +103,29 @@ export const furnitureDetailsParser = (
   }
   return next();
 };
+
+export const userQueryValidator = (
+  req: Request<unknown, unknown, { requestId: string; question: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { requestId, question } = req.body;
+    if (!requestId || !question) {
+      return res
+        .status(400)
+        .json({ error: "Request ID and question are required" });
+    }
+
+    if (typeof requestId !== "string" || typeof question !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Request ID and question must be strings" });
+    }
+    return next();
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown validation error";
+    return res.status(400).json({ errorMessage });
+  }
+};

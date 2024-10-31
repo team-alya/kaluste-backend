@@ -32,7 +32,9 @@ const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
 };
 
 const analyzePrice = async (requestId: string, imageBase64: string) => {
-  const conversationItem = imageServiceOpenAI.conversationHistory[requestId][2];
+  const context = imageServiceOpenAI.conversationHistory[requestId];
+
+  const conversationItem = context.messages[2];
 
   if (!conversationItem || !conversationItem.content) {
     return { error: "No valid furniture analysis found in context" };
@@ -83,7 +85,9 @@ const analyzePrice = async (requestId: string, imageBase64: string) => {
 
     const parsedResponse = parsePriceResponse(responseContent);
 
-    imageServiceOpenAI.conversationHistory[requestId].push({
+    context.price = parsedResponse;
+
+    context.messages.push({
       role: "assistant",
       content: JSON.stringify(parsedResponse),
     });

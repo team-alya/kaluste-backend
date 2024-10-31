@@ -4,7 +4,7 @@ import { resizeImage } from "../../utils/resizeImage";
 import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
 import { ChatCompletionMessageParam } from "openai/resources";
-import { FurnitureDetails } from "../../utils/types";
+import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
 import { v4 as uuidv4 } from "uuid";
 import analyzePrice from "./priceServiceOpenAI";
 
@@ -32,7 +32,11 @@ const prompt = dedent`
 `;
 
 const conversationHistory: {
-  [key: string]: ChatCompletionMessageParam[];
+  [key: string]: {
+    analysis: FurnitureDetails | { error: string };
+    price: PriceAnalysisResponse | { error: string };
+    messages: ChatCompletionMessageParam[];
+  };
 } = {};
 
 // Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
@@ -42,19 +46,25 @@ const analyzeImageOpenAI = async (
   try {
     const requestId = uuidv4();
 
+    console.log("Request id:", requestId);
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
 
-    conversationHistory[requestId] = [];
+    // Add requestId to conversation history
+    conversationHistory[requestId] = {
+      analysis: { error: "Not analyzed yet" },
+      price: { error: "Not analyzed yet" },
+      messages: [],
+    };
 
     // Add user prompt to conversation history
-    conversationHistory[requestId].push({
+    conversationHistory[requestId].messages.push({
       role: "user",
       content: prompt,
     });
 
     // Add user image to conversation history
-    conversationHistory[requestId].push({
+    conversationHistory[requestId].messages.push({
       role: "user",
       content: [
         {
@@ -74,7 +84,7 @@ const analyzeImageOpenAI = async (
     // Send request to OpenAI
     const response = await openai.client.chat.completions.create({
       model: openai.model,
-      messages: conversationHistory[requestId],
+      messages: conversationHistory[requestId].messages,
       response_format: zodResponseFormat(
         furnitureDetailsSchema,
         "furniture_analysis"
@@ -84,6 +94,7 @@ const analyzeImageOpenAI = async (
     // Extract response content into a variable
     const messageContent = response.choices[0].message.content;
 
+    // Check if the message content is null
     if (messageContent === null) {
       throw new Error("Message content is null");
     }
@@ -93,14 +104,18 @@ const analyzeImageOpenAI = async (
       JSON.parse(messageContent)
     );
 
-    conversationHistory[requestId].push({
+    // Add the analysis to the conversation history
+    conversationHistory[requestId].analysis = furnitureAnalysis;
+
+    // Add the response to the conversation history
+    conversationHistory[requestId].messages.push({
       role: "assistant",
       content: JSON.stringify(furnitureAnalysis),
     });
 
+    // Analyze the price of the furniture and log it
     const priceRes = await analyzePrice(requestId, optimizedBase64Img);
-
-    console.log("Response from analyzePrice: ", priceRes);
+    console.log("Price analysis response: ", priceRes);
 
     return furnitureAnalysis;
   } catch (error) {
