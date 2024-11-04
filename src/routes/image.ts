@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
 import { imageUploadHandler, imageValidator } from "../utils/middleware";
-import analyzeImageGemini from "../services/Gemini/imageServiceGemini";
+// import analyzeImageGemini from "../services/Gemini/imageServiceGemini";
 import imageServiceOpenAI from "../services/OpenAI/imageServiceOpenAI";
 
 const router = express.Router();
@@ -12,18 +12,20 @@ router.post(
   imageValidator,
   async (req: Request, res: Response) => {
     try {
-      const geminiPromise = await analyzeImageGemini(req.file!.buffer);
-      const openaiPromise = await imageServiceOpenAI.analyzeImageOpenAI(req.file!.buffer);
+      // const geminiPromise = await analyzeImageGemini(req.file!.buffer);
+      const analysisResult = await imageServiceOpenAI.analyzeImageOpenAI(
+        req.file!.buffer
+      );
 
-      const [geminiResult, openaiResult] = await Promise.all([
-        geminiPromise,
-        openaiPromise,
-      ]);
+      // const [geminiResult, openaiResult] = await Promise.all([
+      //   geminiPromise,
+      //   openaiPromise,
+      // ]);
 
-      const analysisResult = {
-        gemini: geminiResult,
-        openai: openaiResult,
-      };
+      // const analysisResult = {
+      //   gemini: geminiResult,
+      //   openai: openaiResult,
+      // };
 
       return res
         .status(200)

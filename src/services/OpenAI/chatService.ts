@@ -3,15 +3,15 @@ import openai from "../../configs/openai";
 import imageServiceOpenAI from "./imageServiceOpenAI";
 
 // parseAnswer function to clean up the answer from OpenAI
-const parseAnswer = (answer: string): string => {
-  console.log("Raw answer: ", answer);
-  const cleanedText = answer
-    .replace(/```json\n?|\n?```/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  console.log("Cleaned answer: ", cleanedText);
-  return cleanedText;
-};
+// const parseAnswer = (answer: string): string => {
+//   console.log("Raw answer: ", answer);
+//   const cleanedText = answer
+//     .replace(/```json\n?|\n?```/g, "")
+//     .replace(/\s+/g, " ")
+//     .trim();
+//   console.log("Cleaned answer: ", cleanedText);
+//   return cleanedText;
+// };
 
 // Function for asking a question from the OpenAI model
 const askQuestion = async (requestId: string, question: string) => {
@@ -52,7 +52,7 @@ const askQuestion = async (requestId: string, question: string) => {
 
     Kysymys: ${question}
 
-    Anna vastaus merkkijonona ilman muotoiluja.
+    Anna vastaus merkkijonona ilman muotoiluja. 
   `;
 
   // Append the question to the conversation history
@@ -66,7 +66,7 @@ const askQuestion = async (requestId: string, question: string) => {
         {
           role: "system",
           content:
-            "Olet ammattilainen huonekalujen analysoimisessa ja annat vastauksia käyttäjän kysymyksiin hänen huonekaluunsa liittyen.",
+            "Olet ammattilainen huonekalujen analysoimisessa ja annat vastauksia käyttäjän kysymyksiin hänen huonekaluunsa liittyen. Jos käyttäjä kysyy jotakin, joka ei liity huonekaluun, voit vastata 'En osaa vastata kysymykseesi'.",
         },
         ...context.messages,
         { role: "user", content: prompt },
@@ -82,11 +82,11 @@ const askQuestion = async (requestId: string, question: string) => {
     }
 
     // Parse the answer and log it
-    const parsedAnswer = parseAnswer(answer);
-    console.log("Parsed answer: ", parsedAnswer);
+    // const parsedAnswer = parseAnswer(answer);
+    // console.log("Parsed answer: ", parsedAnswer);
 
     // Store the assistant's answer in the conversation history
-    context.messages.push({ role: "assistant", content: parsedAnswer });
+    context.messages.push({ role: "assistant", content: answer });
 
     // Log the whole context after the question is answered
     console.log("Context after question:", context);
