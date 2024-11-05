@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { ToriPrices } from '../../utils/types';
 
-const fetchProductPages = async (link: string): Promise<string [] | {error: string;}> => {
+const fetchProductPages = async (link: string): Promise<string[] | { error: string; }> => {
     try {
         const response = await axios.get(link);
         const $ = cheerio.load(response.data);
@@ -25,34 +25,23 @@ const fetchProductPages = async (link: string): Promise<string [] | {error: stri
     }
 };
 
-const fetchProductDetails = async (links: string[]): Promise<Map<string, number[]> | []>  => {
+const fetchProductDetails = async (links: string[]): Promise<Map<string, number[]> | []> => {
     let hash = new Map<string, number[]>();
     try {
         for (const link of links) {
             const response = await axios.get(link);
             const $ = cheerio.load(response.data);
             const condition = $('section[aria-label="Lisätietoja"] p:contains("Kunto") b').text();
-            const scriptContent = $('#advertising-initial-state').html();
-            let price = '';
-            let bool = false;
-            if (scriptContent) {
-                const jsonData = JSON.parse(scriptContent);
-                const priceItem = jsonData.config?.adServer?.gam?.targeting?.find(
-                    (item: { key: string; value: string[] }) => item.key === 'obj_price'
-                );
-                if (priceItem?.value[0]) {
-                    price =  priceItem.value[0];
-                    bool = true;
-                }
-            }
+            const priceText = $('section.mb-24 div.mb-24 p.m-0.h2').text();
+            const price = priceText.match(/\d+/g)?.join('');
 
-            if (condition && bool) {
+            if (condition && price) {
                 if (hash.has(condition)) {
                     hash.set(condition, [...(hash.get(condition) || []), parseInt(price)]);
                 } else {
                     hash.set(condition, [parseInt(price)]);
                 }
-            } else if (!condition && bool) {
+            } else if (!condition && price) {
                 if (hash.has('Kunto ei tiedossa')) {
                     hash.set('Kunto ei tiedossa', [...(hash.get('Kunto ei tiedossa') || []), parseInt(price)]);
                 } else {
@@ -85,7 +74,7 @@ const calcAvgPerCondition = (hash: Map<string, number[]>): ToriPrices => {
 }
 
 // Returns JSON with the average price per condition and the number of products in that condition
-const getAvgPricesPerCondition = async (brand: string, model: string): Promise<ToriPrices | { error: string; }>=> {
+const getAvgPricesPerCondition = async (brand: string, model: string): Promise<ToriPrices | { error: string; }> => {
     try {
         const link = generateToriLink(brand, model);
         const productPages = await fetchProductPages(link);
