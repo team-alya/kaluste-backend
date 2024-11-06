@@ -1,6 +1,8 @@
 import { ChatCompletionMessageParam } from "openai/resources";
+import { Request } from "express";
 
 export interface FurnitureDetails {
+  requestId: string;
   merkki: string;
   malli: string;
   väri: string;
@@ -14,6 +16,7 @@ export interface FurnitureDetails {
 }
 
 export interface PriceAnalysisResponse {
+  requestId: string;
   korkein_hinta: number;
   alin_hinta: number;
   myyntikanavat: string[];
@@ -33,9 +36,21 @@ export interface UserConversation {
 
 export type ConversationHistory = Record<string, UserConversation>;
 
-export interface UserQuery {
-  requestId: string;
-  question: string;
+export interface ChatResponse {
+  answer: string;
+}
+
+export interface UserQuery extends Request {
+  body: {
+    requestId: string;
+    question: string;
+  };
+}
+
+export interface FurnitureDetailsRequest extends Request {
+  body: {
+    furnitureDetails: FurnitureDetails;
+  };
 }
 
 export interface LocationQuery {

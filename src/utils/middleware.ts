@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import { FurnitureDetails, LocationQuery } from "./types";
+import { LocationQuery, FurnitureDetailsRequest, UserQuery } from "./types";
 import { furnitureDetailsSchema, locationQuerySchema } from "./schemas";
 
 export const imageUploadHandler = () => {
@@ -29,62 +29,8 @@ export const imageValidator = (
   return next();
 };
 
-export const validateFurnitureDetails = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const furnitureDetails: FurnitureDetails = JSON.parse(
-      req.body.furnitureDetails
-    );
-    const requiredFields = [
-      "merkki",
-      "malli",
-      "väri",
-      "mitat",
-      "materiaalit",
-      "kunto",
-    ];
-    const missingFields = requiredFields.filter(
-      (field) => !(furnitureDetails as any)[field]
-    );
-
-    if (!furnitureDetails.mitat) {
-      missingFields.push("mitat (pituus, leveys, korkeus)");
-    } else {
-      const dimensionFields = ["pituus", "leveys", "korkeus"];
-      const missingDimensions = dimensionFields.filter((dim) => {
-        const value = (furnitureDetails.mitat as any)[dim];
-        return value === undefined || typeof value !== "number" || value <= 0;
-      });
-
-      if (missingDimensions.length > 0) {
-        missingFields.push(`mitat (${missingDimensions.join(", ")})`);
-      }
-    }
-
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        error: `The following fields are missing or incomplete: ${missingFields.join(
-          ", "
-        )}`,
-      });
-    }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(400).json({ error: error.message });
-    }
-  }
-  return next();
-};
-
 export const furnitureDetailsParser = (
-  req: Request<
-    unknown,
-    unknown,
-    { furnitureDetails: string; furniture: FurnitureDetails }
-  >,
+  req: FurnitureDetailsRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -94,10 +40,8 @@ export const furnitureDetailsParser = (
         .status(400)
         .json({ error: "Furniture details were not included in the request" });
     }
-    const furnitureDetails: unknown = JSON.parse(req.body.furnitureDetails);
-    const parsedFurniture: FurnitureDetails =
-      furnitureDetailsSchema.parse(furnitureDetails);
-    req.body.furniture = parsedFurniture;
+    const furnitureDetails: unknown = req.body.furnitureDetails;
+    furnitureDetailsSchema.parse(furnitureDetails);
   } catch (error: unknown) {
     return res.status(400).json({ error });
   }
@@ -105,7 +49,7 @@ export const furnitureDetailsParser = (
 };
 
 export const userQueryValidator = (
-  req: Request<unknown, unknown, { requestId: string; question: string }>,
+  req: UserQuery,
   res: Response,
   next: NextFunction
 ) => {

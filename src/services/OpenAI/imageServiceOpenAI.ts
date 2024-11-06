@@ -5,11 +5,11 @@ import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
 import { ConversationHistory, FurnitureDetails } from "../../utils/types";
 import { v4 as uuidv4 } from "uuid";
-import analyzePrice from "./priceServiceOpenAI";
 
-const prompt = dedent` 
+const createPrompt = (requestId: string) => dedent` 
  Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
 
+    - id: ${requestId}
     - merkki: Huonekalun valmistaja tai suunnittelija (esim. "Ikea", "Artek"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - malli: Spesifi mallinimi tai -numero (esim. "Eames Lounge Chair", "Poäng"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - väri: Huonekalun pääväri tai selkein näkyvä väri (esim. "musta", "beige")
@@ -37,40 +37,35 @@ const analyzeImageOpenAI = async (
   imagePath: Buffer
 ): Promise<FurnitureDetails | { error: string }> => {
   try {
+    // Generate conversation id
     const requestId = uuidv4();
 
-    console.log("Request id:", requestId);
+    // Create user prompt for image analysis
+    const prompt = createPrompt(requestId);
+
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
 
-    // Add requestId to conversation history
+    // Initialize conversation history for the request with the user prompt and image
     conversationHistory[requestId] = {
-      messages: [],
-    };
-
-    // Add user prompt to conversation history
-    conversationHistory[requestId].messages.push({
-      role: "user",
-      content: prompt,
-    });
-
-    // Add user image to conversation history
-    conversationHistory[requestId].messages.push({
-      role: "user",
-      content: [
+      imageUrl: `data:image/jpeg;base64,${optimizedBase64Img}`,
+      messages: [
+        { role: "user", content: prompt },
         {
-          type: "text",
-          text: prompt,
-        },
-        {
-          type: "image_url",
-          image_url: {
-            url: `data:image/jpeg;base64,${optimizedBase64Img}`,
-            detail: "auto",
-          },
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${optimizedBase64Img}`,
+                detail: "auto",
+              },
+            },
+          ],
         },
       ],
-    });
+
+    };
 
     // Send request to OpenAI
     const response = await openai.client.chat.completions.create({
@@ -102,19 +97,6 @@ const analyzeImageOpenAI = async (
     const furnitureAnalysis = furnitureDetailsSchema.parse(
       jsonfiedMessage
     );
-
-    // Add the analysis to the conversation history
-    conversationHistory[requestId].furnitureDetails = furnitureAnalysis;
-
-    // Add the response to the conversation history
-    conversationHistory[requestId].messages.push({
-      role: "assistant",
-      content: JSON.stringify(furnitureAnalysis),
-    });
-
-    // Analyze the price of the furniture and log it
-    const priceRes = await analyzePrice(requestId, optimizedBase64Img);
-    console.log("Price analysis response: ", priceRes);
 
     return furnitureAnalysis;
   } catch (error) {

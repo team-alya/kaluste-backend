@@ -1,20 +1,13 @@
 import dedent from "dedent";
 import openai from "../../configs/openai";
 import imageServiceOpenAI from "./imageServiceOpenAI";
-
-// parseAnswer function to clean up the answer from OpenAI
-const parseAnswer = (answer: string): string => {
-  console.log("Raw answer: ", answer);
-  const cleanedText = answer
-    .replace(/```json\n?|\n?```/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  console.log("Cleaned answer: ", cleanedText);
-  return cleanedText;
-};
+import { ChatResponse } from "../../utils/types";
 
 // Function for asking a question from the OpenAI model
-const askQuestion = async (requestId: string, question: string) => {
+const askQuestion = async (
+  requestId: string,
+  question: string
+): Promise<ChatResponse | { error: string }> => {
   // Retrieve the stored context for the specific furniture analysis
   const context = imageServiceOpenAI.conversationHistory[requestId];
 
@@ -23,25 +16,28 @@ const askQuestion = async (requestId: string, question: string) => {
     return { error: "No analysis found for this requestId" };
   }
 
+  // TODO: ponder about this?
   // Ensure context.analysis is of type FurnitureDetails
   if ("error" in context.furnitureDetails!) {
-    return { error: context.furnitureDetails.error };
+    return { error: "No furniture details in context" };
   }
 
   // Ensure context.price is of type PriceAnalysisResponse
   if ("error" in context.price!) {
-    return { error: context.price.error };
+    return { error: "No price in context" };
   }
 
   // Construct the prompt with the context
   const prompt = dedent`
-    Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
+    Tässä on tiedot käyttäjän huonekalusta ja hinta-analyysin tuloksista:
     
-    Analyysi:
+    Huonekalun tiedot:
     Merkki: ${context.furnitureDetails!.merkki}
     Malli: ${context.furnitureDetails!.malli}
     Väri: ${context.furnitureDetails!.väri}
-    Mitat: ${context.furnitureDetails!.mitat.pituus}x${context.furnitureDetails!.mitat.leveys}x${context.furnitureDetails!.mitat.korkeus} cm
+    Mitat: ${context.furnitureDetails!.mitat.pituus}x${
+    context.furnitureDetails!.mitat.leveys
+  }x${context.furnitureDetails!.mitat.korkeus} cm
     Materiaalit: ${context.furnitureDetails!.materiaalit}
     Kunto: ${context.furnitureDetails!.kunto}
     
@@ -50,9 +46,9 @@ const askQuestion = async (requestId: string, question: string) => {
     Alin hinta: ${context.price!.alin_hinta} €
     Myyntikanavat: ${context.price!.myyntikanavat}
 
-    Kysymys: ${question}
+    Käyttäjän kysymys: ${question}
 
-    Anna vastaus merkkijonona ilman muotoiluja.
+    Anna vastaus merkkijonona ilman muotoiluja. 
   `;
 
   // Append the question to the conversation history
@@ -66,7 +62,7 @@ const askQuestion = async (requestId: string, question: string) => {
         {
           role: "system",
           content:
-            "Olet ammattilainen huonekalujen analysoimisessa ja annat vastauksia käyttäjän kysymyksiin hänen huonekaluunsa liittyen.",
+            "Olet ammattilainen huonekalujen analysoimisessa ja annat vastauksia käyttäjän kysymyksiin hänen huonekaluunsa liittyen. Jos käyttäjä kysyy jotakin, joka ei liity huonekaluun, voit vastata 'En osaa vastata kysymykseesi'.",
         },
         ...context.messages,
         { role: "user", content: prompt },
@@ -81,15 +77,8 @@ const askQuestion = async (requestId: string, question: string) => {
       return { error: "Error returning an answer to the question" };
     }
 
-    // Parse the answer and log it
-    const parsedAnswer = parseAnswer(answer);
-    console.log("Parsed answer: ", parsedAnswer);
-
     // Store the assistant's answer in the conversation history
-    context.messages.push({ role: "assistant", content: parsedAnswer });
-
-    // Log the whole context after the question is answered
-    console.log("Context after question:", context);
+    context.messages.push({ role: "assistant", content: answer });
 
     return { answer };
   } catch (error) {

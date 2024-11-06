@@ -2,9 +2,13 @@ import dedent from "dedent";
 import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
 import imageServiceOpenAI from "./imageServiceOpenAI";
 import openai from "../../configs/openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { priceAnalysisSchema } from "../../utils/schemas";
 
 const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
   Kuvassa näkyvän huonekalun kuvaus:
+
+  requestId: ${furnitureDetails.requestId}
 
   Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
   Huonekalun väri on ${furnitureDetails.väri}. Huonekalun arvioidut mitat ovat ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm.
@@ -17,29 +21,32 @@ const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
 
   Esimerkkivastausmuoto:
   {
+    "requestId": "${furnitureDetails.requestId}",
     "korkein_hinta": korkein hinta euroina,
     "alin_hinta": alin hinta euroina,
     "myyntikanavat": ["Tori", "Mjuk"]
   }
 `;
 
-const analyzePrice = async (requestId: string, imageBase64: string) => {
-  const context = imageServiceOpenAI.conversationHistory[requestId];
+const analyzePrice = async (
+  furnitureDetails: FurnitureDetails
+): Promise<PriceAnalysisResponse | { error: string }> => {
+  // Retrieve the stored context for the specific furniture analysis
+  const context =
+    imageServiceOpenAI.conversationHistory[furnitureDetails.requestId];
 
-  const conversationItem = context.messages[2];
+  // Store the furniture details in the context
+  context.furnitureDetails = furnitureDetails;
 
-  if (!conversationItem || !conversationItem.content) {
-    return { error: "No valid furniture analysis found in context" };
+  // Check if the imageUrl is not found in the context
+  if (!context.imageUrl) {
+    return { error: "No valid image content found in context" };
   }
 
-  if (typeof conversationItem.content !== "string") {
-    return { error: "Invalid content format" };
-  }
+  // Extract the base64 image from the context
+  const base64ImgUrl: string = context.imageUrl;
 
-  const furnitureDetails: FurnitureDetails = JSON.parse(
-    conversationItem.content
-  );
-
+  // Create prompt for price analysis
   const prompt = createPrompt(furnitureDetails);
 
   try {
@@ -60,36 +67,44 @@ const analyzePrice = async (requestId: string, imageBase64: string) => {
             {
               type: "image_url",
               image_url: {
-                url: `data:image/jpeg;base64,${imageBase64}`,
+                url: base64ImgUrl,
                 detail: "auto",
               },
             },
           ],
         },
       ],
+      response_format: zodResponseFormat(priceAnalysisSchema, "price_analysis"),
     });
 
+    // Extract response content into a variable
     const responseContent = result.choices[0].message.content;
 
+    // Check if the message content is null
     if (responseContent === null) {
       throw new Error("Error analyzing price");
     }
 
-    context.price = JSON.parse(responseContent) as PriceAnalysisResponse;
+    // Parse the response and store it in the context
+    const parsedResponse = priceAnalysisSchema.parse(
+      JSON.parse(responseContent)
+    );
+    context.price = parsedResponse;
 
+    // Append the response to the conversation history
     context.messages.push({
       role: "assistant",
       content: responseContent,
     });
 
-    return responseContent;
-  } catch (error: unknown) {
+    return parsedResponse;
+  } catch (error) {
     if (error instanceof Error) {
-      console.error(error);
       return { error: error.message };
+    } else {
+      return { error: "An unknown error occurred while analyzing price" };
     }
   }
-  return;
 };
 
 export default analyzePrice;

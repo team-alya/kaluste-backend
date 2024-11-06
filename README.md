@@ -46,16 +46,18 @@ npm run start
 
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and price suggestion with sell probality. |
+| POST | /api/price | Send furniture details as JSON. The key is "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates and places to sell furniture.|
 ```
 {
     "message": "Price estimate was analyzed",
     "result": {
-        "highest_price": 550,
-        "lowest_price": 400,
-        "average_price": 475,
-        "description": "The Aeron chair is a popular model known for its ergonomic design and durability. The gray color is a common option, and the chair is in good condition, which is likely to be appealing to buyers. However, it is 5 years old, which may influence the price.",
-        "price_suggestion": "The chair is most likely to sell for around 450 euros with a 70% probability."
+        "korkein_hinta": 150,
+        "alin_hinta": 100,
+        "myyntikanavat": [
+            "Tori",
+            "Mjuk",
+            "Huuto.net"
+        ]
     }
 }
 ```
@@ -77,7 +79,7 @@ npm run start
 
 | HTTP | Route | Description | Response |
 | ---- | ----- | ----------- | -------- |
-| POST | /api/chat | First send a request to api/image and copy the requestId which is printed in console. Then send a JSON object to this route with the request body containing requestId and question as strings. | The response is a JSON object containing the answer to sent question. |
+| POST | /api/chat | Send a request to /api/image, then copy id from the response. Then send a request to /api/price with the copied id in the request body. After that send a JSON object to this route with the request body containing requestId and question as strings. | The response is a JSON object containing the answer to sent question. |
 ```
 {
     "answer": "Kun myyt kalustetta verkossa, huomioi hyvä tuotekuvaus, jossa kerrot selkeästi merkin, mitat, materiaalit, kunnon ja värin. Käytä laadukkaita kuvia eri kulmista. Aseta kilpailukykyinen hinta perustuen kuntoon ja markkinahintoihin. Valitse sopiva myyntikanava, kuten Tori tai Mjuk, ja varmista turvallinen maksutapa. Ole rehellinen ja vastaa ostajien kysymyksiin nopeasti."
