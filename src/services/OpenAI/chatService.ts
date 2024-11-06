@@ -2,16 +2,6 @@ import dedent from "dedent";
 import openai from "../../configs/openai";
 import imageServiceOpenAI from "./imageServiceOpenAI";
 
-// parseAnswer function to clean up the answer from OpenAI
-// const parseAnswer = (answer: string): string => {
-//   console.log("Raw answer: ", answer);
-//   const cleanedText = answer
-//     .replace(/```json\n?|\n?```/g, "")
-//     .replace(/\s+/g, " ")
-//     .trim();
-//   console.log("Cleaned answer: ", cleanedText);
-//   return cleanedText;
-// };
 
 // Function for asking a question from the OpenAI model
 const askQuestion = async (requestId: string, question: string) => {
@@ -24,8 +14,8 @@ const askQuestion = async (requestId: string, question: string) => {
   }
 
   // Ensure context.analysis is of type FurnitureDetails
-  if ("error" in context.analysis) {
-    return { error: context.analysis.error };
+  if ("error" in context.furnitureDetails) {
+    return { error: context.furnitureDetails.error };
   }
 
   // Ensure context.price is of type PriceAnalysisResponse
@@ -38,12 +28,12 @@ const askQuestion = async (requestId: string, question: string) => {
     Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
     
     Analyysi:
-    Merkki: ${context.analysis.merkki}
-    Malli: ${context.analysis.malli}
-    Väri: ${context.analysis.väri}
-    Mitat: ${context.analysis.mitat.pituus}x${context.analysis.mitat.leveys}x${context.analysis.mitat.korkeus} cm
-    Materiaalit: ${context.analysis.materiaalit}
-    Kunto: ${context.analysis.kunto}
+    Merkki: ${context.furnitureDetails.merkki}
+    Malli: ${context.furnitureDetails.malli}
+    Väri: ${context.furnitureDetails.väri}
+    Mitat: ${context.furnitureDetails.mitat.pituus}x${context.furnitureDetails.mitat.leveys}x${context.furnitureDetails.mitat.korkeus} cm
+    Materiaalit: ${context.furnitureDetails.materiaalit}
+    Kunto: ${context.furnitureDetails.kunto}
     
     Hinta-analyysi:
     Korkein hinta: ${context.price.korkein_hinta} €
@@ -80,10 +70,6 @@ const askQuestion = async (requestId: string, question: string) => {
     if (answer === null) {
       return { error: "Error returning an answer to the question" };
     }
-
-    // Parse the answer and log it
-    // const parsedAnswer = parseAnswer(answer);
-    // console.log("Parsed answer: ", parsedAnswer);
 
     // Store the assistant's answer in the conversation history
     context.messages.push({ role: "assistant", content: answer });

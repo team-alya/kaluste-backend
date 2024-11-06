@@ -1,4 +1,5 @@
 export interface FurnitureDetails {
+  id: string;
   merkki: string;
   malli: string;
   väri: string;

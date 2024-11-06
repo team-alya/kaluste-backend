@@ -35,10 +35,9 @@ export const validateFurnitureDetails = (
   next: NextFunction
 ) => {
   try {
-    const furnitureDetails: FurnitureDetails = JSON.parse(
-      req.body.furnitureDetails
-    );
+    const furnitureDetails: FurnitureDetails = req.body.furnitureDetails;
     const requiredFields = [
+      "id",
       "merkki",
       "malli",
       "väri",

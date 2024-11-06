@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const furnitureDetailsSchema = z.object({
+  id: z.string(),
   merkki: z.string(),
   malli: z.string(),
   väri: z.string(),

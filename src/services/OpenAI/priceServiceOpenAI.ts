@@ -6,6 +6,8 @@ import openai from "../../configs/openai";
 const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
   Kuvassa näkyvän huonekalun kuvaus:
 
+  Pyynnön id: ${furnitureDetails.id}
+
   Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
   Huonekalun väri on ${furnitureDetails.väri}. Huonekalun arvioidut mitat ovat ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm.
   Huonekalussa on käytetty ${furnitureDetails.materiaalit} materiaaleja. Huonekalun kunto on ${furnitureDetails.kunto}.
@@ -17,6 +19,7 @@ const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
 
   Esimerkkivastausmuoto:
   {
+    "id": "${furnitureDetails.id}",
     "korkein_hinta": korkein hinta euroina,
     "alin_hinta": alin hinta euroina,
     "myyntikanavat": ["Tori", "Mjuk"]
@@ -31,23 +34,23 @@ const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
   return JSON.parse(cleanedText) as PriceAnalysisResponse;
 };
 
-const analyzePrice = async (requestId: string, imageBase64: string) => {
-  const context = imageServiceOpenAI.conversationHistory[requestId];
+const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
+  // Retrieve the stored context for the specific furniture analysis
+  const context = imageServiceOpenAI.conversationHistory[furnitureDetails.id];
 
-  const conversationItem = context.messages[2];
 
-  if (!conversationItem || !conversationItem.content) {
-    return { error: "No valid furniture analysis found in context" };
+  // Store the furniture details in the context
+  context.furnitureDetails = furnitureDetails;
+
+  // Check if the imageUrl is not found in the context
+  if (!context.imageUrl) {
+    return { error: "No valid image content found in context" };
   }
 
-  if (typeof conversationItem.content !== "string") {
-    return { error: "Invalid content format" };
-  }
+  // Extract the base64 image from the context
+  const base64ImgUrl: string = context.imageUrl;
 
-  const furnitureDetails: FurnitureDetails = JSON.parse(
-    conversationItem.content
-  );
-
+  // Create prompt for price analysis
   const prompt = createPrompt(furnitureDetails);
 
   try {
@@ -68,7 +71,7 @@ const analyzePrice = async (requestId: string, imageBase64: string) => {
             {
               type: "image_url",
               image_url: {
-                url: `data:image/jpeg;base64,${imageBase64}`,
+                url: base64ImgUrl,
                 detail: "auto",
               },
             },
@@ -77,16 +80,19 @@ const analyzePrice = async (requestId: string, imageBase64: string) => {
       ],
     });
 
+    // Extract response content into a variable
     const responseContent = result.choices[0].message.content;
 
+    // Check if the message content is null
     if (responseContent === null) {
       return { error: "Error analyzing price" };
     }
 
+    // Parse the response and store it in the context
     const parsedResponse = parsePriceResponse(responseContent);
-
     context.price = parsedResponse;
 
+    // Append the response to the conversation history
     context.messages.push({
       role: "assistant",
       content: JSON.stringify(parsedResponse),
