@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
 import askQuestion from "../services/OpenAI/chatService";
 import { userQueryValidator } from "../utils/middleware";

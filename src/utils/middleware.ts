@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import { FurnitureDetails } from "./types";
-import { furnitureDetailsSchema } from "./schemas";
+import { FurnitureDetails, LocationQuery } from "./types";
+import { furnitureDetailsSchema, locationQuerySchema } from "./schemas";
 
 export const imageUploadHandler = () => {
   return multer({ storage: multer.memoryStorage() }).single("image");
@@ -128,4 +128,23 @@ export const userQueryValidator = (
       error instanceof Error ? error.message : "Unknown validation error";
     return res.status(400).json({ errorMessage });
   }
+};
+
+export const locationQueryParser = (
+  req: Request<unknown, unknown, LocationQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body) {
+      res.status(400).json({ error: "Request ID and source are required" });
+      return;
+    }
+    locationQuerySchema.parse(req.body);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Unknown validation error";
+    return res.status(400).json({ errorMessage });
+  }
+  return next();
 };

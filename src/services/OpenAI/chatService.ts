@@ -24,12 +24,12 @@ const askQuestion = async (requestId: string, question: string) => {
   }
 
   // Ensure context.analysis is of type FurnitureDetails
-  if ("error" in context.analysis) {
-    return { error: context.analysis.error };
+  if ("error" in context.furnitureDetails!) {
+    return { error: context.furnitureDetails.error };
   }
 
   // Ensure context.price is of type PriceAnalysisResponse
-  if ("error" in context.price) {
+  if ("error" in context.price!) {
     return { error: context.price.error };
   }
 
@@ -38,17 +38,17 @@ const askQuestion = async (requestId: string, question: string) => {
     Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
     
     Analyysi:
-    Merkki: ${context.analysis.merkki}
-    Malli: ${context.analysis.malli}
-    Väri: ${context.analysis.väri}
-    Mitat: ${context.analysis.mitat.pituus}x${context.analysis.mitat.leveys}x${context.analysis.mitat.korkeus} cm
-    Materiaalit: ${context.analysis.materiaalit}
-    Kunto: ${context.analysis.kunto}
+    Merkki: ${context.furnitureDetails!.merkki}
+    Malli: ${context.furnitureDetails!.malli}
+    Väri: ${context.furnitureDetails!.väri}
+    Mitat: ${context.furnitureDetails!.mitat.pituus}x${context.furnitureDetails!.mitat.leveys}x${context.furnitureDetails!.mitat.korkeus} cm
+    Materiaalit: ${context.furnitureDetails!.materiaalit}
+    Kunto: ${context.furnitureDetails!.kunto}
     
     Hinta-analyysi:
-    Korkein hinta: ${context.price.korkein_hinta} €
-    Alin hinta: ${context.price.alin_hinta} €
-    Myyntikanavat: ${context.price.myyntikanavat}
+    Korkein hinta: ${context.price!.korkein_hinta} €
+    Alin hinta: ${context.price!.alin_hinta} €
+    Myyntikanavat: ${context.price!.myyntikanavat}
 
     Kysymys: ${question}
 

@@ -1,3 +1,5 @@
+import { ChatCompletionMessageParam } from "openai/resources";
+
 export interface FurnitureDetails {
   merkki: string;
   malli: string;
@@ -22,7 +24,26 @@ export interface RepairAnalysisResponse {
   kierrätys_ohjeet: string;
 }
 
+export interface UserConversation {
+  furnitureDetails?: FurnitureDetails;
+  price?: PriceAnalysisResponse;
+  imageUrl?: string;
+  messages: ChatCompletionMessageParam[];
+}
+
+export type ConversationHistory = Record<string, UserConversation>;
+
 export interface UserQuery {
   requestId: string;
   question: string;
+}
+
+export interface LocationQuery {
+  requestId: string;
+  location: string;
+  source: "donation" | "recycle" | "repair";
+}
+
+export interface LocationResponse {
+  result: string;
 }

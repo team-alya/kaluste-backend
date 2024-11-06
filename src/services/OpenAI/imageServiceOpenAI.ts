@@ -3,8 +3,7 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { resizeImage } from "../../utils/resizeImage";
 import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
-import { ChatCompletionMessageParam } from "openai/resources";
-import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
+import { ConversationHistory, FurnitureDetails } from "../../utils/types";
 import { v4 as uuidv4 } from "uuid";
 import analyzePrice from "./priceServiceOpenAI";
 
@@ -31,13 +30,7 @@ const prompt = dedent`
 
 `;
 
-const conversationHistory: {
-  [key: string]: {
-    analysis: FurnitureDetails | { error: string };
-    price: PriceAnalysisResponse | { error: string };
-    messages: ChatCompletionMessageParam[];
-  };
-} = {};
+const conversationHistory: ConversationHistory = {};
 
 // Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
 const analyzeImageOpenAI = async (
@@ -52,8 +45,6 @@ const analyzeImageOpenAI = async (
 
     // Add requestId to conversation history
     conversationHistory[requestId] = {
-      analysis: { error: "Not analyzed yet" },
-      price: { error: "Not analyzed yet" },
       messages: [],
     };
 
@@ -99,13 +90,21 @@ const analyzeImageOpenAI = async (
       throw new Error("Message content is null");
     }
 
+    const jsonfiedMessage: unknown = JSON.parse(messageContent);
+    if (
+      jsonfiedMessage &&
+      typeof jsonfiedMessage === "object" &&
+      "error" in jsonfiedMessage
+    ) {
+      throw new Error(jsonfiedMessage.error as string);
+    }
     // Parse the response to be in the format defined in zod schema
     const furnitureAnalysis = furnitureDetailsSchema.parse(
-      JSON.parse(messageContent)
+      jsonfiedMessage
     );
 
     // Add the analysis to the conversation history
-    conversationHistory[requestId].analysis = furnitureAnalysis;
+    conversationHistory[requestId].furnitureDetails = furnitureAnalysis;
 
     // Add the response to the conversation history
     conversationHistory[requestId].messages.push({

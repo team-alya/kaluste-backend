@@ -5,6 +5,7 @@ import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
 import repairRouter from "./routes/repair";
 import chatRouter from "./routes/chat";
+import locationRouter from "./routes/location";
 import { GEMINI_API_KEY, OPENAI_API_KEY } from "./utils/constants";
 
 if (!GEMINI_API_KEY) {
@@ -28,6 +29,7 @@ app.use("/api/image", imageRouter);
 app.use("/api/price", priceRouter);
 app.use("/api/repair", repairRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/location", locationRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

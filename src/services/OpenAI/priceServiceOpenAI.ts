@@ -23,14 +23,6 @@ const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
   }
 `;
 
-const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
-  const cleanedText = responseText
-    .replace(/```json\n?|\n?```/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return JSON.parse(cleanedText) as PriceAnalysisResponse;
-};
-
 const analyzePrice = async (requestId: string, imageBase64: string) => {
   const context = imageServiceOpenAI.conversationHistory[requestId];
 
@@ -80,23 +72,24 @@ const analyzePrice = async (requestId: string, imageBase64: string) => {
     const responseContent = result.choices[0].message.content;
 
     if (responseContent === null) {
-      return { error: "Error analyzing price" };
+      throw new Error("Error analyzing price");
     }
 
-    const parsedResponse = parsePriceResponse(responseContent);
-
-    context.price = parsedResponse;
+    context.price = JSON.parse(responseContent) as PriceAnalysisResponse;
 
     context.messages.push({
       role: "assistant",
-      content: JSON.stringify(parsedResponse),
+      content: responseContent,
     });
 
-    return parsedResponse;
-  } catch (error) {
-    console.error("Error analyzing price: ", error);
-    return { error: "Error analyzing price" };
+    return responseContent;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error);
+      return { error: error.message };
+    }
   }
+  return;
 };
 
 export default analyzePrice;

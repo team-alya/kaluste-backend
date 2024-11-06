@@ -12,3 +12,13 @@ export const furnitureDetailsSchema = z.object({
   materiaalit: z.array(z.string()),
   kunto: z.string(),
 });
+
+export const locationQuerySchema = z.object({
+  requestId: z.string(),
+  location: z.string(),
+  source: z.union([
+    z.literal("donation"),
+    z.literal("recycle"),
+    z.literal("repair"),
+  ]),
+});
