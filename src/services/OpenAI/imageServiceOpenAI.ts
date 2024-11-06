@@ -61,7 +61,6 @@ const analyzeImageOpenAI = async (
     conversationHistory[requestId] = {
       furnitureDetails: { error: "No furnitureDetails yet" },
       price: { error: "Not analyzed yet" },
-      // imageContent: { error: "Not analyzed yet" },
       imageUrl: `data:image/jpeg;base64,${optimizedBase64Img}`,
       messages: [
         { role: "user", content: prompt },

@@ -1,5 +1,6 @@
+import { Request } from "express";
 export interface FurnitureDetails {
-  id: string;
+  requestId: string;
   merkki: string;
   malli: string;
   väri: string;
@@ -13,6 +14,7 @@ export interface FurnitureDetails {
 }
 
 export interface PriceAnalysisResponse {
+  requestId: string;
   korkein_hinta: number;
   alin_hinta: number;
   myyntikanavat: string[];
@@ -23,7 +25,19 @@ export interface RepairAnalysisResponse {
   kierrätys_ohjeet: string;
 }
 
-export interface UserQuery {
-  requestId: string;
-  question: string;
+export interface ChatResponse {
+  answer: string;
+}
+
+export interface UserQuery extends Request {
+  body: {
+    requestId: string;
+    question: string;
+  };
+}
+
+export interface FurnitureDetailsRequest extends Request {
+  body: {
+    furnitureDetails: FurnitureDetails;
+  };
 }

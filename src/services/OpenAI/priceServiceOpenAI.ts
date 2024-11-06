@@ -2,11 +2,13 @@ import dedent from "dedent";
 import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
 import imageServiceOpenAI from "./imageServiceOpenAI";
 import openai from "../../configs/openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { priceAnalysisSchema } from "../../utils/schemas";
 
 const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
   Kuvassa näkyvän huonekalun kuvaus:
 
-  Pyynnön id: ${furnitureDetails.id}
+  requestId: ${furnitureDetails.requestId}
 
   Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
   Huonekalun väri on ${furnitureDetails.väri}. Huonekalun arvioidut mitat ovat ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm.
@@ -19,25 +21,19 @@ const createPrompt = (furnitureDetails: FurnitureDetails) => dedent`
 
   Esimerkkivastausmuoto:
   {
-    "id": "${furnitureDetails.id}",
+    "requestId": "${furnitureDetails.requestId}",
     "korkein_hinta": korkein hinta euroina,
     "alin_hinta": alin hinta euroina,
     "myyntikanavat": ["Tori", "Mjuk"]
   }
 `;
 
-const parsePriceResponse = (responseText: string): PriceAnalysisResponse => {
-  const cleanedText = responseText
-    .replace(/```json\n?|\n?```/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return JSON.parse(cleanedText) as PriceAnalysisResponse;
-};
-
-const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
+const analyzePrice = async (
+  furnitureDetails: FurnitureDetails
+): Promise<PriceAnalysisResponse | { error: string }> => {
   // Retrieve the stored context for the specific furniture analysis
-  const context = imageServiceOpenAI.conversationHistory[furnitureDetails.id];
-
+  const context =
+    imageServiceOpenAI.conversationHistory[furnitureDetails.requestId];
 
   // Store the furniture details in the context
   context.furnitureDetails = furnitureDetails;
@@ -78,6 +74,7 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
           ],
         },
       ],
+      response_format: zodResponseFormat(priceAnalysisSchema, "price_analysis"),
     });
 
     // Extract response content into a variable
@@ -89,7 +86,9 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
     }
 
     // Parse the response and store it in the context
-    const parsedResponse = parsePriceResponse(responseContent);
+    const parsedResponse = priceAnalysisSchema.parse(
+      JSON.parse(responseContent)
+    );
     context.price = parsedResponse;
 
     // Append the response to the conversation history
@@ -100,8 +99,11 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
 
     return parsedResponse;
   } catch (error) {
-    console.error("Error analyzing price: ", error);
-    return { error: "Error analyzing price" };
+    if (error instanceof Error) {
+      return { error: error.message };
+    } else {
+      return { error: "An unknown error occurred while analyzing price" };
+    }
   }
 };
 

@@ -1,10 +1,13 @@
 import dedent from "dedent";
 import openai from "../../configs/openai";
 import imageServiceOpenAI from "./imageServiceOpenAI";
-
+import { ChatResponse } from "../../utils/types";
 
 // Function for asking a question from the OpenAI model
-const askQuestion = async (requestId: string, question: string) => {
+const askQuestion = async (
+  requestId: string,
+  question: string
+): Promise<ChatResponse | { error: string }> => {
   // Retrieve the stored context for the specific furniture analysis
   const context = imageServiceOpenAI.conversationHistory[requestId];
 
@@ -25,9 +28,9 @@ const askQuestion = async (requestId: string, question: string) => {
 
   // Construct the prompt with the context
   const prompt = dedent`
-    Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
+    Tässä on tiedot käyttäjän huonekalusta ja hinta-analyysin tuloksista:
     
-    Analyysi:
+    Huonekalun tiedot:
     Merkki: ${context.furnitureDetails.merkki}
     Malli: ${context.furnitureDetails.malli}
     Väri: ${context.furnitureDetails.väri}
@@ -40,7 +43,7 @@ const askQuestion = async (requestId: string, question: string) => {
     Alin hinta: ${context.price.alin_hinta} €
     Myyntikanavat: ${context.price.myyntikanavat}
 
-    Kysymys: ${question}
+    Käyttäjän kysymys: ${question}
 
     Anna vastaus merkkijonona ilman muotoiluja. 
   `;
@@ -73,9 +76,6 @@ const askQuestion = async (requestId: string, question: string) => {
 
     // Store the assistant's answer in the conversation history
     context.messages.push({ role: "assistant", content: answer });
-
-    // Log the whole context after the question is answered
-    console.log("Context after question:", context);
 
     return { answer };
   } catch (error) {
