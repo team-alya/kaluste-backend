@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { ToriPrices } from '../../utils/types';
+import { cacheData, getData } from '../../utils/cache';
 
 const fetchProductPages = async (link: string): Promise<string[] | { error: string; }> => {
     try {
@@ -76,6 +77,12 @@ const calcAvgPerCondition = (hash: Map<string, number[]>): ToriPrices => {
 // Returns JSON with the average price per condition and the number of products in that condition
 const getAvgPricesPerCondition = async (brand: string, model: string): Promise<ToriPrices | { error: string; }> => {
     try {
+        brand = brand.toLowerCase();
+        model = model.toLowerCase();
+        const cachedData = await getData(brand + model);
+        if (cachedData) {
+            return cachedData;
+        }
         const link = generateToriLink(brand, model);
         const productPages = await fetchProductPages(link);
         if (Array.isArray(productPages)) {
@@ -85,6 +92,7 @@ const getAvgPricesPerCondition = async (brand: string, model: string): Promise<T
             }
             const pricesPerCodition = await fetchProductDetails(productPages);
             if (pricesPerCodition instanceof Map && pricesPerCodition.size > 0) {
+                cacheData(brand + model, calcAvgPerCondition(pricesPerCodition));
                 return calcAvgPerCondition(pricesPerCodition);
             } else {
                 console.error('No prices found');
