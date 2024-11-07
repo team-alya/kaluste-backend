@@ -1,6 +1,6 @@
 import dedent from "dedent";
 import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
-import imageServiceOpenAI from "./imageServiceOpenAI";
+import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { priceAnalysisSchema } from "../../utils/schemas";

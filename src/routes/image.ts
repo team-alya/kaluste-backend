@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
 import { imageUploadHandler, imageValidator } from "../utils/middleware";
-import imageServiceOpenAI from "../services/OpenAI/imageServiceOpenAI";
+import imageService from "../services/OpenAI/imageService";
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.post(
   imageValidator,
   async (req: Request, res: Response) => {
     try {
-      const analysisResult = await imageServiceOpenAI.analyzeImageOpenAI(
+      const analysisResult = await imageService.analyzeImage(
         req.file!.buffer
       );
 

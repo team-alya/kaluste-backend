@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
 import { furnitureDetailsParser } from "../utils/middleware";
-import analyzePrice from "../services/OpenAI/priceServiceOpenAI";
+import analyzePrice from "../services/OpenAI/priceService";
 
 const router = express.Router();
 

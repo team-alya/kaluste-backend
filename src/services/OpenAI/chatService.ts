@@ -1,7 +1,8 @@
 import dedent from "dedent";
 import openai from "../../configs/openai";
-import imageServiceOpenAI from "./imageServiceOpenAI";
+import imageServiceOpenAI from "./imageService";
 import { ChatResponse } from "../../utils/types";
+import { chatResponseSchema } from "../../utils/schemas";
 
 // Function for asking a question from the OpenAI model
 const askQuestion = async (
@@ -77,10 +78,14 @@ const askQuestion = async (
       return { error: "Error returning an answer to the question" };
     }
 
-    // Store the assistant's answer in the conversation history
-    context.messages.push({ role: "assistant", content: answer });
+    const parsedAnswer = chatResponseSchema.parse({ requestId, answer });
 
-    return { answer };
+    // Store the assistant's answer in the conversation history
+    context.messages.push({ role: "assistant", content: parsedAnswer.answer });
+
+    console.log("Parsed answer: ", parsedAnswer);
+    console.log("Context messages: ", context.messages);  
+    return parsedAnswer;
   } catch (error) {
     console.error("Error in Q&A process: ", error);
     return { error: "Error processing the question" };

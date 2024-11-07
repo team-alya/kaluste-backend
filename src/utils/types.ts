@@ -37,6 +37,7 @@ export interface UserConversation {
 export type ConversationHistory = Record<string, UserConversation>;
 
 export interface ChatResponse {
+  requestId: string;
   answer: string;
 }
 

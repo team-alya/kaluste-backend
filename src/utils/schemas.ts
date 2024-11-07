@@ -30,3 +30,8 @@ export const priceAnalysisSchema = z.object({
   alin_hinta: z.number(),
   myyntikanavat: z.array(z.string()),
 });
+
+export const chatResponseSchema = z.object({
+  requestId: z.string(),
+  answer: z.string(),
+});

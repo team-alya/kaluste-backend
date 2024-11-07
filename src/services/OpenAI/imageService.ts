@@ -33,7 +33,7 @@ const createPrompt = (requestId: string) => dedent`
 const conversationHistory: ConversationHistory = {};
 
 // Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
-const analyzeImageOpenAI = async (
+const analyzeImage = async (
   imagePath: Buffer
 ): Promise<FurnitureDetails | { error: string }> => {
   try {
@@ -109,4 +109,4 @@ const analyzeImageOpenAI = async (
   }
 };
 
-export default { analyzeImageOpenAI, conversationHistory };
+export default { analyzeImage, conversationHistory };

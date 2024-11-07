@@ -1,6 +1,6 @@
 import dedent from "dedent";
 import { FurnitureDetails, LocationQuery } from "../../utils/types";
-import imageServiceOpenAI from "./imageServiceOpenAI";
+import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
 import { ChatCompletionMessageParam } from "openai/resources";
 
