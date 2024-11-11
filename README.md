@@ -24,8 +24,9 @@ npm run start
 ## API Documentation
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the values shown in the example below |
-```
+| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the furniture details |
+> Response example:
+```json
 {
       "type": "Sofa",
       "brand": "West Elm",
@@ -45,7 +46,8 @@ npm run start
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
 | POST | /api/price | Send furniture details as JSON. The key is "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates and places to sell furniture.|
-```
+> Response example:
+```json
 {
     "message": "Price estimate was analyzed",
     "result": {
@@ -63,9 +65,21 @@ npm run start
 | HTTP | Route | Description | Response |
 | ---- | ----- | ----------- | -------- |
 | POST | /api/chat | Send a request to /api/image, then copy id from the response. Then send a request to /api/price with the copied id in the request body. After that send a JSON object to this route with the request body containing requestId and question as strings. | The response is a JSON object containing the answer to sent question. |
-```
+> Response example:
+```json
 {
     "answer": "Kun myyt kalustetta verkossa, huomioi hyvä tuotekuvaus, jossa kerrot selkeästi merkin, mitat, materiaalit, kunnon ja värin. Käytä laadukkaita kuvia eri kulmista. Aseta kilpailukykyinen hinta perustuen kuntoon ja markkinahintoihin. Valitse sopiva myyntikanava, kuten Tori tai Mjuk, ja varmista turvallinen maksutapa. Ole rehellinen ja vastaa ostajien kysymyksiin nopeasti."
+}
+```
+
+| HTTP | Route | Description | Response |
+| ---- | ----- | ----------- | ---------|
+| POST | /api/location | Send an an object with "requestId", "location" (eg. "Kamppi, Helsinki") and "source" ("donation" or "recycle" or "repair") | The response is a JSON object containing information about various stores in the given location that can help the user donate/recycle/repair their furniture |
+> Response example:
+
+```json
+{
+    "result": "Helsingin Kamppi-alueella ja sen läheisyydessä on useita paikkoja, joissa voit kierrättää huonekaluja. Tässä on muutamia ehdotuksia:\n\n1. **Kierrätyskeskus**: Helsingin seudun       ympäristöpalvelut (HSY) tarjoaa kierrätyskeskusten palveluita, joissa voit viedä käytettyjä huonekaluja. Lähin sijaitsee Kalasatamassa, hieman matkan päässä Kampista.\n\n2. **Fida Lähetystori**: Fidan myymälöihin voi lahjoittaa käytettyjä huonekaluja. Kampista lyhyen matkan päässä on Fida Itäkeskuksessa.\n\n3. **Uff**: Vaikka UFF keskittyy pääasiassa vaatekierrätykseen, kannattaa tarkistaa heidän verkkosivuiltaan, ottavatko he vastaan pieniä huonekaluja tai muuta kuin vaatteita.\n\n4. **Kontti (Punainen Risti)**: Kontti-kierrätystavaratalot vastaanottavat lahjoituksina huonekaluja sekä kodin tavaroita. Lähin Kontti löytyy Vantaalta, mutta se on helposti saavutettavissa julkisilla liikennevälineillä.\n\n5. **Tori.fi tai Facebook Marketplace**: Nämä eivät ole fyysisiä paikkoja, mutta niiden kautta voit myydä tai lahjoittaa huonekaluja paikallisesti, ja ne voivat usein löytää uuden kodin nopeasti.\n\n6. **Helsingin kaupungin sorttiasemat**: Joissakin sorttiasemissa voit jättää käyttökelpoisia huonekaluja uudelleen käytettäväksi. Lähin sijaitsee Konalassa.\n\nEnnen kuin viet huonekalun kierrätykseen, kannattaa tarkistaa kyseisen paikan lahjoitusehdot tai ottaa yhteyttä ja varmistaa, että he vastaanottavat kyseisiä tavaroita."
 }
 ```
 
