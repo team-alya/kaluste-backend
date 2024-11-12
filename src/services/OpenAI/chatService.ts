@@ -83,8 +83,6 @@ const askQuestion = async (
     // Store the assistant's answer in the conversation history
     context.messages.push({ role: "assistant", content: parsedAnswer.answer });
 
-    console.log("Parsed answer: ", parsedAnswer);
-    console.log("Context messages: ", context.messages);  
     return parsedAnswer;
   } catch (error) {
     console.error("Error in Q&A process: ", error);
