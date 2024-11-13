@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
 import { imageUploadHandler, imageValidator } from "../utils/middleware";
-import analyzeImageGemini from "../services/Gemini/imageServiceGemini";
-import analyzeImageOpenAI from "../services/OpenAI/imageServiceOpenAI";
+import imageService from "../services/OpenAI/imageService";
 
 const router = express.Router();
 
@@ -12,25 +11,16 @@ router.post(
   imageValidator,
   async (req: Request, res: Response) => {
     try {
-      const geminiPromise = await analyzeImageGemini(req.file!.buffer);
-      const openaiPromise = await analyzeImageOpenAI(req.file!.buffer);
-
-      const [geminiResult, openaiResult] = await Promise.all([
-        geminiPromise,
-        openaiPromise,
-      ]);
-
-      const analysisResult = {
-        gemini: geminiResult,
-        openai: openaiResult,
-      };
+      const analysisResult = await imageService.analyzeImage(
+        req.file!.buffer
+      );
 
       return res
         .status(200)
         .json({ message: "Image was analyzed", result: analysisResult });
     } catch (error: unknown) {
       if (error instanceof Error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
       }
       return res.status(500).json({ error: "An unexpected error occurred." });
     }

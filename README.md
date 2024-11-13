@@ -24,8 +24,9 @@ npm run start
 ## API Documentation
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the values shown in the example below |
-```
+| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the furniture details |
+> Response example:
+```json
 {
       "type": "Sofa",
       "brand": "West Elm",
@@ -41,35 +42,57 @@ npm run start
 }
 ```
 
-### Testing with Postman
-![api_image_postman](https://github.com/user-attachments/assets/538d506f-8d67-4b6b-af5b-67b7f1b1fabf)
 
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
-| POST | /api/price | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates, description and price suggestion with sell probality. |
-```
+| POST | /api/price | Send furniture details as JSON. The key is "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates and places to sell furniture.|
+> Response example:
+```json
 {
     "message": "Price estimate was analyzed",
     "result": {
-        "highest_price": 550,
-        "lowest_price": 400,
-        "average_price": 475,
-        "description": "The Aeron chair is a popular model known for its ergonomic design and durability. The gray color is a common option, and the chair is in good condition, which is likely to be appealing to buyers. However, it is 5 years old, which may influence the price.",
-        "price_suggestion": "The chair is most likely to sell for around 450 euros with a 70% probability."
+        "korkein_hinta": 150,
+        "alin_hinta": 100,
+        "myyntikanavat": [
+            "Tori",
+            "Mjuk",
+            "Huuto.net"
+        ]
     }
 }
 ```
 
 | HTTP | Route | Description | Response |
 | ---- | ----- | ----------- | -------- |
-| POST | /api/repair | Send an image in raw binary format along with furniture details. The key must be "image" for the image and "furnitureDetails" for the JSON object. | The reponse is a JSON object containing repair suggestions and instructions. |
-```
+| POST | /api/chat | Send a request to /api/image, then copy id from the response. Then send a request to /api/price with the copied id in the request body. After that send a JSON object to this route with the request body containing requestId and question as strings. | The response is a JSON object containing the answer to sent question. |
+> Response example:
+```json
 {
-    "message": "Repair need was analyzed",
-    "result": {
-        "repair_instructions": "The chair is in excellent condition and does not need repair. If there are any minor scratches or blemishes, you can use a wood polish or stain to touch them up.",
-        "recycle_instructions": "In Finland, you can recycle wooden furniture by taking it to a recycling center or contacting a waste management company. They will typically collect and process the wood for reuse or recycling. You can also donate the chair to a charity or sell it through a secondhand market.",
-        "suggestion": "The chair is in excellent condition. You can keep using it as it is."
-    }
+    "answer": "Kun myyt kalustetta verkossa, huomioi hyvä tuotekuvaus, jossa kerrot selkeästi merkin, mitat, materiaalit, kunnon ja värin. Käytä laadukkaita kuvia eri kulmista. Aseta kilpailukykyinen hinta perustuen kuntoon ja markkinahintoihin. Valitse sopiva myyntikanava, kuten Tori tai Mjuk, ja varmista turvallinen maksutapa. Ole rehellinen ja vastaa ostajien kysymyksiin nopeasti."
 }
 ```
+
+| HTTP | Route | Description | Response |
+| ---- | ----- | ----------- | ---------|
+| POST | /api/location | Send an an object with "requestId", "location" (eg. "Kamppi, Helsinki") and "source" ("donation" or "recycle" or "repair") | The response is a JSON object containing information about various stores in the given location that can help the user donate/recycle/repair their furniture |
+> Response example:
+
+```json
+{
+    "result": "Helsingin Kamppi-alueella ja sen läheisyydessä on useita paikkoja, joissa voit kierrättää huonekaluja. Tässä on muutamia ehdotuksia:\n\n1. **Kierrätyskeskus**: Helsingin seudun       ympäristöpalvelut (HSY) tarjoaa kierrätyskeskusten palveluita, joissa voit viedä käytettyjä huonekaluja. Lähin sijaitsee Kalasatamassa, hieman matkan päässä Kampista.\n\n2. **Fida Lähetystori**: Fidan myymälöihin voi lahjoittaa käytettyjä huonekaluja. Kampista lyhyen matkan päässä on Fida Itäkeskuksessa.\n\n3. **Uff**: Vaikka UFF keskittyy pääasiassa vaatekierrätykseen, kannattaa tarkistaa heidän verkkosivuiltaan, ottavatko he vastaan pieniä huonekaluja tai muuta kuin vaatteita.\n\n4. **Kontti (Punainen Risti)**: Kontti-kierrätystavaratalot vastaanottavat lahjoituksina huonekaluja sekä kodin tavaroita. Lähin Kontti löytyy Vantaalta, mutta se on helposti saavutettavissa julkisilla liikennevälineillä.\n\n5. **Tori.fi tai Facebook Marketplace**: Nämä eivät ole fyysisiä paikkoja, mutta niiden kautta voit myydä tai lahjoittaa huonekaluja paikallisesti, ja ne voivat usein löytää uuden kodin nopeasti.\n\n6. **Helsingin kaupungin sorttiasemat**: Joissakin sorttiasemissa voit jättää käyttökelpoisia huonekaluja uudelleen käytettäväksi. Lähin sijaitsee Konalassa.\n\nEnnen kuin viet huonekalun kierrätykseen, kannattaa tarkistaa kyseisen paikan lahjoitusehdot tai ottaa yhteyttä ja varmistaa, että he vastaanottavat kyseisiä tavaroita."
+}
+```
+
+## Testing with Postman
+
+### /api/image
+![api_image_postman](./screenshots/api_image_postman.PNG)
+
+### /api/price
+![api_price_postman](./screenshots/api_price_postman.PNG)
+
+### /api/chat
+![api_chat_postman](./screenshots/api_chat_postman.PNG)
+
+### /api/location
+![api_location_postman](./screenshots/api_location_postman.PNG)
