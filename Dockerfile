@@ -1,5 +1,5 @@
 # Create an image with same node version as in development
-FROM node:20-alpine AS builder
+FROM node:20 AS builder
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -15,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # Create a new image with only the build files 
-FROM node:20-alpine
+FROM node:20
 
 # Copy the build files and node_modules
 COPY --from=builder /usr/src/app/build ./build
