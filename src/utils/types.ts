@@ -27,6 +27,10 @@ export interface RepairAnalysisResponse {
   kierrätys_ohjeet: string;
 }
 
+export interface ToriPrices {
+   [key: string]: [number, number];
+}
+
 export interface UserConversation {
   furnitureDetails?: FurnitureDetails;
   price?: PriceAnalysisResponse;
