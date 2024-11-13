@@ -1,8 +1,0 @@
-version: "3"
-services:
-  memcashed:
-    image: memcached:latest
-    container_name: memcached_container
-    ports:
-      - "11211:11211"
-    restart: always

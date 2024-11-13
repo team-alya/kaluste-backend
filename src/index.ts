@@ -5,11 +5,8 @@ import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
 import chatRouter from "./routes/chat";
 import locationRouter from "./routes/location";
-import { GEMINI_API_KEY, OPENAI_API_KEY } from "./utils/constants";
+import { OPENAI_API_KEY } from "./utils/constants";
 
-if (!GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not set in the environment variables");
-}
 if (!OPENAI_API_KEY) {
   throw new Error("OPENAI_API_KEY is not set in the environment variables");
 }

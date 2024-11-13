@@ -5,7 +5,7 @@
 
 ### Enviromental variables
 Create an .env file in the root folder with the following values:
-- GEMINI_API_KEY
+- OPENAI_API_KEY
 
 ### Initialize server
 ```
