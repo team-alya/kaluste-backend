@@ -33,9 +33,15 @@ const fetchProductDetails = async (links: string[]): Promise<Map<string, number[
             const response = await axios.get(link);
             const $ = cheerio.load(response.data);
             const condition = $('section[aria-label="Lisätietoja"] p:contains("Kunto") b').text();
-            const priceText = $('section.mb-24 div.mb-24 p.m-0.h2').text();
+            let priceText = '';
+            if ($('section.mb-24 div.mb-24 p.m-0.h2').length) {
+                priceText = $('section.mb-24 div.mb-24 p.m-0.h2').text();
+            } else if ($('div.mt-24.pb-16 span.h2').length) {
+                priceText = $('div.mt-24.pb-16 span.h2').text();
+            } else if ($('div.mt-4 div.h2').length) {
+                priceText = $('div.mt-4 div.h2').text();
+            }
             const price = priceText.match(/\d+/g)?.join('');
-
             if (condition && price) {
                 if (hash.has(condition)) {
                     hash.set(condition, [...(hash.get(condition) || []), parseInt(price)]);
