@@ -3,10 +3,13 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { resizeImage } from "../../utils/resizeImage";
 import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
+import { ConversationHistory, FurnitureDetails } from "../../utils/types";
+import { v4 as uuidv4 } from "uuid";
 
-const prompt = dedent` 
+const createPrompt = (requestId: string) => dedent` 
  Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
 
+    - id: ${requestId}
     - merkki: Huonekalun valmistaja tai suunnittelija (esim. "Ikea", "Artek"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - malli: Spesifi mallinimi tai -numero (esim. "Eames Lounge Chair", "Poäng"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - väri: Huonekalun pääväri tai selkein näkyvä väri (esim. "musta", "beige")
@@ -27,23 +30,30 @@ const prompt = dedent`
 
 `;
 
+const conversationHistory: ConversationHistory = {};
+
 // Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
-const analyzeImageOpenAI = async (imagePath: Buffer) => {
+const analyzeImage = async (
+  imagePath: Buffer
+): Promise<FurnitureDetails | { error: string }> => {
   try {
+    // Generate conversation id
+    const requestId = uuidv4();
+
+    // Create user prompt for image analysis
+    const prompt = createPrompt(requestId);
+
     // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
 
-    // Send request to OpenAI
-    const response = await openai.client.chat.completions.create({
-      model: openai.model,
+    // Initialize conversation history for the request with the user prompt and image
+    conversationHistory[requestId] = {
+      imageUrl: `data:image/jpeg;base64,${optimizedBase64Img}`,
       messages: [
+        { role: "user", content: prompt },
         {
           role: "user",
           content: [
-            {
-              type: "text",
-              text: prompt,
-            },
             {
               type: "image_url",
               image_url: {
@@ -54,6 +64,13 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
           ],
         },
       ],
+
+    };
+
+    // Send request to OpenAI
+    const response = await openai.client.chat.completions.create({
+      model: openai.model,
+      messages: conversationHistory[requestId].messages,
       response_format: zodResponseFormat(
         furnitureDetailsSchema,
         "furniture_analysis"
@@ -63,13 +80,22 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
     // Extract response content into a variable
     const messageContent = response.choices[0].message.content;
 
+    // Check if the message content is null
     if (messageContent === null) {
       throw new Error("Message content is null");
     }
 
+    const jsonfiedMessage: unknown = JSON.parse(messageContent);
+    if (
+      jsonfiedMessage &&
+      typeof jsonfiedMessage === "object" &&
+      "error" in jsonfiedMessage
+    ) {
+      throw new Error(jsonfiedMessage.error as string);
+    }
     // Parse the response to be in the format defined in zod schema
     const furnitureAnalysis = furnitureDetailsSchema.parse(
-      JSON.parse(messageContent)
+      jsonfiedMessage
     );
 
     return furnitureAnalysis;
@@ -83,4 +109,4 @@ const analyzeImageOpenAI = async (imagePath: Buffer) => {
   }
 };
 
-export default analyzeImageOpenAI;
+export default { analyzeImage, conversationHistory };

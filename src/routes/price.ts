@@ -1,27 +1,17 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from "express";
-import {
-  imageUploadHandler,
-  imageValidator,
-  validateFurnitureDetails,
-} from "../utils/middleware";
-import analyzePriceEstimate from "../services/Gemini/priceServiceGemini";
+import { furnitureDetailsParser } from "../utils/middleware";
+import analyzePrice from "../services/OpenAI/priceService";
 
 const router = express.Router();
 
 router.post(
   "/",
-  imageUploadHandler(),
-  imageValidator,
-  validateFurnitureDetails,
+  furnitureDetailsParser,
   async (req: Request, res: Response) => {
     try {
-      const imageBase64 = req.file!.buffer.toString("base64");
-      const furnitureDetails = JSON.parse(req.body.furnitureDetails);
-      const analysisResult = await analyzePriceEstimate(
-        imageBase64,
-        furnitureDetails
-      );
+      const furnitureDetails = req.body.furnitureDetails;
+      const analysisResult = await analyzePrice(furnitureDetails);
       res.status(200).json({
         message: "Price estimate was analyzed",
         result: analysisResult,
