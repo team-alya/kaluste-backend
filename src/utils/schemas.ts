@@ -29,6 +29,7 @@ export const priceAnalysisSchema = z.object({
   korkein_hinta: z.number(),
   alin_hinta: z.number(),
   myyntikanavat: z.array(z.string()),
+  tori_hinnat: z.record(z.string(), z.tuple([z.number(), z.number()])),
 });
 
 export const chatResponseSchema = z.object({

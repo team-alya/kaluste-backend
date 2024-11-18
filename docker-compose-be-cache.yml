@@ -17,6 +17,8 @@ services:
       - memcached
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      MEMCACHED_HOST: memcached
+      MEMCACHED_PORT: 11211
     ports:
       - "3000:3000"
     volumes:

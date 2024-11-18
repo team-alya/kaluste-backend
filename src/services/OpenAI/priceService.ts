@@ -1,35 +1,55 @@
 import dedent from "dedent";
-import { FurnitureDetails, PriceAnalysisResponse, ToriPrices } from "../../utils/types";
+import {
+  FurnitureDetails,
+  PriceAnalysisResponse,
+  ToriPrices,
+} from "../../utils/types";
 import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
-import { zodResponseFormat } from "openai/helpers/zod";
 import { priceAnalysisSchema } from "../../utils/schemas";
 import getAvgPricesPerCondition from "../Tori/toriScraper";
 
-const createPrompt = (furnitureDetails: FurnitureDetails, toriPrices: ToriPrices) => dedent`
-  Kuvassa näkyvän huonekalun kuvaus:
+// TODO: Add error field to prompt to be displayed when Tori.fi prices aren't found
 
+const createPrompt = (
+  furnitureDetails: FurnitureDetails,
+  toriPrices: ToriPrices
+) => dedent`
+  # HUONEKALUN HINTA-ARVIOPYYNTÖ 
   requestId: ${furnitureDetails.requestId}
 
-  Huonekalun valmistaja on ${furnitureDetails.merkki} ja sen malli on ${furnitureDetails.malli}.
-  Huonekalun väri on ${furnitureDetails.väri}. Huonekalun arvioidut mitat ovat ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm.
-  Huonekalussa on käytetty ${furnitureDetails.materiaalit} materiaaleja. Huonekalun kunto on ${furnitureDetails.kunto}.
+  ## HUONEKALUN TIEDOT
+  - Valmistaja: ${furnitureDetails.merkki}
+  - Malli: ${furnitureDetails.malli}
+  - Väri: ${furnitureDetails.väri}
+  - Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${
+  furnitureDetails.mitat.korkeus
+} cm
+  - Materiaalit: ${furnitureDetails.materiaalit}
+  - Kunto: ${furnitureDetails.kunto}
 
-  Anna hinta-arvio huonekalulle käytettyjen tavaroiden markkinoilla annetun kuvauksen ja kuvan perusteella. Kyseessä olevat käytettyjen tavaroiden markkinat sijaitsevat Suomessa.
-  Hyödynnä seuraavaa tietoa hinta-arvion tekemiseen: 
-  Kuntoluokittainen hintakeskiarvo: ${toriPrices}. Tämä tieto sisältää kyseisen huonekalun keskihinnan ja huonekalujen määrän eri kuntoluokituksissa Tori.fi -palvelussa.
-  
-  Palauta 2 hintaa ja 1 lista myyntikanavista JSON-oliona sisältäen seuraavat arvot: korkein_hinta, alin_hinta, myyntikanavat.
-  myyntikanavat tulisi olla lista, joka sisältää merkkijonoja kanavista, joilla käyttäjä voisi myydä huonekalun (esim. Tori, Mjuk)
-  Muotoile vastaus JSON oliona.
+  ## TARKAT TORI.FI MARKKINATIEDOT
+  Ajantasaiset Tori.fi markkinatilastot tämän tyyppiselle huonekalulle:
+  ${JSON.stringify(toriPrices, null, 2)}
+  TÄRKEÄÄ: Kopio nämä tarkat arvot vastauksen kohtaan tori_hinnat.
 
-  Esimerkkivastausmuoto:
+  ## VAADITTU LOPPUTULOS
+  Anna hinta-arvio JSON näiden vaatimusten perusteella:
+  1. Käytä tori_hinnat kohdassa annettua Tori.fi dataa (jos dataa ei ole saatavilla älä palauta mitään tori_hintoihin)
+  2. Anna hinta-arvio huonekalulle käytettyjen tavaroiden markkinoilla annetun kuvauksen ja kuvan perusteella. Kyseessä olevat käytettyjen tavaroiden markkinat sijaitsevat Suomessa.
+  3. Vastauksen muodon tulee olla: 
   {
     "requestId": "${furnitureDetails.requestId}",
-    "korkein_hinta": korkein hinta euroina,
-    "alin_hinta": alin hinta euroina,
-    "myyntikanavat": ["Tori", "Mjuk"]
+    "korkein_hinta": <korkein hinta euroina>,
+    "alin_hinta": <alin hinta euroina>,
+    "myyntikanavat": <lista myyntikanavista>
+    "tori_hinnat": {
+      <kunto>: [<keskiarvoinen_hinta>, <kappalemäärä>]
   }
+
+  ## VALIDAATIOSÄÄNNÖT
+  1. Kaikki hinnat tulee olla euroina
+  2. tori_hinnat tulee vastata annettua Tori.fi dataa
 `;
 
 const analyzePrice = async (
@@ -51,11 +71,15 @@ const analyzePrice = async (
   const base64ImgUrl: string = context.imageUrl;
 
   // Get the average prices per condition for the furniture
-  const toriPrices =  await getAvgPricesPerCondition(furnitureDetails.merkki, furnitureDetails.malli);
+  const toriPrices = await getAvgPricesPerCondition(
+    furnitureDetails.merkki,
+    furnitureDetails.malli
+  );
+
   // Create prompt for price analysis
-  const prompt = !('error' in toriPrices) 
-      ? createPrompt(furnitureDetails, toriPrices) 
-      : createPrompt(furnitureDetails, {});
+  const prompt = !("error" in toriPrices)
+    ? createPrompt(furnitureDetails, toriPrices)
+    : createPrompt(furnitureDetails, {});
 
   try {
     const result = await openai.client.chat.completions.create({
@@ -82,7 +106,7 @@ const analyzePrice = async (
           ],
         },
       ],
-      response_format: zodResponseFormat(priceAnalysisSchema, "price_analysis"),
+      response_format: { type: "json_object" },
     });
 
     // Extract response content into a variable
@@ -99,7 +123,7 @@ const analyzePrice = async (
     );
     context.price = parsedResponse;
 
-    // Append the response to the conversation history
+    // // Append the response to the conversation history
     context.messages.push({
       role: "assistant",
       content: responseContent,

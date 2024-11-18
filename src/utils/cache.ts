@@ -1,6 +1,7 @@
 import memjs from 'memjs';
+import { MEMCACHED_HOST, MEMCACHED_PORT } from './constants';
 
-const mc = memjs.Client.create('localhost:11211');
+const mc = memjs.Client.create(`${MEMCACHED_HOST}:${MEMCACHED_PORT}`);
 
 const cacheData = async (key: string, data: any) => {
     try {

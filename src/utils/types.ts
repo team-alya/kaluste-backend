@@ -20,6 +20,7 @@ export interface PriceAnalysisResponse {
   korkein_hinta: number;
   alin_hinta: number;
   myyntikanavat: string[];
+  tori_hinnat: ToriPrices;
 }
 
 export interface RepairAnalysisResponse {
