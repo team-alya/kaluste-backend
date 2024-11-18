@@ -6,6 +6,8 @@
 ### Enviromental variables
 Create an .env file in the root folder with the following values:
 - OPENAI_API_KEY
+- MEMCACHED_HOST
+- MEMCACHED_PORT
 
 ### Initialize server
 ```
