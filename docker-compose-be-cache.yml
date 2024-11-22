@@ -10,7 +10,9 @@ services:
 
   kaluste-backend:
     container_name: kaluste_backend_container
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
       - .env
     depends_on:
