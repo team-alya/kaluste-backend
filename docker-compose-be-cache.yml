@@ -1,0 +1,35 @@
+services:
+  memcached:
+    image: memcached:latest
+    container_name: memcached_container
+    ports: 
+      - "11211:11211"
+    networks:
+      - kaluste-network
+    restart: always
+
+  kaluste-backend:
+    container_name: kaluste_backend_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - memcached
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      MEMCACHED_HOST: memcached
+      MEMCACHED_PORT: 11211
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - kaluste-network
+    command: npm start
+
+networks:
+  kaluste-network:
+    driver: bridge
