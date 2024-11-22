@@ -1,10 +1,16 @@
 # kaluste-backend
 Älyä-hankkeessa KalusteArvio-projektin palvelin ja tekoälyliittymät
 
+## Table of Contents
+- [Installation](#installation)
+- [API Documentation](#api-documentation)
+- [Testing with Postman](#testing-with-postman)
+- [Docker Instructions](#docker-instructions)
+
 ## Installation
 
 ### Enviromental variables
-Create an .env file in the root folder with the following values:
+Create an .env file in the root folder with the following values (use the .env.template file for reference):
 - OPENAI_API_KEY
 - MEMCACHED_HOST
 - MEMCACHED_PORT
@@ -98,3 +104,64 @@ npm run start
 
 ### /api/location
 ![api_location_postman](./screenshots/api_location_postman.PNG)
+
+
+## Docker Instructions
+
+### Using Dockerfile
+
+#### Build Docker Image
+To build the Docker image, run the following command in the root directory:
+```sh
+docker build -t kaluste-backend .
+```
+
+#### Run Docker Container
+```sh
+docker run -d --name kaluste-backend -p 3000:3000 --env-file .env kaluste-backend
+```
+
+#### Stop Docker Container
+To stop the Docker container, use the following command:
+```sh
+docker stop kaluste-backend
+```
+
+#### Remove Docker Container
+To remove the Docker container, use the following command:
+```sh
+docker rm kaluste-backend
+```
+
+### Using Docker Compose
+
+#### docker-compose-be-cache.yml
+This file is used to set up and run both the backend and Memcached services.
+
+To build and run the containers, use the following command:
+```sh
+docker-compose -f docker-compose-be-cache.yml up
+```
+
+To stop the running containers, use the following command:
+```sh
+docker-compose -f docker-compose-be-cache.yml down
+```
+
+#### docker-compose-local-cache.yml
+This file is used to set up and run only the Memcached service. Note: Remove `MEMCACHED_HOST` from `.env` or set it to `localhost` for this to work.
+
+To build and run the Memcached container, use the following command:
+```sh
+docker-compose -f docker-compose-local-cache.yml up
+```
+
+After the Memcached container is running, run the backend locally:
+```sh
+npm run dev
+```
+
+To stop the running Memcached container, use the following command:
+```sh
+docker-compose -f docker-compose-local-cache.yml down
+```
