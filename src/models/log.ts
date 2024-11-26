@@ -14,6 +14,14 @@ const logSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  review: {
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+    },
+    comment: String,
+  }
 });
 
 const Log = mongoose.model("Log", logSchema);

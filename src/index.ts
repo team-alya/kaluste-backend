@@ -5,6 +5,7 @@ import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
 import chatRouter from "./routes/chat";
 import locationRouter from "./routes/location";
+import reviewRouter from "./routes/review";
 import { MONGODB_URI, OPENAI_API_KEY } from "./utils/constants";
 import mongoose from "mongoose";
 
@@ -39,6 +40,7 @@ app.use("/api/image", imageRouter);
 app.use("/api/price", priceRouter);
 app.use("/api/chat", chatRouter);
 app.use("/api/location", locationRouter);
+app.use("/api/review", reviewRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

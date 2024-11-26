@@ -2,7 +2,7 @@
 import express, { Request, Response } from "express";
 import askQuestion from "../services/OpenAI/chatService";
 import { userQueryValidator } from "../utils/middleware";
-import chatLogger from "../services/Log/chatLogger";
+import { chatLogger } from "../services/Log/logger";
 
 const router = express.Router();
 
