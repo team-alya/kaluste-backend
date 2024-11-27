@@ -13,7 +13,11 @@ if (!OPENAI_API_KEY) {
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://kalustebottifrontend-arvolaskuri-demo.2.rahtiapp.fi",
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/ping", (_req: Request, res: Response) => {
