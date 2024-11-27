@@ -22,8 +22,5 @@ COPY --from=builder /usr/src/app/build ./build
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
 
-# Expose the backend port
-EXPOSE 3000
-
 # Run the app
 CMD ["node", "build/index.js"]

@@ -3,7 +3,7 @@ services:
     image: memcached:latest
     container_name: memcached_container
     ports: 
-      - "11211:11211"
+      - "${MEMCACHED_PORT}:${MEMCACHED_PORT}"
     networks:
       - kaluste-network
     restart: always
@@ -19,10 +19,10 @@ services:
       - memcached
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-      MEMCACHED_HOST: memcached
-      MEMCACHED_PORT: 11211
+      MEMCACHED_HOST: ${MEMCACHED_HOST}
+      MEMCACHED_PORT: ${MEMCACHED_PORT}
     ports:
-      - "3000:3000"
+      - "${PORT}:${PORT}"
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
