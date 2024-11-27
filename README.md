@@ -30,6 +30,12 @@ npm run start
 ```
 
 ## API Documentation
+
+### Roadmap
+1. Send the image to /api/image 🠊 2. If the properties of the received result object have incorrect values, fix them. Send the object as furnitureDetails to /api/price 🠊 3. Send requestId, user's location and chat tab to /api/location 🠊 4. Send requestId and question to /api/chat for all further chatbot requests
+
+### Route details
+
 | HTTP | Route      | Description | Response |
 | ---- | ---------- | ----------- | -------- |
 | POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the furniture details |
