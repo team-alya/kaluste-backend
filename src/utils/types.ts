@@ -67,3 +67,7 @@ export interface LocationQuery {
 export interface LocationResponse {
   result: string;
 }
+
+export interface loggerResponse {
+  message: string;
+}
