@@ -12,6 +12,9 @@
 ### Enviromental variables
 Create an .env file in the root folder with the following values (use the .env.template file for reference):
 - OPENAI_API_KEY
+- RAHTI_URL
+- LOCAL_URL
+- PORT
 - MEMCACHED_HOST
 - MEMCACHED_PORT
 
