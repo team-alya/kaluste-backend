@@ -122,6 +122,9 @@ npm run start
 ### /api/location
 ![api_location_postman](./screenshots/api_location_postman.PNG)
 
+### /api/review
+![api_review_postman](./screenshots/api_review_postman.PNG)
+
 
 ## Docker Instructions
 
@@ -182,9 +185,6 @@ To stop the running Memcached container, use the following command:
 ```sh
 docker-compose -f docker-compose-local-cache.yml down
 ```
-
-### /api/review
-![api_review_postman](./screenshots/api_review_postman.PNG)
 
 
 ## Database
