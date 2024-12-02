@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
+import { ZodError } from "zod";
 import { LocationQuery, FurnitureDetailsRequest, UserQuery } from "./types";
-import { furnitureDetailsSchema, locationQuerySchema } from "./schemas";
+import { furnitureDetailsSchema, locationQuerySchema, reviewSchema } from "./schemas";
 
 export const imageUploadHandler = () => {
   return multer({ storage: multer.memoryStorage() }).single("image");
@@ -88,6 +89,33 @@ export const locationQueryParser = (
   } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : "Unknown validation error";
+    return res.status(400).json({ errorMessage });
+  }
+  return next();
+};
+
+export const reviewValidator = (
+  req: Request<unknown, unknown, { requestId: string; review: object }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body) {
+      res.status(400).json({ error: "Request ID and review are required" });
+      return;
+    }
+    reviewSchema.parse(req.body);
+  } catch (err: unknown) {
+    if (err instanceof ZodError) {
+      return res.status(400).json({
+        error: err.errors.map(e => ({
+          message: e.message,
+          path: e.path
+        }))
+      });
+    }
+    
+    const errorMessage = err instanceof Error ? err.message : "Unknown validation error";
     return res.status(400).json({ errorMessage });
   }
   return next();

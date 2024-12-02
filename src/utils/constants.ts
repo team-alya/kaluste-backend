@@ -4,3 +4,4 @@ export const LOCAL_URL = process.env.LOCAL_URL;
 export const PORT = process.env.PORT;
 export const MEMCACHED_HOST = process.env.MEMCACHED_HOST || "localhost";
 export const MEMCACHED_PORT = process.env.MEMCACHED_PORT;
+export const MONGODB_URI = process.env.MONGODB_URI;
