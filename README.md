@@ -83,6 +83,17 @@ npm run start
 }
 ```
 
+| HTTP | Route | Description | Response |
+| ---- | ----- | ----------- | ---------|
+| POST | /api/review | Send a request containing `request_id` and `review` as an object. The `review` object should include a `rating` (between 1 and 5) and an optional `comment`. Prior to using this route, you must have sent a request to the `/api/chat` route with the same `request_id`. | A message indicating whether the review was successfully logged or not. |
+> Response example:
+
+```json
+{
+    "message": "Review logged successfully"
+}
+```
+
 ## Testing with Postman
 
 ### /api/image
@@ -96,3 +107,25 @@ npm run start
 
 ### /api/location
 ![api_location_postman](./screenshots/api_location_postman.PNG)
+
+### /api/review
+![api_review_postman](./screenshots/api_review_postman.PNG)
+
+
+## Database
+
+This project uses [MongoDB](https://www.mongodb.com/) as its database solution and [mongoose](https://mongoosejs.com/) to interact with MongoDB.
+
+### Main Functionalities
+1. Conversation Logging
+    - Stores chat interactions between users and AI
+    - Endpoint: `/api/chat`
+    - Records full conversation history
+
+2. Review Logging
+    - Stores user feedback and reviews
+    - Endpoint: `/api/review`
+
+### Database Schema
+
+The schema for the database documents is declared in the [log.ts](/src/models/log.ts) file.
