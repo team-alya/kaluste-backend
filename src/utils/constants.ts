@@ -5,3 +5,4 @@ export const PORT = process.env.PORT;
 export const MEMCACHED_HOST = process.env.MEMCACHED_HOST || "localhost";
 export const MEMCACHED_PORT = process.env.MEMCACHED_PORT;
 export const MONGODB_URI = process.env.MONGODB_URI;
+export const CONVERSATION_TIMEOUT_MS = 60 * 60 * 24 * 1000;
