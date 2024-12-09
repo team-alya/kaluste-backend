@@ -12,23 +12,21 @@ const askQuestion = async (
   // Retrieve the stored context for the specific furniture analysis
   const context = imageServiceOpenAI.conversationHistory[requestId];
 
-  // Check if the context exists
+
   if (!context) {
     return { error: "No analysis found for this requestId" };
   }
 
   // TODO: ponder about this?
-  // Ensure context.analysis is of type FurnitureDetails
   if ("error" in context.furnitureDetails!) {
     return { error: "No furniture details in context" };
   }
 
-  // Ensure context.price is of type PriceAnalysisResponse
+
   if ("error" in context.price!) {
     return { error: "No price in context" };
   }
 
-  // Construct the prompt with the context
   const prompt = dedent`
     Tässä on tiedot käyttäjän huonekalusta ja hinta-analyysin tuloksista:
     
@@ -52,11 +50,9 @@ const askQuestion = async (
     Anna vastaus merkkijonona ilman muotoiluja. 
   `;
 
-  // Append the question to the conversation history
   context.messages.push({ role: "user", content: question });
 
   try {
-    // Make a call to OpenAI with the context and question
     const response = await openai.client.chat.completions.create({
       model: openai.model,
       messages: [
@@ -70,17 +66,14 @@ const askQuestion = async (
       ],
     });
 
-    // Get the answer from the response
     const answer = response.choices[0].message.content;
 
-    // Check if the answer is null
     if (answer === null) {
       return { error: "Error returning an answer to the question" };
     }
 
     const parsedAnswer = chatResponseSchema.parse({ requestId, answer });
 
-    // Store the assistant's answer in the conversation history
     context.messages.push({ role: "assistant", content: parsedAnswer.answer });
 
     return parsedAnswer;
