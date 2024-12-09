@@ -5,6 +5,8 @@ import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
 import { ConversationHistory, FurnitureDetails } from "../../utils/types";
 import { v4 as uuidv4 } from "uuid";
+import { CONVERSATION_TIMEOUT_MS } from "../../utils/constants";
+import { cleanupConversationHistory } from "../../utils/clearContext";
 
 const createPrompt = (requestId: string) => dedent` 
  Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
@@ -37,17 +39,14 @@ const analyzeImage = async (
   imagePath: Buffer
 ): Promise<FurnitureDetails | { error: string }> => {
   try {
-    // Generate conversation id
     const requestId = uuidv4();
 
-    // Create user prompt for image analysis
     const prompt = createPrompt(requestId);
 
-    // Get resized and optimized image
     const optimizedBase64Img = await resizeImage(imagePath);
 
-    // Initialize conversation history for the request with the user prompt and image
     conversationHistory[requestId] = {
+      timestamp: Date.now(),
       imageUrl: `data:image/jpeg;base64,${optimizedBase64Img}`,
       messages: [
         { role: "user", content: prompt },
@@ -64,10 +63,11 @@ const analyzeImage = async (
           ],
         },
       ],
-
     };
+    console.log(conversationHistory);
+    const clean = cleanupConversationHistory(conversationHistory);
+    console.log(clean);
 
-    // Send request to OpenAI
     const response = await openai.client.chat.completions.create({
       model: openai.model,
       messages: conversationHistory[requestId].messages,
@@ -77,10 +77,8 @@ const analyzeImage = async (
       ),
     });
 
-    // Extract response content into a variable
     const messageContent = response.choices[0].message.content;
 
-    // Check if the message content is null
     if (messageContent === null) {
       throw new Error("Message content is null");
     }
@@ -93,14 +91,11 @@ const analyzeImage = async (
     ) {
       throw new Error(jsonfiedMessage.error as string);
     }
-    // Parse the response to be in the format defined in zod schema
-    const furnitureAnalysis = furnitureDetailsSchema.parse(
-      jsonfiedMessage
-    );
+
+    const furnitureAnalysis = furnitureDetailsSchema.parse(jsonfiedMessage);
 
     return furnitureAnalysis;
   } catch (error) {
-    // Handle any errors during the request
     if (error instanceof Error) {
       return { error: error.message };
     } else {
@@ -108,5 +103,7 @@ const analyzeImage = async (
     }
   }
 };
+
+setInterval(() => cleanupConversationHistory(conversationHistory), CONVERSATION_TIMEOUT_MS);
 
 export default { analyzeImage, conversationHistory };

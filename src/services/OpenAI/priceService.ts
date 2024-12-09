@@ -55,28 +55,22 @@ const createPrompt = (
 const analyzePrice = async (
   furnitureDetails: FurnitureDetails
 ): Promise<PriceAnalysisResponse | { error: string }> => {
-  // Retrieve the stored context for the specific furniture analysis
   const context =
     imageServiceOpenAI.conversationHistory[furnitureDetails.requestId];
 
-  // Store the furniture details in the context
   context.furnitureDetails = furnitureDetails;
 
-  // Check if the imageUrl is not found in the context
   if (!context.imageUrl) {
     return { error: "No valid image content found in context" };
   }
 
-  // Extract the base64 image from the context
   const base64ImgUrl: string = context.imageUrl;
 
-  // Get the average prices per condition for the furniture
   const toriPrices = await getAvgPricesPerCondition(
     furnitureDetails.merkki,
     furnitureDetails.malli
   );
 
-  // Create prompt for price analysis
   const prompt = !("error" in toriPrices)
     ? createPrompt(furnitureDetails, toriPrices)
     : createPrompt(furnitureDetails, {});
@@ -109,21 +103,17 @@ const analyzePrice = async (
       response_format: { type: "json_object" },
     });
 
-    // Extract response content into a variable
     const responseContent = result.choices[0].message.content;
 
-    // Check if the message content is null
     if (responseContent === null) {
       throw new Error("Error analyzing price");
     }
 
-    // Parse the response and store it in the context
     const parsedResponse = priceAnalysisSchema.parse(
       JSON.parse(responseContent)
     );
     context.price = parsedResponse;
 
-    // // Append the response to the conversation history
     context.messages.push({
       role: "assistant",
       content: responseContent,

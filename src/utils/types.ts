@@ -37,6 +37,7 @@ export interface UserConversation {
   price?: PriceAnalysisResponse;
   imageUrl?: string;
   messages: ChatCompletionMessageParam[];
+  timestamp: number;
 }
 
 export type ConversationHistory = Record<string, UserConversation>;
