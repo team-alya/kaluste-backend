@@ -6,7 +6,7 @@ import priceRouter from "./routes/price";
 import chatRouter from "./routes/chat";
 import locationRouter from "./routes/location";
 import reviewRouter from "./routes/review";
-import { MONGODB_URI, OPENAI_API_KEY, PORT, RAHTI_URL, LOCAL_URL } from "./utils/constants";
+import { MONGODB_URI, OPENAI_API_KEY, PORT } from "./utils/constants";
 import mongoose from "mongoose";
 
 if (!OPENAI_API_KEY) {
@@ -19,14 +19,11 @@ if (!MONGODB_URI) {
 
 const app = express();
 
-const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "dev"
-      ? LOCAL_URL
-      : process.env.NODE_ENV === "build"
-      ? RAHTI_URL
-      : undefined,
-};
+const allowedOrigins = [
+  "https://kalustebottifrontend-arvolaskuri-demo.2.rahtiapp.fi",
+  "http://localhost:5173",
+  "https://localhost:5173",
+];
 
 mongoose
   .connect(MONGODB_URI)
@@ -34,10 +31,10 @@ mongoose
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
-    console.log("Error connection to MongoDB", err);
+    console.log("Error connecting to MongoDB", err);
   });
 
-app.use(cors(corsOptions));
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/ping", (_req: Request, res: Response) => {
