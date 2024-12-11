@@ -23,7 +23,10 @@ const allowedOrigins = [
   "https://kalustebottifrontend-arvolaskuri-demo.2.rahtiapp.fi",
   "http://localhost:5173",
   "https://localhost:5173",
+  "http://localhost:3000"
 ];
+
+app.use(cors({ origin: allowedOrigins }));
 
 mongoose
   .connect(MONGODB_URI)
@@ -34,7 +37,6 @@ mongoose
     console.log("Error connecting to MongoDB", err);
   });
 
-app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/ping", (_req: Request, res: Response) => {
