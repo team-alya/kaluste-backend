@@ -31,10 +31,9 @@ export const createChatPrompt = (context: UserConversation, question: string) =>
 /**
  * Creates a prompt for the image analysis service.
  */
-export const createImagePrompt = (requestId: string) => dedent` 
+export const createImagePrompt = () => dedent` 
  Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
 
-    - id: ${requestId}
     - merkki: Huonekalun valmistaja tai suunnittelija (esim. "Ikea", "Artek"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - malli: Spesifi mallinimi tai -numero (esim. "Eames Lounge Chair", "Poäng"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - väri: Huonekalun pääväri tai selkein näkyvä väri (esim. "musta", "beige")
@@ -139,7 +138,6 @@ export const createPricePrompt = (
   toriPrices: ToriPrices
 ) => dedent`
   # HUONEKALUN HINTA-ARVIOPYYNTÖ 
-  requestId: ${furnitureDetails.requestId}
 
   ## HUONEKALUN TIEDOT
   - Valmistaja: ${furnitureDetails.merkki}
@@ -162,7 +160,6 @@ export const createPricePrompt = (
   2. Anna hinta-arvio huonekalulle käytettyjen tavaroiden markkinoilla annetun kuvauksen ja kuvan perusteella. Kyseessä olevat käytettyjen tavaroiden markkinat sijaitsevat Suomessa.
   3. Vastauksen muodon tulee olla: 
   {
-    "requestId": "${furnitureDetails.requestId}",
     "korkein_hinta": <korkein hinta euroina>,
     "alin_hinta": <alin hinta euroina>,
     "myyntikanavat": <lista myyntikanavista>

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const furnitureDetailsSchema = z.object({
-  requestId: z.string(),
+  requestId: z.string().optional(),
   merkki: z.string(),
   malli: z.string(),
   väri: z.string(),
@@ -25,7 +25,7 @@ export const locationQuerySchema = z.object({
 });
 
 export const priceAnalysisSchema = z.object({
-  requestId: z.string(),
+  requestId: z.string().optional(),
   korkein_hinta: z.number(),
   alin_hinta: z.number(),
   myyntikanavat: z.array(z.string()),
