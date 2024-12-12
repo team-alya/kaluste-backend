@@ -131,7 +131,6 @@ const generateToriLink = (brand: string, model: string): string => {
     searchQueryParams.push('q=' + encodeURIComponent(brand + ' ' + model));
     searchQueryParams.push('trade_type=1');
     baseUrl += searchQueryParams.join('&');
-    console.log(baseUrl);
     return baseUrl;
 }
 
