@@ -21,7 +21,7 @@ const logSchema = new Schema({
       max: 5,
     },
     comment: String,
-  }
+  },
 });
 
 const Log = mongoose.model("Log", logSchema);

@@ -29,7 +29,7 @@ export interface RepairAnalysisResponse {
 }
 
 export interface ToriPrices {
-   [key: string]: [number, number];
+  [key: string]: [number, number];
 }
 
 export interface UserConversation {
@@ -40,6 +40,11 @@ export interface UserConversation {
   timestamp: number;
 }
 
+/**
+ * A map of objects with key: requestId and value: UserConversation.
+ *
+ * - All user conversations are saved to this map and removed by a timed context remover.
+ */
 export type ConversationHistory = Record<string, UserConversation>;
 
 export interface ChatResponse {
@@ -60,10 +65,22 @@ export interface FurnitureDetailsRequest extends Request {
   };
 }
 
-export interface LocationQuery {
-  requestId: string;
-  location: string;
-  source: "donation" | "recycle" | "repair";
+export interface ReviewQuery extends Request {
+  body: {
+    requestId: string;
+    review: {
+      rating: 1 | 2 | 3 | 4 | 5;
+      comment?: string;
+    };
+  };
+}
+
+export interface LocationQuery extends Request {
+  body: {
+    requestId: string;
+    location: string;
+    source: "donation" | "recycle" | "repair";
+  };
 }
 
 export interface LocationResponse {

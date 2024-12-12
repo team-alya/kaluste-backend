@@ -1,22 +1,23 @@
 import openai from "../../configs/openai";
-import imageServiceOpenAI from "./imageService";
 import { ChatResponse } from "../../utils/types";
 import { chatResponseSchema } from "../../utils/schemas";
 import { createChatPrompt } from "../../prompts/prompts";
+import conversationHistory from "../../context/conversations";
 
-// Function for asking a question from the OpenAI model
+/**
+ * Ask a question to AI model relating the furniture piece.
+ */
 const askQuestion = async (
   requestId: string,
   question: string
 ): Promise<ChatResponse | { error: string }> => {
   // Retrieve the stored context for the specific furniture analysis
-  const context = imageServiceOpenAI.conversationHistory[requestId];
+  const context = conversationHistory[requestId];
 
   if (!context) {
     return { error: "No analysis found for this requestId" };
   }
 
-  // TODO: ponder about this?
   if ("error" in context.furnitureDetails!) {
     return { error: "No furniture details in context" };
   }

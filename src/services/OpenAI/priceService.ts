@@ -1,15 +1,18 @@
 import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
-import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
 import { priceAnalysisSchema } from "../../utils/schemas";
 import getAvgPricesPerCondition from "../Tori/toriScraper";
 import { createPricePrompt } from "../../prompts/prompts";
+import conversationHistory from "../../context/conversations";
 
+
+/**
+ * Analyze price of the furniture.
+ */
 const analyzePrice = async (
   furnitureDetails: FurnitureDetails
 ): Promise<PriceAnalysisResponse | { error: string }> => {
-  const context =
-    imageServiceOpenAI.conversationHistory[furnitureDetails.requestId];
+  const context = conversationHistory[furnitureDetails.requestId];
 
   context.furnitureDetails = furnitureDetails;
 

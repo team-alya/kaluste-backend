@@ -40,7 +40,8 @@ export const chatResponseSchema = z.object({
 export const reviewSchema = z.object({
   requestId: z.string(),
   review: z.object({
-    rating: z.number()
+    rating: z
+      .number()
       .min(1, { message: "Rating must be between 1 and 5" })
       .max(5, { message: "Rating must be between 1 and 5" }),
     comment: z.string().optional(),

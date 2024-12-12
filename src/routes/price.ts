@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import { furnitureDetailsParser } from "../utils/middleware";
 import analyzePrice from "../services/OpenAI/priceService";
+import { FurnitureDetailsRequest } from "../utils/types";
 
 const router = express.Router();
 
 router.post(
   "/",
   furnitureDetailsParser,
-  async (req: Request, res: Response) => {
+  async (req: FurnitureDetailsRequest, res: Response) => {
     try {
       const furnitureDetails = req.body.furnitureDetails;
       const analysisResult = await analyzePrice(furnitureDetails);
