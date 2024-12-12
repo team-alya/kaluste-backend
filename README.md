@@ -189,7 +189,20 @@ To stop the running Memcached container, use the following command:
 ```sh
 docker-compose -f docker-compose-local-cache.yml down
 ```
+## Cache
 
+We use [Memcached](https://memcached.org/) for caching in development.
+
+### Key Features
+- Caches furniture price data using `brand+model` as key
+- 24 hour cache expiration
+- Checks cache before new price scrapes
+- Cache clears on server restart
+
+### Setup
+- Follow Docker Instructions to setup Memcached.
+
+Note: Caching is currently disabled in production.
 
 ## Database
 

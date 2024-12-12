@@ -3,6 +3,12 @@ import * as cheerio from "cheerio";
 import { ToriPrices } from "../../utils/types";
 // import { cacheData, getData } from '../../utils/cache';
 
+/**
+ * Returns list of product pages from the first search page
+ * - Max amount of products in the first search page is 54
+ * - If needed to fetch more products from the search, the function should be modified to check if there are more pages available
+ * and then add "&page=<pagenumber>" to the link
+ */
 const fetchProductPages = async (
   link: string
 ): Promise<string[] | { error: string }> => {
@@ -40,6 +46,8 @@ const fetchProductDetails = async (
         'section[aria-label="Lisätietoja"] p:contains("Kunto") b'
       ).text();
       let priceText = "";
+      // Product pages can have different structures, so we need to check multiple elements to find the price
+      // Keep an eye on the structure of the product pages and update the code if needed
       if ($("section.mb-24 div.mb-24 p.m-0.h2").length) {
         priceText = $("section.mb-24 div.mb-24 p.m-0.h2").text();
       } else if ($("div.mt-24.pb-16 span.h2").length) {
@@ -110,7 +118,7 @@ const getAvgPricesPerCondition = async (
     const productPages = await fetchProductPages(link);
     if (Array.isArray(productPages)) {
       if (productPages.length === 0) {
-        console.error("No products found");
+        console.warn("No products found");
         return { error: "No products found" };
       }
       const pricesPerCodition = await fetchProductDetails(productPages);
@@ -118,7 +126,7 @@ const getAvgPricesPerCondition = async (
         // cacheData(brand + model, calcAvgPerCondition(pricesPerCodition));
         return calcAvgPerCondition(pricesPerCodition);
       } else {
-        console.error("No prices found");
+        console.warn("No prices found");
         return { error: "No prices found" };
       }
     } else {
