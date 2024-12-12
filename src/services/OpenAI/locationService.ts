@@ -1,74 +1,12 @@
-import dedent from "dedent";
 import { FurnitureDetails, LocationQuery } from "../../utils/types";
 import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
 import { ChatCompletionMessageParam } from "openai/resources";
-
-const createDonationPrompt = (
-  furnitureDetails: FurnitureDetails,
-  location: string
-) => {
-  if (furnitureDetails) {
-    return dedent`
-    Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
-    
-    Analyysi:
-    Merkki: ${furnitureDetails.merkki}
-    Malli: ${furnitureDetails.malli}
-    Väri: ${furnitureDetails.väri}
-    Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
-    Materiaalit: ${furnitureDetails.materiaalit}
-    Kunto: ${furnitureDetails.kunto}
-
-    Palauta lista paikoista tämän sijainnin "${location}" läheisyydessä, joissa huonekalun voisi lahjoittaa.
-  `;
-  }
-  return null;
-};
-
-const createRecyclePrompt = (
-  furnitureDetails: FurnitureDetails,
-  location: string
-) => {
-  if (furnitureDetails) {
-    return dedent`
-    Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
-    
-    Analyysi:
-    Merkki: ${furnitureDetails.merkki}
-    Malli: ${furnitureDetails.malli}
-    Väri: ${furnitureDetails.väri}
-    Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
-    Materiaalit: ${furnitureDetails.materiaalit}
-    Kunto: ${furnitureDetails.kunto}
-  
-    Palauta lista paikoista tämän sijainnin "${location}" läheisyydessä, joissa huonekalun voisi kierrättää.
-  `;
-  }
-  return null;
-};
-
-const createRepairPompt = (
-  furnitureDetails: FurnitureDetails,
-  location: string
-) => {
-  if (furnitureDetails) {
-    return dedent`
-    Tässä on tiedot käyttäjän huonekalun analyysin ja hinnoittelun tuloksista:
-    
-    Analyysi:
-    Merkki: ${furnitureDetails.merkki}
-    Malli: ${furnitureDetails.malli}
-    Väri: ${furnitureDetails.väri}
-    Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
-    Materiaalit: ${furnitureDetails.materiaalit}
-    Kunto: ${furnitureDetails.kunto}
-  
-    Palauta lista paikoista tämän sijainnin "${location}" läheisyydessä, joissa huonekalun voisi korjauttaa.
-  `;
-  }
-  return null;
-};
+import {
+  createDonationPrompt,
+  createRecyclePrompt,
+  createRepairPrompt,
+} from "../../prompts/prompts";
 
 const createPrompt = (
   data: LocationQuery,
@@ -85,7 +23,7 @@ const createPrompt = (
       prompt = createRecyclePrompt(furnitureDetails, location);
       break;
     case "repair":
-      prompt = createRepairPompt(furnitureDetails, location);
+      prompt = createRepairPrompt(furnitureDetails, location);
       break;
   }
 
