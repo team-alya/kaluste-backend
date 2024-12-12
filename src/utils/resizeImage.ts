@@ -1,5 +1,8 @@
 import sharp from "sharp";
 
+/**
+ * Resize image to fit OpenAI API requirements.
+ */
 export const resizeImage = async (imagePath: Buffer) => {
   const sharpImage = sharp(imagePath);
 

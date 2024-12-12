@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const furnitureDetailsSchema = z.object({
-  requestId: z.string(),
+  requestId: z.string().optional(),
   merkki: z.string(),
   malli: z.string(),
   väri: z.string(),
@@ -25,7 +25,7 @@ export const locationQuerySchema = z.object({
 });
 
 export const priceAnalysisSchema = z.object({
-  requestId: z.string(),
+  requestId: z.string().optional(),
   korkein_hinta: z.number(),
   alin_hinta: z.number(),
   myyntikanavat: z.array(z.string()),
@@ -40,7 +40,8 @@ export const chatResponseSchema = z.object({
 export const reviewSchema = z.object({
   requestId: z.string(),
   review: z.object({
-    rating: z.number()
+    rating: z
+      .number()
       .min(1, { message: "Rating must be between 1 and 5" })
       .max(5, { message: "Rating must be between 1 and 5" }),
     comment: z.string().optional(),

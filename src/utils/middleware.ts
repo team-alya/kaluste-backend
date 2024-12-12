@@ -1,13 +1,28 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import { ZodError } from "zod";
-import { LocationQuery, FurnitureDetailsRequest, UserQuery } from "./types";
-import { furnitureDetailsSchema, locationQuerySchema, reviewSchema } from "./schemas";
+import {
+  LocationQuery,
+  FurnitureDetailsRequest,
+  UserQuery,
+  ReviewQuery,
+} from "./types";
+import {
+  furnitureDetailsSchema,
+  locationQuerySchema,
+  reviewSchema,
+} from "./schemas";
 
+/**
+ * Middleware to extract image from the request.
+ */
 export const imageUploadHandler = () => {
   return multer({ storage: multer.memoryStorage() }).single("image");
 };
 
+/**
+ * Middleware to validate that a file of image format was sent.
+ */
 export const imageValidator = (
   req: Request,
   res: Response,
@@ -30,6 +45,9 @@ export const imageValidator = (
   return next();
 };
 
+/**
+ * Middleware that parses request body and expects to find furnitureDetails.
+ */
 export const furnitureDetailsParser = (
   req: FurnitureDetailsRequest,
   res: Response,
@@ -49,7 +67,10 @@ export const furnitureDetailsParser = (
   return next();
 };
 
-export const userQueryValidator = (
+/**
+ * Middleware that parses request body and expects to find a chat question request.
+ */
+export const userQueryParser = (
   req: UserQuery,
   res: Response,
   next: NextFunction
@@ -75,14 +96,19 @@ export const userQueryValidator = (
   }
 };
 
+/**
+ * Middleware that parses request body and expects to find a user location request.
+ */
 export const locationQueryParser = (
-  req: Request<unknown, unknown, LocationQuery>,
+  req: LocationQuery,
   res: Response,
   next: NextFunction
 ) => {
   try {
     if (!req.body) {
-      res.status(400).json({ error: "Request ID and source are required" });
+      res
+        .status(400)
+        .json({ error: "Request ID, location, and source are required" });
       return;
     }
     locationQuerySchema.parse(req.body);
@@ -94,8 +120,11 @@ export const locationQueryParser = (
   return next();
 };
 
-export const reviewValidator = (
-  req: Request<unknown, unknown, { requestId: string; review: object }>,
+/**
+ * Middleware that parses request body and expects to find a user review request.
+ */
+export const reviewQueryParser = (
+  req: ReviewQuery,
   res: Response,
   next: NextFunction
 ) => {
@@ -108,14 +137,15 @@ export const reviewValidator = (
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       return res.status(400).json({
-        error: err.errors.map(e => ({
+        error: err.errors.map((e) => ({
           message: e.message,
-          path: e.path
-        }))
+          path: e.path,
+        })),
       });
     }
-    
-    const errorMessage = err instanceof Error ? err.message : "Unknown validation error";
+
+    const errorMessage =
+      err instanceof Error ? err.message : "Unknown validation error";
     return res.status(400).json({ errorMessage });
   }
   return next();

@@ -2,10 +2,22 @@
 Älyä-hankkeessa KalusteArvio-projektin palvelin ja tekoälyliittymät
 
 ## Table of Contents
+- [Technologies](#technologies)
 - [Installation](#installation)
 - [API Documentation](#api-documentation)
-- [Testing with Postman](#testing-with-postman)
 - [Docker Instructions](#docker-instructions)
+- [Cache](#cache)
+- [Database](#database)
+
+## Technologies
+
+- TypeScript
+- Node.js
+- Express.js
+- OpenAI API
+- MongoDB
+- Docker
+- Memcached
 
 ## Installation
 
@@ -36,97 +48,49 @@ npm run start
 ## API Documentation
 
 ### Roadmap
-1. Send the image to /api/image 🠊 2. If the properties of the received result object have incorrect values, fix them. Send the object as furnitureDetails to /api/price 🠊 3. Send requestId, user's location and chat tab to /api/location 🠊 4. Send requestId and question to /api/chat for all further chatbot requests
+1. Send the image to /api/image 🠊 2. If the properties of the received result object have incorrect values, fix them. Send the furnitureDetails object to /api/price 🠊 3. Make a request to /api/location 🠊 4. Send all further user chat questions to /api/chat 🠊 5. After the converstation is done, send a user review to /api/review
 
 ### Route details
 
-| HTTP | Route      | Description | Response |
-| ---- | ---------- | ----------- | -------- |
-| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value. | The response is a JSON object containing the furniture details |
-> Response example:
-```json
-{
-      "type": "Sofa",
-      "brand": "West Elm",
-      "model": "Hamilton",
-      "color": "Gray",
-      "dimensions": {
-        "length": 218,
-        "width": 94,
-        "height": 90
-      },
-      "age": 3,
-      "condition": "Excellent"
-}
-```
+| HTTP | Route | Description |
+| ---- | ----- | ----------- |
+| GET  | /ping | Send a request to validate the server is running |
 
+| HTTP | Route      | Description |
+| ---- | ---------- | ----------- |
+| POST | /api/image | Send an image in raw binary format using HTML multipart/form-data. Key must be "image" and the image itself as value to recieve an analysis of the furniture |
 
-| HTTP | Route      | Description | Response |
-| ---- | ---------- | ----------- | -------- |
-| POST | /api/price | Send furniture details as JSON. The key is "furnitureDetails" for the JSON object. | The response is a JSON object containing the price estimates and places to sell furniture.|
-> Response example:
-```json
-{
-    "message": "Price estimate was analyzed",
-    "result": {
-        "korkein_hinta": 150,
-        "alin_hinta": 100,
-        "myyntikanavat": [
-            "Tori",
-            "Mjuk",
-            "Huuto.net"
-        ]
-    }
-}
-```
+| HTTP | Route      | Description |
+| ---- | ---------- | ----------- |
+| POST | /api/price | Send furniture details in the request body to receive price estimates |
 
-| HTTP | Route | Description | Response |
-| ---- | ----- | ----------- | -------- |
-| POST | /api/chat | Send a request to /api/image, then copy id from the response. Then send a request to /api/price with the copied id in the request body. After that send a JSON object to this route with the request body containing requestId and question as strings. | The response is a JSON object containing the answer to sent question. |
-> Response example:
-```json
-{
-    "answer": "Kun myyt kalustetta verkossa, huomioi hyvä tuotekuvaus, jossa kerrot selkeästi merkin, mitat, materiaalit, kunnon ja värin. Käytä laadukkaita kuvia eri kulmista. Aseta kilpailukykyinen hinta perustuen kuntoon ja markkinahintoihin. Valitse sopiva myyntikanava, kuten Tori tai Mjuk, ja varmista turvallinen maksutapa. Ole rehellinen ja vastaa ostajien kysymyksiin nopeasti."
-}
-```
+| HTTP | Route | Description |
+| ---- | ----- | ----------- |
+| POST | /api/chat | Send an open question regarding the piece of furniture and the AI will answer it to the best of its abilities |
 
-| HTTP | Route | Description | Response |
-| ---- | ----- | ----------- | ---------|
-| POST | /api/location | Send an an object with "requestId", "location" (eg. "Kamppi, Helsinki") and "source" ("donation" or "recycle" or "repair") | The response is a JSON object containing information about various stores in the given location that can help the user donate/recycle/repair their furniture |
-> Response example:
+| HTTP | Route | Description |
+| ---- | ----- | ----------- |
+| POST | /api/location | Send the user location and a single source, either "donation" or "recycle" or "repair", and the AI will find locations where the user can perform the given activity to the piece of furniture |
 
-```json
-{
-    "result": "Helsingin Kamppi-alueella ja sen läheisyydessä on useita paikkoja, joissa voit kierrättää huonekaluja. Tässä on muutamia ehdotuksia:\n\n1. **Kierrätyskeskus**: Helsingin seudun       ympäristöpalvelut (HSY) tarjoaa kierrätyskeskusten palveluita, joissa voit viedä käytettyjä huonekaluja. Lähin sijaitsee Kalasatamassa, hieman matkan päässä Kampista.\n\n2. **Fida Lähetystori**: Fidan myymälöihin voi lahjoittaa käytettyjä huonekaluja. Kampista lyhyen matkan päässä on Fida Itäkeskuksessa.\n\n3. **Uff**: Vaikka UFF keskittyy pääasiassa vaatekierrätykseen, kannattaa tarkistaa heidän verkkosivuiltaan, ottavatko he vastaan pieniä huonekaluja tai muuta kuin vaatteita.\n\n4. **Kontti (Punainen Risti)**: Kontti-kierrätystavaratalot vastaanottavat lahjoituksina huonekaluja sekä kodin tavaroita. Lähin Kontti löytyy Vantaalta, mutta se on helposti saavutettavissa julkisilla liikennevälineillä.\n\n5. **Tori.fi tai Facebook Marketplace**: Nämä eivät ole fyysisiä paikkoja, mutta niiden kautta voit myydä tai lahjoittaa huonekaluja paikallisesti, ja ne voivat usein löytää uuden kodin nopeasti.\n\n6. **Helsingin kaupungin sorttiasemat**: Joissakin sorttiasemissa voit jättää käyttökelpoisia huonekaluja uudelleen käytettäväksi. Lähin sijaitsee Konalassa.\n\nEnnen kuin viet huonekalun kierrätykseen, kannattaa tarkistaa kyseisen paikan lahjoitusehdot tai ottaa yhteyttä ja varmistaa, että he vastaanottavat kyseisiä tavaroita."
-}
-```
+| HTTP | Route | Description |
+| ---- | ----- | ----------- |
+| POST | /api/review | Send a review that includes a rating (between 1 and 5) and an optional comment. Prior to using this route, you must have sent a request to the `/api/chat` |
 
-| HTTP | Route | Description | Response |
-| ---- | ----- | ----------- | ---------|
-| POST | /api/review | Send a request containing `request_id` and `review` as an object. The `review` object should include a `rating` (between 1 and 5) and an optional `comment`. Prior to using this route, you must have sent a request to the `/api/chat` route with the same `request_id`. | A message indicating whether the review was successfully logged or not. |
-> Response example:
+### Requests and Responses
 
-```json
-{
-    "message": "Review logged successfully"
-}
-```
-
-## Testing with Postman
-
-### /api/image
+> #### /api/image
 ![api_image_postman](./screenshots/api_image_postman.PNG)
 
-### /api/price
+> #### /api/price
 ![api_price_postman](./screenshots/api_price_postman.PNG)
 
-### /api/chat
+> #### /api/chat
 ![api_chat_postman](./screenshots/api_chat_postman.PNG)
 
-### /api/location
+> #### /api/location
 ![api_location_postman](./screenshots/api_location_postman.PNG)
 
-### /api/review
+> #### /api/review
 ![api_review_postman](./screenshots/api_review_postman.PNG)
 
 
@@ -189,7 +153,20 @@ To stop the running Memcached container, use the following command:
 ```sh
 docker-compose -f docker-compose-local-cache.yml down
 ```
+## Cache
 
+We use [Memcached](https://memcached.org/) for caching in development.
+
+### Key Features
+- Caches furniture price data using `brand+model` as key
+- 24 hour cache expiration
+- Checks cache before new price scrapes
+- Cache clears on server restart
+
+### Setup
+- Follow Docker Instructions to setup Memcached.
+
+Note: Caching is currently disabled in production.
 
 ## Database
 

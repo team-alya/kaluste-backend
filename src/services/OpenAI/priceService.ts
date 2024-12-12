@@ -1,15 +1,18 @@
 import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
-import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
 import { priceAnalysisSchema } from "../../utils/schemas";
 import getAvgPricesPerCondition from "../Tori/toriScraper";
 import { createPricePrompt } from "../../prompts/prompts";
+import conversationHistory from "../../context/conversations";
 
+/**
+ * Analyze price of the furniture.
+ */
 const analyzePrice = async (
   furnitureDetails: FurnitureDetails
 ): Promise<PriceAnalysisResponse | { error: string }> => {
-  const context =
-    imageServiceOpenAI.conversationHistory[furnitureDetails.requestId];
+  const context = conversationHistory[furnitureDetails.requestId];
+  const requestId = furnitureDetails.requestId;
 
   context.furnitureDetails = furnitureDetails;
 
@@ -65,14 +68,21 @@ const analyzePrice = async (
     const parsedResponse = priceAnalysisSchema.parse(
       JSON.parse(responseContent)
     );
-    context.price = parsedResponse;
+    const priceAnalysisResponseWithId: PriceAnalysisResponse = {
+      requestId,
+      korkein_hinta: parsedResponse.korkein_hinta,
+      alin_hinta: parsedResponse.alin_hinta,
+      myyntikanavat: parsedResponse.myyntikanavat,
+      tori_hinnat: parsedResponse.tori_hinnat,
+    };
+    context.price = priceAnalysisResponseWithId;
 
     context.messages.push({
       role: "assistant",
       content: responseContent,
     });
 
-    return parsedResponse;
+    return priceAnalysisResponseWithId;
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };

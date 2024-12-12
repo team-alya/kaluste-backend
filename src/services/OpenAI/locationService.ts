@@ -1,5 +1,4 @@
 import { FurnitureDetails, LocationQuery } from "../../utils/types";
-import imageServiceOpenAI from "./imageService";
 import openai from "../../configs/openai";
 import { ChatCompletionMessageParam } from "openai/resources";
 import {
@@ -7,9 +6,10 @@ import {
   createRecyclePrompt,
   createRepairPrompt,
 } from "../../prompts/prompts";
+import conversationHistory from "../../context/conversations";
 
 const createPrompt = (
-  data: LocationQuery,
+  data: LocationQuery["body"],
   furnitureDetails: FurnitureDetails
 ) => {
   let prompt: string | null;
@@ -30,8 +30,11 @@ const createPrompt = (
   return prompt;
 };
 
-const analyzeLocation = async (data: LocationQuery) => {
-  const context = imageServiceOpenAI.conversationHistory[data.requestId];
+/**
+ * Analyze given user location and return places that match.
+ */
+const analyzeLocation = async (data: LocationQuery["body"]) => {
+  const context = conversationHistory[data.requestId];
   const prompt = createPrompt(data, context.furnitureDetails!);
   if (!prompt) {
     throw new Error("During during location prompt creation");

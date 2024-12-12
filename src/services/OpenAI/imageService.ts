@@ -2,22 +2,23 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { resizeImage } from "../../utils/resizeImage";
 import { furnitureDetailsSchema } from "../../utils/schemas";
 import openai from "../../configs/openai";
-import { ConversationHistory, FurnitureDetails } from "../../utils/types";
+import { FurnitureDetails } from "../../utils/types";
 import { v4 as uuidv4 } from "uuid";
 import { CONVERSATION_TIMEOUT_MS } from "../../utils/constants";
 import { cleanupConversationHistory } from "../../utils/clearContext";
 import { createImagePrompt } from "../../prompts/prompts";
+import conversationHistory from "../../context/conversations";
 
-const conversationHistory: ConversationHistory = {};
-
-// Function to analyze the provided image using OpenAI's GPT model, extracting furniture details
+/**
+ * Analyze a given image to extract the furniture's details
+ */
 const analyzeImage = async (
   imagePath: Buffer
 ): Promise<FurnitureDetails | { error: string }> => {
   try {
     const requestId = uuidv4();
 
-    const prompt = createImagePrompt(requestId);
+    const prompt = createImagePrompt();
 
     const optimizedBase64Img = await resizeImage(imagePath);
 
@@ -69,8 +70,17 @@ const analyzeImage = async (
     }
 
     const furnitureAnalysis = furnitureDetailsSchema.parse(jsonfiedMessage);
+    const furnitureDetailsWithId: FurnitureDetails = {
+      requestId,
+      merkki: furnitureAnalysis.merkki,
+      malli: furnitureAnalysis.malli,
+      väri: furnitureAnalysis.väri,
+      mitat: furnitureAnalysis.mitat,
+      materiaalit: furnitureAnalysis.materiaalit,
+      kunto: furnitureAnalysis.kunto,
+    };
 
-    return furnitureAnalysis;
+    return furnitureDetailsWithId;
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
@@ -85,4 +95,4 @@ setInterval(
   CONVERSATION_TIMEOUT_MS
 );
 
-export default { analyzeImage, conversationHistory };
+export default { analyzeImage };
