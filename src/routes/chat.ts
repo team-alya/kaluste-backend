@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import askQuestion from "../services/OpenAI/chatService";
-import { userQueryValidator } from "../utils/middleware";
+import { userQueryParser } from "../utils/middleware";
 import { chatLogger } from "../services/Log/logger";
+import { UserQuery } from "../utils/types";
 
 const router = express.Router();
 
-router.post("/", userQueryValidator, async (req: Request, res: Response) => {
+router.post("/", userQueryParser, async (req: UserQuery, res: Response) => {
   const { requestId, question } = req.body;
 
   try {
     await chatLogger(requestId, {
       role: "user",
-      content: question
+      content: question,
     });
     const answer = await askQuestion(requestId, question);
 
@@ -22,7 +23,7 @@ router.post("/", userQueryValidator, async (req: Request, res: Response) => {
 
     await chatLogger(requestId, {
       role: "assistant",
-      content: answer.answer
+      content: answer.answer,
     });
     return res.status(200).json(answer);
   } catch (error: unknown) {

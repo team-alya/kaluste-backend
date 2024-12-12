@@ -11,9 +11,7 @@ router.post(
   imageValidator,
   async (req: Request, res: Response) => {
     try {
-      const analysisResult = await imageService.analyzeImage(
-        req.file!.buffer
-      );
+      const analysisResult = await imageService.analyzeImage(req.file!.buffer);
 
       return res
         .status(200)

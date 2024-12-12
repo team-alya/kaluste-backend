@@ -1,7 +1,9 @@
 import dedent from "dedent";
 import { FurnitureDetails, ToriPrices, UserConversation } from "../utils/types";
 
-// chatService prompt
+/**
+ * Creates a prompt for the chat service.
+ */
 export const createChatPrompt = (context: UserConversation, question: string) =>
   dedent`
     Tässä on tiedot käyttäjän huonekalusta ja hinta-analyysin tuloksista:
@@ -10,7 +12,9 @@ export const createChatPrompt = (context: UserConversation, question: string) =>
     Merkki: ${context.furnitureDetails!.merkki}
     Malli: ${context.furnitureDetails!.malli}
     Väri: ${context.furnitureDetails!.väri}
-    Mitat: ${context.furnitureDetails!.mitat.pituus}x${context.furnitureDetails!.mitat.leveys}x${context.furnitureDetails!.mitat.korkeus} cm
+    Mitat: ${context.furnitureDetails!.mitat.pituus}x${
+    context.furnitureDetails!.mitat.leveys
+  }x${context.furnitureDetails!.mitat.korkeus} cm
     Materiaalit: ${context.furnitureDetails!.materiaalit}
     Kunto: ${context.furnitureDetails!.kunto}
         
@@ -24,11 +28,12 @@ export const createChatPrompt = (context: UserConversation, question: string) =>
     Anna vastaus merkkijonona ilman muotoiluja. 
 `;
 
-// imageService prompt
-export const createImagePrompt = (requestId: string) => dedent` 
+/**
+ * Creates a prompt for the image analysis service.
+ */
+export const createImagePrompt = () => dedent` 
  Analysoi kuvassa näkyvä huonekalu ja anna seuraavat tiedot:
 
-    - id: ${requestId}
     - merkki: Huonekalun valmistaja tai suunnittelija (esim. "Ikea", "Artek"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - malli: Spesifi mallinimi tai -numero (esim. "Eames Lounge Chair", "Poäng"). Jos ei tunnistettavissa, palauta "Tuntematon"
     - väri: Huonekalun pääväri tai selkein näkyvä väri (esim. "musta", "beige")
@@ -49,7 +54,9 @@ export const createImagePrompt = (requestId: string) => dedent`
 
 `;
 
-// locationService donation prompt
+/**
+ * Creates a dontation prompt for the location service.
+ */
 export const createDonationPrompt = (
   furnitureDetails: FurnitureDetails,
   location: string
@@ -72,7 +79,9 @@ export const createDonationPrompt = (
   return null;
 };
 
-// locationService recycle prompt
+/**
+ * Creates a recycle prompt for the location service.
+ */
 export const createRecyclePrompt = (
   furnitureDetails: FurnitureDetails,
   location: string
@@ -95,7 +104,9 @@ export const createRecyclePrompt = (
   return null;
 };
 
-// locationService repair prompt
+/**
+ * Creates a repair prompt for the location service.
+ */
 export const createRepairPrompt = (
   furnitureDetails: FurnitureDetails,
   location: string
@@ -119,13 +130,14 @@ export const createRepairPrompt = (
 };
 
 // TODO: Add error field to prompt to be displayed when Tori.fi prices aren't found
-// priceService prompt
+/**
+ * Creates a prompt for the price service.
+ */
 export const createPricePrompt = (
   furnitureDetails: FurnitureDetails,
   toriPrices: ToriPrices
 ) => dedent`
   # HUONEKALUN HINTA-ARVIOPYYNTÖ 
-  requestId: ${furnitureDetails.requestId}
 
   ## HUONEKALUN TIEDOT
   - Valmistaja: ${furnitureDetails.merkki}
@@ -148,7 +160,6 @@ export const createPricePrompt = (
   2. Anna hinta-arvio huonekalulle käytettyjen tavaroiden markkinoilla annetun kuvauksen ja kuvan perusteella. Kyseessä olevat käytettyjen tavaroiden markkinat sijaitsevat Suomessa.
   3. Vastauksen muodon tulee olla: 
   {
-    "requestId": "${furnitureDetails.requestId}",
     "korkein_hinta": <korkein hinta euroina>,
     "alin_hinta": <alin hinta euroina>,
     "myyntikanavat": <lista myyntikanavista>

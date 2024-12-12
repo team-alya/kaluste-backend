@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import { reviewLogger } from "../services/Log/logger";
-import { reviewValidator } from "../utils/middleware";
+import { reviewQueryParser } from "../utils/middleware";
+import { ReviewQuery } from "../utils/types";
 
 const router = express.Router();
 
-router.post("/", reviewValidator, async (req: Request, res: Response) => {
+router.post("/", reviewQueryParser, async (req: ReviewQuery, res: Response) => {
   const { requestId, review } = req.body;
 
   try {
