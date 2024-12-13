@@ -9,7 +9,7 @@ import conversationHistory from "../../context/conversations";
  * Analyze price of the furniture.
  */
 const analyzePrice = async (
-  furnitureDetails: FurnitureDetails
+  furnitureDetails: FurnitureDetails,
 ): Promise<PriceAnalysisResponse | { error: string }> => {
   const context = conversationHistory[furnitureDetails.requestId];
   const requestId = furnitureDetails.requestId;
@@ -24,7 +24,7 @@ const analyzePrice = async (
 
   const toriPrices = await getAvgPricesPerCondition(
     furnitureDetails.merkki,
-    furnitureDetails.malli
+    furnitureDetails.malli,
   );
 
   const prompt = !("error" in toriPrices)
@@ -66,7 +66,7 @@ const analyzePrice = async (
     }
 
     const parsedResponse = priceAnalysisSchema.parse(
-      JSON.parse(responseContent)
+      JSON.parse(responseContent),
     );
     const priceAnalysisResponseWithId: PriceAnalysisResponse = {
       requestId,

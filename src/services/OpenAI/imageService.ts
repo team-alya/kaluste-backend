@@ -13,7 +13,7 @@ import conversationHistory from "../../context/conversations";
  * Analyze a given image to extract the furniture's details
  */
 const analyzeImage = async (
-  imagePath: Buffer
+  imagePath: Buffer,
 ): Promise<FurnitureDetails | { error: string }> => {
   try {
     const requestId = uuidv4();
@@ -50,7 +50,7 @@ const analyzeImage = async (
       messages: conversationHistory[requestId].messages,
       response_format: zodResponseFormat(
         furnitureDetailsSchema,
-        "furniture_analysis"
+        "furniture_analysis",
       ),
     });
 
@@ -92,7 +92,7 @@ const analyzeImage = async (
 
 setInterval(
   () => cleanupConversationHistory(conversationHistory),
-  CONVERSATION_TIMEOUT_MS
+  CONVERSATION_TIMEOUT_MS,
 );
 
 export default { analyzeImage };

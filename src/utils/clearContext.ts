@@ -5,7 +5,7 @@ import { CONVERSATION_TIMEOUT_MS } from "./constants";
  * Remove conversations from in-memory that are no longer needed.
  */
 export const cleanupConversationHistory = (
-  conversationHistory: ConversationHistory
+  conversationHistory: ConversationHistory,
 ) => {
   try {
     if (!conversationHistory) {
@@ -28,7 +28,7 @@ export const cleanupConversationHistory = (
       Object.entries(conversationHistory).map(([id, entry]) => ({
         id: id.slice(0, 8),
         age: Math.round((now - entry.timestamp) / 1000 / 60) + " minutes",
-      }))
+      })),
     );
 
     let deletedCount = 0;
@@ -43,7 +43,7 @@ export const cleanupConversationHistory = (
     console.log("--- Context Cleanup Completed ---");
     console.log(`Deleted ${deletedCount} conversations`);
     console.log(
-      `Remaining conversations: ${Object.keys(conversationHistory).length}`
+      `Remaining conversations: ${Object.keys(conversationHistory).length}`,
     );
   } catch (error) {
     console.error("Error during conversation cleanup", error);

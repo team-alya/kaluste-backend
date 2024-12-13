@@ -2,7 +2,7 @@ services:
   memcached:
     image: memcached:latest
     container_name: memcached_container
-    ports: 
+    ports:
       - "${MEMCACHED_PORT}:${MEMCACHED_PORT}"
     networks:
       - kaluste-network

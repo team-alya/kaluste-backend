@@ -10,7 +10,7 @@ import { ToriPrices } from "../../utils/types";
  * and then add "&page=<pagenumber>" to the link
  */
 const fetchProductPages = async (
-  link: string
+  link: string,
 ): Promise<string[] | { error: string }> => {
   try {
     const response = await axios.get<string>(link);
@@ -35,7 +35,7 @@ const fetchProductPages = async (
 };
 
 const fetchProductDetails = async (
-  links: string[]
+  links: string[],
 ): Promise<Map<string, number[]> | []> => {
   const hash = new Map<string, number[]>();
   try {
@@ -43,7 +43,7 @@ const fetchProductDetails = async (
       const response = await axios.get<string>(link);
       const $ = cheerio.load(response.data);
       const condition = $(
-        'section[aria-label="Lisätietoja"] p:contains("Kunto") b'
+        'section[aria-label="Lisätietoja"] p:contains("Kunto") b',
       ).text();
       let priceText = "";
       // Product pages can have different structures, so we need to check multiple elements to find the price
@@ -105,7 +105,7 @@ const calcAvgPerCondition = (hash: Map<string, number[]>): ToriPrices => {
  */
 const getAvgPricesPerCondition = async (
   brand: string,
-  model: string
+  model: string,
 ): Promise<ToriPrices | { error: string }> => {
   try {
     brand = brand.toLowerCase();

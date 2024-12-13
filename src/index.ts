@@ -1,13 +1,13 @@
-import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
-import imageRouter from "./routes/image";
-import priceRouter from "./routes/price";
+import express, { Request, Response } from "express";
+import mongoose from "mongoose";
 import chatRouter from "./routes/chat";
+import imageRouter from "./routes/image";
 import locationRouter from "./routes/location";
+import priceRouter from "./routes/price";
 import reviewRouter from "./routes/review";
 import { MONGODB_URI, OPENAI_API_KEY, PORT } from "./utils/constants";
-import mongoose from "mongoose";
 
 if (!OPENAI_API_KEY) {
   throw new Error("OPENAI_API_KEY is not set in the environment variables");

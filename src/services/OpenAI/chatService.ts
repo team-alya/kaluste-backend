@@ -9,7 +9,7 @@ import conversationHistory from "../../context/conversations";
  */
 const askQuestion = async (
   requestId: string,
-  question: string
+  question: string,
 ): Promise<ChatResponse | { error: string }> => {
   // Retrieve the stored context for the specific furniture analysis
   const context = conversationHistory[requestId];

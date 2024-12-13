@@ -26,7 +26,7 @@ export const imageUploadHandler = () => {
 export const imageValidator = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     if (!req.file) {
@@ -51,7 +51,7 @@ export const imageValidator = (
 export const furnitureDetailsParser = (
   req: FurnitureDetailsRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     if (!req.body.furnitureDetails) {
@@ -73,7 +73,7 @@ export const furnitureDetailsParser = (
 export const userQueryParser = (
   req: UserQuery,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { requestId, question } = req.body;
@@ -102,7 +102,7 @@ export const userQueryParser = (
 export const locationQueryParser = (
   req: LocationQuery,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     if (!req.body) {
@@ -126,7 +126,7 @@ export const locationQueryParser = (
 export const reviewQueryParser = (
   req: ReviewQuery,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     if (!req.body) {

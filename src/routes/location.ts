@@ -18,7 +18,7 @@ router.post(
         return res.status(500).json({ error: error.message });
     }
     return;
-  }
+  },
 );
 
 export default router;

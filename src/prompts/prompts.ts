@@ -13,8 +13,8 @@ export const createChatPrompt = (context: UserConversation, question: string) =>
     Malli: ${context.furnitureDetails!.malli}
     Väri: ${context.furnitureDetails!.väri}
     Mitat: ${context.furnitureDetails!.mitat.pituus}x${
-    context.furnitureDetails!.mitat.leveys
-  }x${context.furnitureDetails!.mitat.korkeus} cm
+      context.furnitureDetails!.mitat.leveys
+    }x${context.furnitureDetails!.mitat.korkeus} cm
     Materiaalit: ${context.furnitureDetails!.materiaalit}
     Kunto: ${context.furnitureDetails!.kunto}
         
@@ -59,7 +59,7 @@ export const createImagePrompt = () => dedent`
  */
 export const createDonationPrompt = (
   furnitureDetails: FurnitureDetails,
-  location: string
+  location: string,
 ) => {
   if (furnitureDetails) {
     return dedent`
@@ -84,7 +84,7 @@ export const createDonationPrompt = (
  */
 export const createRecyclePrompt = (
   furnitureDetails: FurnitureDetails,
-  location: string
+  location: string,
 ) => {
   if (furnitureDetails) {
     return dedent`
@@ -109,7 +109,7 @@ export const createRecyclePrompt = (
  */
 export const createRepairPrompt = (
   furnitureDetails: FurnitureDetails,
-  location: string
+  location: string,
 ) => {
   if (furnitureDetails) {
     return dedent`
@@ -135,7 +135,7 @@ export const createRepairPrompt = (
  */
 export const createPricePrompt = (
   furnitureDetails: FurnitureDetails,
-  toriPrices: ToriPrices
+  toriPrices: ToriPrices,
 ) => dedent`
   # HUONEKALUN HINTA-ARVIOPYYNTÖ 
 
@@ -144,8 +144,8 @@ export const createPricePrompt = (
   - Malli: ${furnitureDetails.malli}
   - Väri: ${furnitureDetails.väri}
   - Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${
-  furnitureDetails.mitat.korkeus
-} cm
+    furnitureDetails.mitat.korkeus
+  } cm
   - Materiaalit: ${furnitureDetails.materiaalit}
   - Kunto: ${furnitureDetails.kunto}
 

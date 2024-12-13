@@ -10,7 +10,7 @@ import conversationHistory from "../../context/conversations";
 
 const createPrompt = (
   data: LocationQuery["body"],
-  furnitureDetails: FurnitureDetails
+  furnitureDetails: FurnitureDetails,
 ) => {
   let prompt: string | null;
   const location = data.location;
