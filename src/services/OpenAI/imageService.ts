@@ -13,23 +13,23 @@ import conversationHistory from "../../context/conversations";
  * Analyze a given image to extract the furniture's details
  */
 const analyzeImage = async (
-  imagePath: Buffer,
+  imagePath: Buffer
 ): Promise<FurnitureDetails | { error: string }> => {
   try {
     const requestId = uuidv4();
-
-    const prompt = createImagePrompt();
-
     const optimizedBase64Img = await resizeImage(imagePath);
 
-    conversationHistory[requestId] = {
-      timestamp: Date.now(),
-      imageUrl: `data:image/jpeg;base64,${optimizedBase64Img}`,
+    // Pyydetään ensin analyysi kuvasta
+    const imageAnalysisResponse = await openai.client.chat.completions.create({
+      model: openai.model,
       messages: [
-        { role: "user", content: prompt },
         {
           role: "user",
           content: [
+            {
+              type: "text",
+              text: createImagePrompt(),
+            },
             {
               type: "image_url",
               image_url: {
@@ -40,47 +40,49 @@ const analyzeImage = async (
           ],
         },
       ],
+      response_format: zodResponseFormat(
+        furnitureDetailsSchema,
+        "furniture_analysis"
+      ),
+    });
+
+    const analysisContent = imageAnalysisResponse.choices[0].message.content;
+    if (!analysisContent) {
+      throw new Error("Analysis content is null");
+    }
+
+    conversationHistory[requestId] = {
+      timestamp: Date.now(),
+      messages: [
+        {
+          role: "user",
+          content: "Käyttäjä lähetti kuvan analysoitavaksi",
+        },
+        {
+          role: "assistant",
+          content: analysisContent,
+        },
+      ],
     };
 
     // Start cleanup function which removes conversations older than 24hrs
     cleanupConversationHistory(conversationHistory);
 
-    const response = await openai.client.chat.completions.create({
-      model: openai.model,
-      messages: conversationHistory[requestId].messages,
-      response_format: zodResponseFormat(
-        furnitureDetailsSchema,
-        "furniture_analysis",
-      ),
-    });
-
-    const messageContent = response.choices[0].message.content;
-
-    if (messageContent === null) {
-      throw new Error("Message content is null");
-    }
-
-    const jsonfiedMessage: unknown = JSON.parse(messageContent);
+    const parsedContent: unknown = JSON.parse(analysisContent);
     if (
-      jsonfiedMessage &&
-      typeof jsonfiedMessage === "object" &&
-      "error" in jsonfiedMessage
+      typeof parsedContent === "object" &&
+      parsedContent &&
+      "error" in parsedContent
     ) {
-      throw new Error(jsonfiedMessage.error as string);
+      throw new Error(parsedContent.error as string);
     }
 
-    const furnitureAnalysis = furnitureDetailsSchema.parse(jsonfiedMessage);
-    const furnitureDetailsWithId: FurnitureDetails = {
-      requestId,
-      merkki: furnitureAnalysis.merkki,
-      malli: furnitureAnalysis.malli,
-      väri: furnitureAnalysis.väri,
-      mitat: furnitureAnalysis.mitat,
-      materiaalit: furnitureAnalysis.materiaalit,
-      kunto: furnitureAnalysis.kunto,
-    };
+    const furnitureAnalysis = furnitureDetailsSchema.parse(parsedContent);
 
-    return furnitureDetailsWithId;
+    return {
+      requestId,
+      ...furnitureAnalysis,
+    };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
@@ -92,7 +94,7 @@ const analyzeImage = async (
 
 setInterval(
   () => cleanupConversationHistory(conversationHistory),
-  CONVERSATION_TIMEOUT_MS,
+  CONVERSATION_TIMEOUT_MS
 );
 
 export default { analyzeImage };
