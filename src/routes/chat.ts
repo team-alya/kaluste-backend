@@ -1,23 +1,25 @@
 import { openai } from "@ai-sdk/openai";
 import { StreamTextResult, streamText } from "ai";
 import express, { Request, Response } from "express";
+import { getSystemPrompt } from "../prompts/system";
 
 const router = express.Router();
 
 router.post("/", (req: Request, res: Response) => {
-  const { messages } = req.body;
+  const { messages, furnitureContext } = req.body;
 
   // Create an AbortController
   const abortController = new AbortController();
   const { signal } = abortController;
 
+  const systemPrompt = getSystemPrompt(furnitureContext);
+
   const result: StreamTextResult<Record<string, never>> = streamText({
-    model: openai("gpt-4-turbo"),
+    model: openai("gpt-4o"),
     messages,
     maxTokens: 1000,
-    temperature: 0.7,
-    system:
-      "Olet avulias assistentti joka neuvoo käytettyn kalusteen myymisessä, lahjoittamisessa, kierrättämisessä ja kunnostamisessa.",
+    temperature: 0.6,
+    system: systemPrompt,
     abortSignal: signal,
   });
 

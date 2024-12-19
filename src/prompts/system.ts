@@ -1,3 +1,5 @@
+import dedent from "dedent";
+
 export const imgAnalyzeSystemMsg = `
 Olet huonekaluasiantuntija, joka erikoistuu huonekalujen tunnistamiseen ja arviointiin. 
   
@@ -46,4 +48,23 @@ Pohjoismaiset valmistajat:
 - Gubi (esim: Beetle Chair, Grand Piano)
 - Hem (esim: Puffy, Hide)
 - Skovby (esim: ruokapöydät, tuolit)
+`;
+
+export const getSystemPrompt = (furnitureContext: any) => dedent`
+  Olet avulias assistentti joka neuvoo käytetyn kalusteen myymisessä, lahjoittamisessa, kierrättämisessä ja kunnostamisessa.
+  ${
+    furnitureContext
+      ? dedent`
+    Käsiteltävän huonekalun tiedot:
+    - Merkki: ${furnitureContext.merkki}
+    - Malli: ${furnitureContext.malli}
+    - Väri: ${furnitureContext["väri"]}
+    - Kunto: ${furnitureContext.kunto}
+    - Materiaalit: ${furnitureContext.materiaalit.join(", ")}
+    - Mitat: ${furnitureContext.mitat.pituus}x${furnitureContext.mitat.leveys}x${furnitureContext.mitat.korkeus} cm
+
+    Käytä näitä tietoja vastauksissasi kun ne ovat relevantteja.
+  `
+      : ""
+  }
 `;
