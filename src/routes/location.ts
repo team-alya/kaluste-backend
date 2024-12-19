@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import exress, { Response } from "express";
+import locationService from "../services/ai/locationService";
 import { locationQueryParser } from "../utils/middleware";
 import { LocationQuery } from "../utils/types";
-import locationService from "../services/OpenAI/locationService";
 
 const router = exress.Router();
 

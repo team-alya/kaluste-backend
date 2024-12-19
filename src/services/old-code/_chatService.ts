@@ -1,8 +1,8 @@
 import openai from "../../configs/openai";
-import { ChatResponse } from "../../utils/types";
-import { chatResponseSchema } from "../../utils/schemas";
-import { createChatPrompt } from "../../prompts/prompts";
 import conversationHistory from "../../context/conversations";
+import { createChatPrompt } from "../../prompts/prompts";
+import { chatResponseSchema } from "../../utils/schemas";
+import { ChatResponse } from "../../utils/types";
 
 /**
  * Ask a question to AI model relating the furniture piece.
@@ -13,8 +13,11 @@ const askQuestion = async (
 ): Promise<ChatResponse | { error: string }> => {
   // Retrieve the stored context for the specific furniture analysis
   const context = conversationHistory[requestId];
+  console.log("context", context);
 
   if (!context) {
+    console.log("No analysis found for this requestId");
+
     return { error: "No analysis found for this requestId" };
   }
 

@@ -1,28 +1,25 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Response } from "express";
-import { furnitureDetailsParser } from "../utils/middleware";
-import analyzePrice from "../services/OpenAI/priceService";
+import generateObjects from "../services/ai/generate-objects";
+import { PriceAnalysisResponse } from "../utils/schemas";
 import { FurnitureDetailsRequest } from "../utils/types";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  furnitureDetailsParser,
-  async (req: FurnitureDetailsRequest, res: Response) => {
-    try {
-      const furnitureDetails = req.body.furnitureDetails;
-      const analysisResult = await analyzePrice(furnitureDetails);
-      res.status(200).json({
-        message: "Price estimate was analyzed",
-        result: analysisResult,
-      });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(500).json({ error: error.message });
-      }
-    }
-  },
-);
+router.post("/", async (req: FurnitureDetailsRequest, res: Response) => {
+  try {
+    const { furnitureDetails } = req.body;
+    console.log("furnitureDetails", furnitureDetails);
+
+    const priceAnalysis: PriceAnalysisResponse =
+      await generateObjects.analyzePrice(furnitureDetails);
+
+    return res.json(priceAnalysis);
+  } catch (error) {
+    console.error("Error:");
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : "Price analysis failed",
+    });
+  }
+});
 
 export default router;

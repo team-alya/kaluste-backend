@@ -1,19 +1,6 @@
-import { ChatCompletionMessageParam } from "openai/resources";
 import { Request } from "express";
-
-export interface FurnitureDetails {
-  requestId: string;
-  merkki: string;
-  malli: string;
-  väri: string;
-  mitat: {
-    pituus: number;
-    leveys: number;
-    korkeus: number;
-  };
-  materiaalit: string[];
-  kunto: string;
-}
+import { ChatCompletionMessageParam } from "openai/resources";
+import { FurnitureDetails } from "./schemas";
 
 export interface PriceAnalysisResponse {
   requestId: string;
@@ -23,13 +10,13 @@ export interface PriceAnalysisResponse {
   tori_hinnat: ToriPrices;
 }
 
+export interface ToriPrices {
+  [key: string]: [number, number];
+}
+
 export interface RepairAnalysisResponse {
   korjaus_ohjeet: string;
   kierrätys_ohjeet: string;
-}
-
-export interface ToriPrices {
-  [key: string]: [number, number];
 }
 
 export interface UserConversation {

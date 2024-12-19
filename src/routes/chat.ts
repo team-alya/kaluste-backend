@@ -1,37 +1,39 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import express, { Response } from "express";
-import askQuestion from "../services/OpenAI/chatService";
-import { userQueryParser } from "../utils/middleware";
-import { chatLogger } from "../services/Log/logger";
-import { UserQuery } from "../utils/types";
+import { openai } from "@ai-sdk/openai";
+import { StreamTextResult, streamText } from "ai";
+import express, { Request, Response } from "express";
 
 const router = express.Router();
 
-router.post("/", userQueryParser, async (req: UserQuery, res: Response) => {
-  const { requestId, question } = req.body;
+router.post("/", (req: Request, res: Response) => {
+  const { messages } = req.body;
+
+  // Create an AbortController
+  const abortController = new AbortController();
+  const { signal } = abortController;
+
+  const result: StreamTextResult<Record<string, never>> = streamText({
+    model: openai("gpt-4-turbo"),
+    messages,
+    maxTokens: 1000,
+    temperature: 0.7,
+    system:
+      "Olet avulias assistentti joka neuvoo käytettyn kalusteen myymisessä, lahjoittamisessa, kierrättämisessä ja kunnostamisessa.",
+    abortSignal: signal,
+  });
 
   try {
-    await chatLogger(requestId, {
-      role: "user",
-      content: question,
+    result.pipeDataStreamToResponse(res, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+      },
     });
-    const answer = await askQuestion(requestId, question);
-
-    if ("error" in answer) {
-      return res.status(500).json(answer);
+  } catch (error) {
+    if (signal.aborted) {
+      console.log("Stream aborted by client");
+      abortController.abort();
+    } else {
+      console.error("Unexpected stream error:", error);
     }
-
-    await chatLogger(requestId, {
-      role: "assistant",
-      content: answer.answer,
-    });
-    return res.status(200).json(answer);
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    return res
-      .status(500)
-      .json({ error: `An unexpected error occurred: ${errorMessage}` });
   }
 });
 

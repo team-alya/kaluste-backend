@@ -1,7 +1,6 @@
 import cors from "cors";
 import "dotenv/config";
 import express, { Request, Response } from "express";
-import mongoose from "mongoose";
 import chatRouter from "./routes/chat";
 import imageRouter from "./routes/image";
 import locationRouter from "./routes/location";
@@ -28,14 +27,14 @@ const allowedOrigins = [
 
 app.use(cors({ origin: allowedOrigins }));
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.log("Error connecting to MongoDB", err);
-  });
+// mongoose
+//   .connect(MONGODB_URI)
+//   .then(() => {
+//     console.log("Connected to MongoDB");
+//   })
+//   .catch((err) => {
+//     console.log("Error connecting to MongoDB", err);
+//   });
 
 app.use(express.json());
 

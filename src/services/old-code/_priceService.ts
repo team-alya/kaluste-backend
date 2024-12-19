@@ -1,9 +1,9 @@
-import { FurnitureDetails, PriceAnalysisResponse } from "../../utils/types";
 import openai from "../../configs/openai";
-import { priceAnalysisSchema } from "../../utils/schemas";
-import getAvgPricesPerCondition from "../Tori/toriScraper";
-import { createPricePrompt } from "../../prompts/prompts";
 import conversationHistory from "../../context/conversations";
+import { createPricePrompt } from "../../prompts/prompts";
+import { FurnitureDetails, priceAnalysisSchema } from "../../utils/schemas";
+import { PriceAnalysisResponse } from "../../utils/types";
+import getAvgPricesPerCondition from "../tori/toriScraper";
 
 /**
  * Analyze price of the furniture.

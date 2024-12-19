@@ -1,12 +1,13 @@
-import { FurnitureDetails, LocationQuery } from "../../utils/types";
-import openai from "../../configs/openai";
 import { ChatCompletionMessageParam } from "openai/resources";
+import openai from "../../configs/openai";
+import conversationHistory from "../../context/conversations";
 import {
   createDonationPrompt,
   createRecyclePrompt,
   createRepairPrompt,
 } from "../../prompts/prompts";
-import conversationHistory from "../../context/conversations";
+import { FurnitureDetails } from "../../utils/schemas";
+import { LocationQuery } from "../../utils/types";
 
 const createPrompt = (
   data: LocationQuery["body"],

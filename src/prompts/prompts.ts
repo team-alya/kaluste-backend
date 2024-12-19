@@ -1,5 +1,6 @@
 import dedent from "dedent";
-import { FurnitureDetails, ToriPrices, UserConversation } from "../utils/types";
+import { FurnitureDetails } from "../utils/schemas";
+import { ToriPrices, UserConversation } from "../utils/types";
 
 /**
  * Creates a prompt for the chat service.

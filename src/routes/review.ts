@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Response } from "express";
-import { reviewLogger } from "../services/Log/logger";
+import { reviewLogger } from "../services/log/logger";
 import { reviewQueryParser } from "../utils/middleware";
 import { ReviewQuery } from "../utils/types";
 
