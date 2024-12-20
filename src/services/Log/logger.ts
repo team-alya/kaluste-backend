@@ -1,5 +1,5 @@
 import Log from "../../models/log";
-import { loggerResponse, ReviewQuery } from "../../utils/types";
+import { loggerResponse, ReviewQuery } from "../../types/middleware";
 
 /**
  * Saves user question and AI answer to the database.

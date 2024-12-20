@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { ToriPrices } from "../../utils/types";
 // import { cacheData, getData } from '../../utils/cache';
 
 /**
@@ -9,6 +8,10 @@ import { ToriPrices } from "../../utils/types";
  * - If needed to fetch more products from the search, the function should be modified to check if there are more pages available
  * and then add "&page=<pagenumber>" to the link
  */
+export interface ToriPrices {
+  [key: string]: [number, number];
+}
+
 const fetchProductPages = async (
   link: string,
 ): Promise<string[] | { error: string }> => {

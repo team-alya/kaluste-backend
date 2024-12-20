@@ -5,7 +5,7 @@ import {
   FurnitureDetails,
   furnitureDetailsSchema,
   priceAnalysisSchema,
-} from "../../utils/schemas";
+} from "../../types/schemas";
 import getAvgPricesPerCondition from "../tori/toriScraper";
 
 const analyzeImage = async (imageBuffer: Buffer) => {
@@ -31,7 +31,6 @@ const analyzeImage = async (imageBuffer: Buffer) => {
         },
       ],
     });
-    console.log("result.object", result.object);
 
     return result.object;
   } catch (error) {
@@ -46,6 +45,7 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
       furnitureDetails.merkki,
       furnitureDetails.malli,
     );
+    console.log("toriPrices", toriPrices);
 
     const result = await generateObject({
       model: openai("gpt-4o-2024-11-20"),

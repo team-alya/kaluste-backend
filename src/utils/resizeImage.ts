@@ -25,7 +25,7 @@ export const resizeImage = async (imagePath: Buffer) => {
 
   // Transform image into JPEG form and optimize its quality
   const optimizedBuffer = await sharpImage
-    .jpeg({ quality: 80, progressive: true })
+    .jpeg({ quality: 100, progressive: true })
     .toBuffer();
 
   const optimizedBase64 = optimizedBuffer.toString("base64");

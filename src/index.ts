@@ -3,7 +3,6 @@ import "dotenv/config";
 import express, { Request, Response } from "express";
 import chatRouter from "./routes/chat";
 import imageRouter from "./routes/image";
-import locationRouter from "./routes/location";
 import priceRouter from "./routes/price";
 import reviewRouter from "./routes/review";
 import { MONGODB_URI, OPENAI_API_KEY, PORT } from "./utils/constants";
@@ -45,7 +44,7 @@ app.get("/ping", (_req: Request, res: Response) => {
 app.use("/api/image", imageRouter);
 app.use("/api/price", priceRouter);
 app.use("/api/chat", chatRouter);
-app.use("/api/location", locationRouter);
+// app.use("/api/location", locationRouter);
 app.use("/api/review", reviewRouter);
 
 app.listen(PORT, () => {

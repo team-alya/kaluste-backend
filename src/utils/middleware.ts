@@ -2,16 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import { ZodError } from "zod";
 import {
-  LocationQuery,
   FurnitureDetailsRequest,
-  UserQuery,
+  LocationQuery,
   ReviewQuery,
-} from "./types";
+  UserQuery,
+} from "../types/middleware";
 import {
   furnitureDetailsSchema,
   locationQuerySchema,
   reviewSchema,
-} from "./schemas";
+} from "../types/schemas";
 
 /**
  * Middleware to extract image from the request.

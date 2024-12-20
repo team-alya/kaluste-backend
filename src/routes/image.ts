@@ -1,12 +1,12 @@
 import express, { Request, Response } from "express";
-import imageService from "../services/ai/generate-objects";
+import { executeImageAnalysis } from "../services/ai/furniture-identifier";
 import { imageUploadHandler } from "../utils/middleware";
 
 const router = express.Router();
 
 router.post("/", imageUploadHandler(), async (req: Request, res: Response) => {
   try {
-    const furnitureData = await imageService.analyzeImage(req.file!.buffer);
+    const furnitureData = await executeImageAnalysis(req.file!.buffer);
 
     const responseData = {
       ...furnitureData,

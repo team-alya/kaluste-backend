@@ -1,7 +1,7 @@
 import express, { Response } from "express";
 import generateObjects from "../services/ai/generate-objects";
-import { PriceAnalysisResponse } from "../utils/schemas";
-import { FurnitureDetailsRequest } from "../utils/types";
+import { FurnitureDetailsRequest } from "../types/common-types";
+import { PriceAnalysisResponse } from "../types/schemas";
 
 const router = express.Router();
 

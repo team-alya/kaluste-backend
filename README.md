@@ -218,3 +218,44 @@ This project uses [MongoDB](https://www.mongodb.com/) as its database solution a
 ### Database Schema
 
 The schema for the database documents is declared in the [log.ts](/src/models/log.ts) file.
+
+## Vision Pipeline
+
+The system uses multiple AI vision models in sequence to identify furniture from images. Below is the flow diagram of the process:
+
+```mermaid
+flowchart TD
+    User([User]) --> FrontendUI[Frontend UI]
+    FrontendUI -->|Upload image| ImageProcess[Image Processing]
+
+    subgraph AsyncVisionPipeline[Asynchronous Vision Pipeline]
+        ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
+
+        subgraph AsyncModels[Vision Models Running in Parallel]
+            direction LR
+            GPT4[GPT-4 Vision]
+            Gemini[Gemini Vision]
+        end
+
+        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand & Model Found?}
+
+        ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
+        ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
+        WaitNext --> ResultCheck
+
+        ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
+    end
+
+    StopAndUse --> EditableForm[Editable Form]
+    CombineResults --> EditableForm
+
+    EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
+    PriceAnalysis --> ResponseUI[Response to User]
+    ResponseUI --> User
+
+    style AsyncVisionPipeline fill:#f0f8ff
+    style AsyncModels fill:#e6ffe6
+    style ResultCheck fill:#fff0f0
+    style EditableForm fill:#90EE90
+    style StopAndUse fill:#98FB98
+```
