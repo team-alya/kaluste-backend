@@ -48,7 +48,7 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
     );
 
     const result = await generateObject({
-      model: openai("gpt-4"),
+      model: openai("gpt-4o-2024-11-20"),
       schema: priceAnalysisSchema,
       temperature: 0,
       messages: [

@@ -8,7 +8,6 @@ const router = express.Router();
 router.post("/", async (req: FurnitureDetailsRequest, res: Response) => {
   try {
     const { furnitureDetails } = req.body;
-    console.log("furnitureDetails", furnitureDetails);
 
     const priceAnalysis: PriceAnalysisResponse =
       await generateObjects.analyzePrice(furnitureDetails);

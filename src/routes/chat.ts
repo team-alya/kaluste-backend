@@ -15,7 +15,7 @@ router.post("/", (req: Request, res: Response) => {
   const systemPrompt = getSystemPrompt(furnitureContext);
 
   const result: StreamTextResult<Record<string, never>> = streamText({
-    model: openai("gpt-4o"),
+    model: openai("gpt-4o-2024-11-20"),
     messages,
     maxTokens: 1000,
     temperature: 0.6,
