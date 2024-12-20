@@ -1,5 +1,7 @@
 # kaluste-backend
 
+⚠️ **WARNING: This documentation is outdated and corresponds to git TAG v1.0. The codebase has evolved significantly since this version. Please refer to the latest code for current implementation details.**
+
 Älyä-hankkeessa KalusteArvio-projektin palvelin ja tekoälyliittymät
 
 ## Table of Contents
@@ -227,33 +229,33 @@ The system uses multiple AI vision models in sequence to identify furniture from
 flowchart TD
     User([User]) --> FrontendUI[Frontend UI]
     FrontendUI -->|Upload image| ImageProcess[Image Processing]
-
-    subgraph AsyncVisionPipeline[Asynchronous Vision Pipeline]
+    
+    subgraph AsyncPipeline[Async Vision Pipeline]
         ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
-
-        subgraph AsyncModels[Vision Models Running in Parallel]
+        
+        subgraph AsyncModels[AI Models Running in Parallel]
             direction LR
             GPT4[GPT-4 Vision]
             Gemini[Gemini Vision]
         end
-
+        
         AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand & Model Found?}
-
+        
         ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
         ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
         WaitNext --> ResultCheck
-
+        
         ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
     end
-
+    
     StopAndUse --> EditableForm[Editable Form]
     CombineResults --> EditableForm
-
+    
     EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
     PriceAnalysis --> ResponseUI[Response to User]
     ResponseUI --> User
 
-    style AsyncVisionPipeline fill:#f0f8ff
+    style AsyncPipeline fill:#f0f8ff
     style AsyncModels fill:#e6ffe6
     style ResultCheck fill:#fff0f0
     style EditableForm fill:#90EE90
