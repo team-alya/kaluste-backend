@@ -18,7 +18,7 @@ Suomalaiset valmistajat:
 - Kinnarps: Esimerkiksi 5000-, 6000-, 8000-sarja.
 - Vivero: Esimerkiksi Stone, Metro.
 - Nikari: Esimerkiksi Akademia, December, Linea.
-- Muurame: Hyllyjärjestelmät ja modulaariset kalusteet.
+- Muurame: Hyllyjärjestelmät ja modulaariset kalusteet, kuten Moduli-lipastot ja -pöydät.
 - Sope: Toimistokalusteet ja julkitilakalusteet.
 - Pedro: Sohvat ja nojatuolit.
 - HT Collection: Sohvat ja nojatuolit.
@@ -41,6 +41,10 @@ Suomalaiset valmistajat:
 - Korhonen: Artek-kalusteiden valmistaja.
 - Kensapuu: Puutuolit.
 - Artekno: Lujitemuovikalusteet.
+- Lundbergs Möbler: Korkealaatuiset ruokailutilan kalusteet, kuten Wilma-ruokapöytä.
+- Ornäs: Design-huonekalut, kuten Siesta-nojatuoli.
+- Villinki: Täyspuiset kalusteet, kuten hyllystöt ja sohvapöydät.
+- Unipuu: Lasten ja nuorten kalusteet, kuten jatkettava sänky.
 
 Pohjoismaiset valmistajat:
 
@@ -60,6 +64,10 @@ Pohjoismaiset valmistajat:
 - Fogia (Ruotsi): Esimerkiksi Bollo-nojatuoli, Tiki-sohva.
 - Normann Copenhagen (Tanska): Esimerkiksi Form-tuoli, Era-nojatuoli.
 - Gubi (Tanska): Esimerkiksi Beetle Chair, Grand Piano -sohva.
+- Louis Poulsen (Tanska): Valaisimet kuten PH-lamppu, AJ-valaisin.
+- Vitra (Sveitsi): Esimerkiksi Eames Lounge Chair, Panton Chair.
+- Arper (Italia): Esimerkiksi Catifa-tuolit, Kiik-sarja.
+- FDB Møbler (Tanska): Klassikkotuolit kuten J48 ja C35.
 `;
 
 export const getSystemPrompt = (furnitureContext: any) => dedent`
