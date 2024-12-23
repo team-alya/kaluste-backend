@@ -1,10 +1,10 @@
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
+import { analyzeImagePromptGPT4o } from "../../../prompts/prompts";
 import { imgAnalyzeSystemMsg } from "../../../prompts/system";
 import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
 import { furnitureDetailsSchema } from "../../../types/schemas";
-
 dotenv.config();
 
 export class GPT4Analyzer implements AIAnalyzer {
@@ -22,7 +22,7 @@ export class GPT4Analyzer implements AIAnalyzer {
             content: [
               {
                 type: "text",
-                text: "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'.",
+                text: analyzeImagePromptGPT4o,
               },
               {
                 type: "image",
@@ -32,8 +32,6 @@ export class GPT4Analyzer implements AIAnalyzer {
           },
         ],
       });
-      console.log("result.object", result.object);
-
       return result.object;
     } catch (error) {
       console.error("Error analyzing image:", error);
@@ -43,15 +41,15 @@ export class GPT4Analyzer implements AIAnalyzer {
 
   // analyze(_imageBuffer: Buffer): Promise<AnalyzerResult> {
   //   return Promise.resolve({
-  //     merkki: "Akademia",
+  //     merkki: "Isku",
   //     malli: "",
-  //     väri: "",
+  //     vari: "musta,punainen",
   //     mitat: {
-  //       pituus: 4,
+  //       pituus: 5,
   //       leveys: 4,
   //       korkeus: 4,
   //     },
-  //     materiaalit: ["puu"],
+  //     materiaalit: ["kivi"],
   //     kunto: "Uusi",
   //   });
   // }

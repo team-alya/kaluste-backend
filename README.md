@@ -229,28 +229,28 @@ The system uses multiple AI vision models in sequence to identify furniture from
 flowchart TD
     User([User]) --> FrontendUI[Frontend UI]
     FrontendUI -->|Upload image| ImageProcess[Image Processing]
-    
+
     subgraph AsyncPipeline[Async Vision Pipeline]
         ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
-        
-        subgraph AsyncModels[AI Models Running in Parallel]
+
+        subgraph AsyncModels[Running in Parallel]
             direction LR
             GPT4[GPT-4 Vision]
             Gemini[Gemini Vision]
         end
-        
+
         AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand & Model Found?}
-        
+
         ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
         ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
         WaitNext --> ResultCheck
-        
+
         ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
     end
-    
+
     StopAndUse --> EditableForm[Editable Form]
     CombineResults --> EditableForm
-    
+
     EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
     PriceAnalysis --> ResponseUI[Response to User]
     ResponseUI --> User

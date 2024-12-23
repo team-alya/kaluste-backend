@@ -1,7 +1,7 @@
 export interface AnalyzerResult {
   merkki: string;
   malli: string;
-  väri: string;
+  vari: string;
   mitat: {
     pituus: number;
     leveys: number;

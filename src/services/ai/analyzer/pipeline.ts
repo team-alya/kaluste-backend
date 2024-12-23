@@ -2,7 +2,7 @@ import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
 
 interface AnalysisResult {
   result: AnalyzerResult;
-  confidence: number; // Luottamusarvo välillä 0-1
+  confidence: number;
   analyzerName: string;
   completionTime: number;
 }
@@ -14,9 +14,6 @@ export class AIAnalysisPipeline {
     this.analyzers = analyzers;
   }
 
-  /**
-   * Tarkistaa onko tulos validi (merkki ja malli tunnistettu)
-   */
   private isValidResult(result: AnalyzerResult): boolean {
     return (
       result.merkki !== "Ei tiedossa" &&
@@ -26,11 +23,6 @@ export class AIAnalysisPipeline {
     );
   }
 
-  /**
-   * Laskee tuloksen luottamusarvon perustuen tunnistettuihin kenttiin
-   * - Merkki ja malli ovat tärkeimmät (0.4 pistettä kummastakin)
-   * - Muut kentät antavat lisäpisteitä (0.05 kustakin)
-   */
   private getResultConfidence(result: AnalyzerResult): number {
     let confidence = 0;
 
@@ -38,7 +30,7 @@ export class AIAnalysisPipeline {
       confidence += 0.4;
     if (result.malli !== "Ei tiedossa" && result.malli !== "")
       confidence += 0.4;
-    if (result.väri !== "Ei tiedossa") confidence += 0.05;
+    if (result.vari !== "Ei tiedossa") confidence += 0.05;
     if (result.materiaalit.length > 0) confidence += 0.05;
     if (result.mitat.pituus > 0) confidence += 0.05;
     if (result.kunto !== "Ei tiedossa") confidence += 0.05;
@@ -47,8 +39,110 @@ export class AIAnalysisPipeline {
   }
 
   /**
+   * Käsittelee yksittäisen arvon kentät (merkki, malli, kunto)
+   */
+  private getSingleValue(
+    results: AnalysisResult[],
+    fieldName: keyof AnalyzerResult,
+  ): string {
+    // Kerää validit arvot
+    const validResults = results
+      .map((r) => r.result[fieldName] as string)
+      .filter((value) => value !== "Ei tiedossa" && value !== "");
+
+    if (validResults.length === 0) return "Ei tiedossa";
+
+    // Laske esiintymiskerrat
+    const counts = validResults.reduce(
+      (acc, value) => {
+        acc[value] = (acc[value] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    // Jos jokin arvo esiintyy vähintään kahdesti, käytä sitä
+    const [mostCommonValue, count] = Object.entries(counts).sort(
+      (a, b) => b[1] - a[1],
+    )[0];
+
+    if (count >= 2) return mostCommonValue;
+
+    // Jos ei konsensusta, ota ensimmäinen validi
+    return validResults[0];
+  }
+
+  /**
+   * Yhdistää pilkulla erotellut arvot (värit)
+   */
+  private combineColorValues(results: AnalysisResult[]): string {
+    const allColors = new Set<string>();
+
+    results.forEach((result) => {
+      if (result.result.vari !== "Ei tiedossa" && result.result.vari !== "") {
+        // Pilkotaan värit ja käsitellään yhdistelmävärit
+        const colors = result.result.vari
+          .toLowerCase()
+          .split(",")
+          .flatMap((color) => {
+            // Pilkotaan "ja" tai "sekä" sanalla yhdistetyt värit
+            const parts = color.split(/\s+(?:ja|sekä)\s+/);
+            return parts.map((p) => p.trim());
+          })
+          .filter((color) => color !== ""); // Poistetaan tyhjät
+
+        colors.forEach((color) => {
+          // Poistetaan duplikaatit normalisoimalla värit
+          const normalizedColor = color
+            .replace(/\s+/g, " ") // Korvataan moninkertaiset välilyönnit yhdellä
+            .trim();
+          if (normalizedColor) {
+            allColors.add(normalizedColor);
+          }
+        });
+      }
+    });
+
+    // Järjestetään värit aakkosjärjestykseen
+    const sortedColors = Array.from(allColors).sort();
+    return sortedColors.length > 0 ? sortedColors.join(", ") : "Ei tiedossa";
+  }
+
+  /**
+   * Yhdistää materiaalit taulukoista
+   */
+  private combineMaterials(results: AnalysisResult[]): string[] {
+    const allMaterials = new Set<string>();
+
+    results.forEach((result) => {
+      result.result.materiaalit
+        .filter((m) => m !== "" && m !== "Ei tiedossa")
+        .forEach((material) => allMaterials.add(material));
+    });
+
+    return Array.from(allMaterials);
+  }
+
+  /**
+   * Valitsee parhaat mitat korkeimman luottamusarvon tuloksesta
+   */
+  private getBestDimensions(results: AnalysisResult[]) {
+    const validResults = results
+      .filter(
+        (r) =>
+          r.result.mitat.pituus > 0 &&
+          r.result.mitat.leveys > 0 &&
+          r.result.mitat.korkeus > 0,
+      )
+      .sort((a, b) => b.confidence - a.confidence);
+
+    return validResults.length > 0
+      ? validResults[0].result.mitat
+      : { pituus: 0, leveys: 0, korkeus: 0 };
+  }
+
+  /**
    * Suorittaa analyysin yhdellä mallilla ja palauttaa tuloksen metatietoineen
-   * Käsittelee virhetilanteet palauttamalla tyhjän tuloksen
    */
   private async analyzeWithModel(
     analyzer: AIAnalyzer,
@@ -63,6 +157,7 @@ export class AIAnalysisPipeline {
       console.log(
         `${analyzer.name} completed with confidence: ${confidence} in ${completionTime}ms`,
       );
+      console.log("result.object", result);
 
       return {
         result,
@@ -81,12 +176,6 @@ export class AIAnalysisPipeline {
     }
   }
 
-  /**
-   * Päämetodi joka suorittaa analyysit rinnakkain ja yhdistää tulokset
-   * 1. Suorittaa kaikki analyysit rinnakkain
-   * 2. Jos löytyy validi tulos, palauttaa sen
-   * 3. Muuten yhdistää parhaat osat kaikista tuloksista
-   */
   async analyze(imageBuffer: Buffer): Promise<{
     result: AnalyzerResult;
     usedAnalyzers: string[];
@@ -96,7 +185,6 @@ export class AIAnalysisPipeline {
       this.analyzeWithModel(analyzer, imageBuffer),
     );
 
-    // Odota kaikkien analyysien valmistumista
     const results: AnalysisResult[] = [];
     const usedAnalyzers: string[] = [];
 
@@ -117,35 +205,36 @@ export class AIAnalysisPipeline {
       }
     }
 
-    // Jos täydellistä tulosta ei löydy, yhdistä parhaat osat eri tuloksista
-    console.log("No valid result found, combining best results");
-    const sortedResults = results.sort((a, b) => b.confidence - a.confidence);
+    console.log("\nYhdistetään tulokset mallien konsensuksen perusteella...");
 
-    const combinedResult = sortedResults.reduce<AnalyzerResult>(
-      (combined, current) => ({
-        merkki:
-          combined.merkki !== "Ei tiedossa" && combined.merkki !== ""
-            ? combined.merkki
-            : current.result.merkki,
-        malli:
-          combined.malli !== "Ei tiedossa" && combined.malli !== ""
-            ? combined.malli
-            : current.result.malli,
-        väri:
-          combined.väri !== "Ei tiedossa" ? combined.väri : current.result.väri,
-        mitat:
-          combined.mitat.pituus > 0 ? combined.mitat : current.result.mitat,
-        materiaalit:
-          combined.materiaalit.length > 0
-            ? combined.materiaalit
-            : current.result.materiaalit,
-        kunto:
-          combined.kunto !== "Ei tiedossa"
-            ? combined.kunto
-            : current.result.kunto,
-      }),
-      this.createEmptyResult(),
-    );
+    // Käsittele yksittäiset arvot
+    const merkki = this.getSingleValue(results, "merkki");
+    // Jos merkki löytyi, yritä löytää malli
+    const malli =
+      merkki !== "Ei tiedossa"
+        ? this.getSingleValue(results, "malli")
+        : "Ei tiedossa";
+    const kunto = this.getSingleValue(results, "kunto");
+
+    // Yhdistä moniosaiset kentät
+    const vari = this.combineColorValues(results);
+    const materiaalit = this.combineMaterials(results);
+    const mitat = this.getBestDimensions(results);
+
+    console.log("Tulokset:");
+    console.log(`merkki: "${merkki}"`);
+    console.log(`malli: "${malli}"`);
+    console.log(`vari: "${vari}"`);
+    console.log(`kunto: "${kunto}"`);
+
+    const combinedResult: AnalyzerResult = {
+      merkki,
+      malli,
+      vari,
+      mitat,
+      materiaalit,
+      kunto,
+    };
 
     return {
       result: combinedResult,
@@ -157,7 +246,7 @@ export class AIAnalysisPipeline {
     return {
       merkki: "Ei tiedossa",
       malli: "Ei tiedossa",
-      väri: "Ei tiedossa",
+      vari: "Ei tiedossa",
       mitat: {
         pituus: 0,
         leveys: 0,

@@ -1,18 +1,20 @@
-import { google } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
 import { analyzeImagePrompt } from "../../../prompts/prompts";
 import { imgAnalyzeSystemMsg } from "../../../prompts/system";
 import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
 import { furnitureDetailsSchema } from "../../../types/schemas";
+
 dotenv.config();
-export class GeminiAnalyzer implements AIAnalyzer {
-  name = "Gemini";
+
+export class ClaudeAnalyzer implements AIAnalyzer {
+  name = "CLAUDE-3-5-SONNET";
+
   async analyze(imageBuffer: Buffer): Promise<AnalyzerResult> {
     try {
       const result = await generateObject({
-        model: google("gemini-2.0-flash-exp"),
-        // model: google("gemini-1.5-pro-latest"),
+        model: anthropic("claude-3-5-sonnet-20240620"),
         schema: furnitureDetailsSchema,
         output: "object",
         system: imgAnalyzeSystemMsg,
@@ -39,19 +41,18 @@ export class GeminiAnalyzer implements AIAnalyzer {
     }
   }
 
-  // async analyze(_imageBuffer: Buffer): Promise<AnalyzerResult> {
-  //   // await sleep(4000);
+  // analyze(_imageBuffer: Buffer): Promise<AnalyzerResult> {
   //   return Promise.resolve({
   //     merkki: "Martella",
   //     malli: "",
-  //     vari: "keltainen",
+  //     vari: "musta,punainen,vihreä",
   //     mitat: {
   //       pituus: 6,
   //       leveys: 6,
   //       korkeus: 6,
   //     },
-  //     materiaalit: ["kivi"],
-  //     kunto: "Uudenveroinen",
+  //     materiaalit: ["puu"],
+  //     kunto: "Uusi",
   //   });
   // }
 }

@@ -1,53 +1,65 @@
 import dedent from "dedent";
 
 export const imgAnalyzeSystemMsg = `
-Olet huonekaluasiantuntija, joka erikoistuu huonekalujen tunnistamiseen ja arviointiin. 
-  
+Olet huonekaluasiantuntija, joka erikoistuu huonekalujen tunnistamiseen ja arviointiin.
+
 Tunnet erityisesti seuraavat valmistajat ja heidän mallistonsa:
-  
+
 Suomalaiset valmistajat:
-- Isku (Toimistokalusteet kuten Step, Matrix; Julkitilakalusteet kuten Still, Mondo)
-- Martela (Toimisto- ja julkitilakalusteet kuten Kilta, Sola, Form, Plus+)
-- Artek (Design-klassikot kuten 69, Domus, Paimio)
-- Asko (esim: Avokas, Ateljee)
-- Lundia (esim: Classic, Fuuga)
-- Hakola (esim: Lazy, Day)
-- Inno (esim: Lab, Aura)
-- EFG (esim: Nova, Evo)
-- Kinnarps (esim: 5000, 6000, 8000-sarja)
-- Vivero (esim: Stone, Metro)
-- Nikari (esim: Akademia, December, Linea)
-- Mobel (esim: ruokailuryhmät, sohvat)
-- Pohjanmaan Kaluste (esim: sohvat, nojatuolit)
-- Junet (esim: sängyt, lipastot)
-- Muurame (esim: hyllyjärjestelmät)
-- Sope (esim: toimistokalusteet)
-- Pedro (esim: sohvat, nojatuolit)
-- HT Collection (esim: sohvat)
-- Lepo Product (esim: nojatuolit, sohvat)
-- Interface (esim: toimistokalusteet)
-- Piiroinen (esim: tuolit, pöydät)
-- Avarte (esim: design-huonekalut)
+
+- Isku: Toimistokalusteet kuten Step, Matrix; julkitilakalusteet kuten Still, Mondo.
+- Martela: Toimisto- ja julkitilakalusteet kuten Kilta, Sola, Form, Plus+.
+- Artek: Design-klassikot kuten 69, Domus, Paimio.
+- Asko: Esimerkiksi Avokas, Ateljee.
+- Lundia: Esimerkiksi Classic, Fuuga.
+- Hakola: Esimerkiksi Lazy, Day.
+- Inno: Esimerkiksi Lab, Aura.
+- EFG: Esimerkiksi Nova, Evo.
+- Kinnarps: Esimerkiksi 5000-, 6000-, 8000-sarja.
+- Vivero: Esimerkiksi Stone, Metro.
+- Nikari: Esimerkiksi Akademia, December, Linea.
+- Muurame: Hyllyjärjestelmät ja modulaariset kalusteet.
+- Sope: Toimistokalusteet ja julkitilakalusteet.
+- Pedro: Sohvat ja nojatuolit.
+- HT Collection: Sohvat ja nojatuolit.
+- Piiroinen: Tuolit ja pöydät.
+- Avarte: Design-huonekalut, erityisesti Yrjö Kukkapuron suunnittelemat.
+- Finsoffat: Esimerkiksi Kaarna-sohva, Aina-vuodesohva.
+- Shapes: Esimerkiksi Sky-sohva, Slim-sohva.
+- Kiteen Huonekalutehdas: Esimerkiksi Notte-sarja.
+- Soft-Kaluste: Esimerkiksi Terra-vuodesohva, Claudia-nahkasohva.
+- BD-Möbel: Nahkakalusteet.
+- Salli Systems: Ergonomiset satulatuolit.
+- Parolan Rottinki: Rottinkikalusteet.
+- Unikulma: Sängyt ja patjat.
+- Treston: Teollisuus- ja työpistekalusteet.
+- Toika: Kangaspuut ja kudontavälineet.
+- Skanno: Design-huonekalut.
+- Niemen Tehtaat: Säilytyskalusteet.
+- Made by Choice: Design-huonekalut.
+- Laitala: Puukalusteet.
+- Korhonen: Artek-kalusteiden valmistaja.
+- Kensapuu: Puutuolit.
+- Artekno: Lujitemuovikalusteet.
 
 Pohjoismaiset valmistajat:
-- IKEA (esim: Poäng, Markus, Billy)
-- Hay (esim: About A Chair, Mags)
-- Muuto (esim: Fiber Chair, Oslo)
-- String (esim: String System)
-- Montana (esim: Montana System)
-- Fritz Hansen (esim: Series 7, Ant Chair)
-- Carl Hansen (esim: Wishbone Chair)
-- Swedese (esim: Lamino)
-- Materia (esim: Neo, Plint)
-- BoConcept (esim: Imola, Carlton)
-- Fredericia (esim: Spanish Chair, J39)
-- &Tradition (esim: Flowerpot, Little Petra)
-- Menu (esim: Afteroom, Harbour)
-- Fogia (esim: Bollo, Tiki)
-- Normann Copenhagen (esim: Form, Era)
-- Gubi (esim: Beetle Chair, Grand Piano)
-- Hem (esim: Puffy, Hide)
-- Skovby (esim: ruokapöydät, tuolit)
+
+- IKEA (Ruotsi): Esimerkiksi Poäng-tuoli, Markus-työtuoli, Billy-kirjahylly.
+- HAY (Tanska): Esimerkiksi About A Chair -sarja, Mags-sohva.
+- Muuto (Tanska): Esimerkiksi Fiber Chair, Oslo-sarja.
+- String (Ruotsi): Esimerkiksi String System -hyllyjärjestelmä.
+- Montana (Tanska): Esimerkiksi Montana System -säilytysjärjestelmä.
+- Fritz Hansen (Tanska): Esimerkiksi Series 7 -tuoli, Ant Chair.
+- Carl Hansen & Søn (Tanska): Esimerkiksi Wishbone Chair.
+- Swedese (Ruotsi): Esimerkiksi Lamino-tuoli.
+- Materia (Ruotsi): Esimerkiksi Neo, Plint.
+- BoConcept (Tanska): Esimerkiksi Imola-tuoli, Carlton-sohva.
+- Fredericia (Tanska): Esimerkiksi Spanish Chair, J39-tuoli.
+- &Tradition (Tanska): Esimerkiksi Flowerpot-valaisin, Little Petra -nojatuoli.
+- Menu (Tanska): Esimerkiksi Afteroom-tuoli, Harbour-sarja.
+- Fogia (Ruotsi): Esimerkiksi Bollo-nojatuoli, Tiki-sohva.
+- Normann Copenhagen (Tanska): Esimerkiksi Form-tuoli, Era-nojatuoli.
+- Gubi (Tanska): Esimerkiksi Beetle Chair, Grand Piano -sohva.
 `;
 
 export const getSystemPrompt = (furnitureContext: any) => dedent`
@@ -58,7 +70,7 @@ export const getSystemPrompt = (furnitureContext: any) => dedent`
     Käsiteltävän huonekalun tiedot:
     - Merkki: ${furnitureContext.merkki}
     - Malli: ${furnitureContext.malli}
-    - Väri: ${furnitureContext["väri"]}
+    - Väri: ${furnitureContext["vari"]}
     - Kunto: ${furnitureContext.kunto}
     - Materiaalit: ${furnitureContext.materiaalit.join(", ")}
     - Mitat: ${furnitureContext.mitat.pituus}x${furnitureContext.mitat.leveys}x${furnitureContext.mitat.korkeus} cm

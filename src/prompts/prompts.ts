@@ -14,7 +14,7 @@ export const createDonationPrompt = (
     Analyysi:
     Merkki: ${furnitureDetails.merkki}
     Malli: ${furnitureDetails.malli}
-    Väri: ${furnitureDetails.väri}
+    Väri: ${furnitureDetails.vari}
     Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
     Materiaalit: ${furnitureDetails.materiaalit}
     Kunto: ${furnitureDetails.kunto}
@@ -39,7 +39,7 @@ export const createRecyclePrompt = (
     Analyysi:
     Merkki: ${furnitureDetails.merkki}
     Malli: ${furnitureDetails.malli}
-    Väri: ${furnitureDetails.väri}
+    Väri: ${furnitureDetails.vari}
     Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
     Materiaalit: ${furnitureDetails.materiaalit}
     Kunto: ${furnitureDetails.kunto}
@@ -64,7 +64,7 @@ export const createRepairPrompt = (
     Analyysi:
     Merkki: ${furnitureDetails.merkki}
     Malli: ${furnitureDetails.malli}
-    Väri: ${furnitureDetails.väri}
+    Väri: ${furnitureDetails.vari}
     Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
     Materiaalit: ${furnitureDetails.materiaalit}
     Kunto: ${furnitureDetails.kunto}
@@ -74,3 +74,10 @@ export const createRepairPrompt = (
   }
   return null;
 };
+
+export const analyzeImagePrompt =
+  "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'. Älä arvaa";
+
+// GPT4o jättää kunnon aina ei tiedossa jos käytämme lopussa "Älä arvaa" ohjetta siksi oma prompt
+export const analyzeImagePromptGPT4o =
+  "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'.";

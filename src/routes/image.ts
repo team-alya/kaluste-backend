@@ -1,12 +1,14 @@
 import express, { Request, Response } from "express";
-import { executeImageAnalysis } from "../services/ai/furniture-identifier";
+import { runImageAnalysisPipeline } from "../services/ai/image-analysis-pipeline";
 import { imageUploadHandler } from "../utils/middleware";
+import { resizeImage } from "../utils/resizeImage";
 
 const router = express.Router();
 
 router.post("/", imageUploadHandler(), async (req: Request, res: Response) => {
   try {
-    const furnitureData = await executeImageAnalysis(req.file!.buffer);
+    const optimizedImage = await resizeImage(req.file!.buffer);
+    const furnitureData = await runImageAnalysisPipeline(optimizedImage.buffer);
 
     const responseData = {
       ...furnitureData,

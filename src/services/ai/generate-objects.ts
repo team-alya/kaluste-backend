@@ -1,43 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
-import { imgAnalyzeSystemMsg } from "../../prompts/system";
-import {
-  FurnitureDetails,
-  furnitureDetailsSchema,
-  priceAnalysisSchema,
-} from "../../types/schemas";
+import { FurnitureDetails, priceAnalysisSchema } from "../../types/schemas";
 import getAvgPricesPerCondition from "../tori/toriScraper";
-
-const analyzeImage = async (imageBuffer: Buffer) => {
-  try {
-    const result = await generateObject({
-      model: openai("gpt-4o"),
-      schema: furnitureDetailsSchema,
-      output: "object",
-      system: imgAnalyzeSystemMsg,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'.",
-            },
-            {
-              type: "image",
-              image: imageBuffer,
-            },
-          ],
-        },
-      ],
-    });
-
-    return result.object;
-  } catch (error) {
-    console.error("Error analyzing image:", error);
-    throw error;
-  }
-};
 
 const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
   try {
@@ -62,7 +26,7 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
             Analysoi tämän huonekalun hinta käytettyjen tavaroiden markkinoilla:
             - Merkki: ${furnitureDetails.merkki}
             - Malli: ${furnitureDetails.malli}
-            - Väri: ${furnitureDetails.väri}
+            - Väri: ${furnitureDetails.vari}
             - Mitat: ${furnitureDetails.mitat.pituus}x${furnitureDetails.mitat.leveys}x${furnitureDetails.mitat.korkeus} cm
             - Materiaalit: ${furnitureDetails.materiaalit.join(", ")}
             - Kunto: ${furnitureDetails.kunto}
@@ -87,6 +51,5 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
 };
 
 export default {
-  analyzeImage,
   analyzePrice,
 };

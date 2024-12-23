@@ -6,6 +6,7 @@ export const kuntoOptions = [
   "Hyvä",
   "Kohtalainen",
   "Huono",
+  "Ei tiedossa",
 ] as const;
 
 export const furnitureDetailsSchema = z.object({
@@ -19,7 +20,7 @@ export const furnitureDetailsSchema = z.object({
     .describe(
       "Huonekalun mallinimi, sarja tai tyylillinen kuvaus. Voi olla tarkka mallisarja (esim. 'Kilta', 'Mondo') tai kuvaileva määritelmä vintage-kalusteelle (esim. 'Teak Dining Chair 1960s', 'Danish Style Lounge Chair', 'Bauhaus Style Office Chair'). Jos mallia ei voi tunnistaa varmuudella, palauta 'Ei tiedossa'.",
     ),
-  väri: z.string(),
+  vari: z.string(),
   mitat: z
     .object({
       pituus: z.number(),
@@ -30,7 +31,7 @@ export const furnitureDetailsSchema = z.object({
   materiaalit: z.array(z.string()),
   kunto: z
     .enum(kuntoOptions)
-    .describe("Huonekalun kuntoarvio. Valitse paras arvio."),
+    .describe("Huonekalun kuntoarvio. Valitse paras arvio listalta."),
 });
 
 export const locationQuerySchema = z.object({
