@@ -68,6 +68,8 @@ Pohjoismaiset valmistajat:
 - Vitra (Sveitsi): Esimerkiksi Eames Lounge Chair, Panton Chair.
 - Arper (Italia): Esimerkiksi Catifa-tuolit, Kiik-sarja.
 - FDB Møbler (Tanska): Klassikkotuolit kuten J48 ja C35.
+- Jysk (Tanska): Edulliset huonekalut ja sisustustuotteet, kuten huonekalusarjat kuten Vedde, Stouby ja Silkeborg.
+
 `;
 
 export const getSystemPrompt = (furnitureContext: any) => dedent`
