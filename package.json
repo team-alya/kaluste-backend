@@ -25,6 +25,7 @@
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.11.0",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
@@ -33,7 +34,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^1.0.6",
     "@ai-sdk/google": "^1.0.12",
-    "@ai-sdk/openai": "^1.0.10",
+    "@ai-sdk/openai": "^1.0.11",
     "@anthropic-ai/sdk": "^0.33.1",
     "ai": "^4.0.20",
     "axios": "^1.7.7",

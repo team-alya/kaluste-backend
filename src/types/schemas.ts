@@ -13,12 +13,12 @@ export const furnitureDetailsSchema = z.object({
   merkki: z
     .string()
     .describe(
-      "Huonekalun valmistajan nimi tai tyylisuunta. Jos kyseessä on vintage-kaluste tai et tunnista tarkkaa valmistajaa, voit kuvailla tyyliä esim. 'Vintage Scandinavian', 'Mid-century Modern', 'Danish Modern', 'Finnish Design 1960s', 'Bauhaus Style'. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'.",
+      "Huonekalun valmistajan nimi tai tyylisuunta. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'.",
     ),
   malli: z
     .string()
     .describe(
-      "Huonekalun mallinimi, sarja tai tyylillinen kuvaus. Voi olla tarkka mallisarja (esim. 'Kilta', 'Mondo') tai kuvaileva määritelmä vintage-kalusteelle (esim. 'Teak Dining Chair 1960s', 'Danish Style Lounge Chair', 'Bauhaus Style Office Chair'). Jos mallia ei voi tunnistaa varmuudella, palauta 'Ei tiedossa'.",
+      "Huonekalun mallinimi, sarja tai tyylillinen kuvaus. Voi olla tarkka mallisarja (esim. 'Kilta', 'Mondo'). Jos mallia ei voi tunnistaa varmuudella, palauta 'Ei tiedossa'.",
     ),
   vari: z.string(),
   mitat: z

@@ -81,3 +81,14 @@ export const analyzeImagePrompt =
 // GPT4o jättää kunnon aina ei tiedossa jos käytämme lopussa "Älä arvaa" ohjetta siksi oma prompt
 export const analyzeImagePromptGPT4o =
   "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'.";
+
+// Jos pipeline ei ole löytänyt vastausta kutsumme vielä kerran GPT4o uusinta mallia tällä promptilla ja pyydämme antamaan parhaan arvionsa huonekalun brändille vähintään
+export const finalAnalyzePromptGPT4o = `Analysoi tämä huonekalu mahdollisimman tarkasti ja palauta valmistajan nimi merkki-kenttään. 
+
+Tämä on viimeinen tunnistusyritys, joten anna aina jokin valmistajan nimi vähintään. Mallia ei tarvitse tunnistaa ellet ole varma, mutta anna paraus arvauksesi jos sinulla on hyvä epäilys - älä palauta "Ei tiedossa" merkille.
+
+Analyysin vaiheet:
+1. Tutki huonekalun muotokieltä, materiaaleja ja yksityiskohtia
+2. Vertaa näitä piirteitä tunnettuihin suomalaisiin ja pohjoismaisiin valmistajiin
+3. Palauta parhaiten sopivan valmistajan nimi
+`;

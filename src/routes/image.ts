@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { finalAnalyze } from "../services/ai/generate-objects";
 import { runImageAnalysisPipeline } from "../services/ai/image-analysis-pipeline";
 import { imageUploadHandler } from "../utils/middleware";
 import { resizeImage } from "../utils/resizeImage";
@@ -8,7 +9,29 @@ const router = express.Router();
 router.post("/", imageUploadHandler(), async (req: Request, res: Response) => {
   try {
     const optimizedImage = await resizeImage(req.file!.buffer);
-    const furnitureData = await runImageAnalysisPipeline(optimizedImage.buffer);
+    let furnitureData = await runImageAnalysisPipeline(optimizedImage.buffer);
+
+    // Jos merkki puuttuu tai on "Ei tiedossa", kutsutaan finalAnalyze
+    if (!furnitureData.merkki || furnitureData.merkki === "Ei tiedossa") {
+      console.log(
+        "Merkki puuttuu, yritetään tunnistaa uudelleen GPT4-vision avulla...",
+      );
+
+      try {
+        const finalResult = await finalAnalyze(optimizedImage.buffer);
+
+        // Päivitetään vain merkki, säilytetään muut tiedot
+        furnitureData = {
+          ...furnitureData,
+          merkki: finalResult.merkki,
+        };
+
+        console.log("Lopullinen merkki tunnistus:", finalResult.merkki);
+      } catch (analyzeError) {
+        console.error("Virhe lopullisessa merkki-analyysissa:", analyzeError);
+        // Jatketaan alkuperäisellä datalla jos finalAnalyze epäonnistuu
+      }
+    }
 
     const responseData = {
       ...furnitureData,

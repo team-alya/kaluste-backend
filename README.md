@@ -239,17 +239,21 @@ flowchart TD
             Gemini[Gemini Vision]
         end
 
-        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand & Model Found?}
+        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand Found?}
 
         ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
         ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
         WaitNext --> ResultCheck
 
         ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
+
+        CombineResults --> CheckBrand{Brand Found?}
+        CheckBrand -->|Yes| EditableForm
+        CheckBrand -->|No| FinalGPT4[GPT-4 Vision<br>Final Attempt]
+        FinalGPT4 --> EditableForm
     end
 
     StopAndUse --> EditableForm[Editable Form]
-    CombineResults --> EditableForm
 
     EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
     PriceAnalysis --> ResponseUI[Response to User]
@@ -260,4 +264,47 @@ flowchart TD
     style ResultCheck fill:#fff0f0
     style EditableForm fill:#90EE90
     style StopAndUse fill:#98FB98
+    style FinalGPT4 fill:#FFB6C1
+    style CheckBrand fill:#fff0f0
 ```
+
+flowchart TD
+User([User]) --> FrontendUI[Frontend UI]
+FrontendUI -->|Upload image| ImageProcess[Image Processing]
+
+    subgraph AsyncPipeline[Async Vision Pipeline]
+        ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
+
+        subgraph AsyncModels[Running in Parallel]
+            direction LR
+            GPT4[GPT-4 Vision]
+            Gemini[Gemini Vision]
+        end
+
+        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand Found?}
+
+        ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
+        ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
+        WaitNext --> ResultCheck
+
+        ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
+
+        CombineResults --> CheckBrand{Brand Found?}
+        CheckBrand -->|Yes| EditableForm
+        CheckBrand -->|No| FinalGPT4[GPT-4 Vision<br>Final Attempt]
+        FinalGPT4 --> EditableForm
+    end
+
+    StopAndUse --> EditableForm[Editable Form]
+
+    EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
+    PriceAnalysis --> ResponseUI[Response to User]
+    ResponseUI --> User
+
+    style AsyncPipeline fill:#f0f8ff
+    style AsyncModels fill:#e6ffe6
+    style ResultCheck fill:#fff0f0
+    style EditableForm fill:#90EE90
+    style StopAndUse fill:#98FB98
+    style FinalGPT4 fill:#FFB6C1
+    style CheckBrand fill:#fff0f0

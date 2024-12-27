@@ -6,11 +6,11 @@ import { pipeline } from "../services/ai/image-analysis-pipeline";
 // Lista testattavista kuvista
 const TEST_IMAGES = [
   "marius.png",
-  "adde_tuoli.png",
-  "martella-axia.png",
-  "seminar-nikari.jpg",
-  "akademia.png",
-  "artek-jakkara.jpg",
+  // "adde_tuoli.png",
+  // "martella-axia.png",
+  // "seminar-nikari.jpg",
+  // "akademia.png",
+  // "artek-jakkara.jpg",
 ] as const;
 
 async function analyzeImage(imageName: string) {
