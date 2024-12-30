@@ -52,7 +52,7 @@ export class ClaudeAnalyzer implements AIAnalyzer {
   //       korkeus: 6,
   //     },
   //     materiaalit: ["puu"],
-  //     kunto: "uusi",
+  //     kunto: "Uusi",
   //   });
   // }
 }

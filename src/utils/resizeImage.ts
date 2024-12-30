@@ -1,4 +1,3 @@
-// utils/imageProcessor.ts
 import sharp from "sharp";
 
 /**

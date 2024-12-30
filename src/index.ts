@@ -2,19 +2,11 @@ import cors from "cors";
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
+import config from "./config/startup-envs";
 import chatRouter from "./routes/chat";
 import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
 import reviewRouter from "./routes/review";
-import { MONGODB_URI, OPENAI_API_KEY, PORT } from "./utils/constants";
-
-if (!OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY is not set in the environment variables");
-}
-
-if (!MONGODB_URI) {
-  throw new Error("MONGODB_URI is not set in the enviromental variables");
-}
 
 const app = express();
 
@@ -29,7 +21,7 @@ const allowedOrigins = [
 app.use(cors({ origin: allowedOrigins }));
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(config.mongodb.uri)
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -49,6 +41,6 @@ app.use("/api/chat", chatRouter);
 // app.use("/api/location", locationRouter);
 app.use("/api/review", reviewRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
 });

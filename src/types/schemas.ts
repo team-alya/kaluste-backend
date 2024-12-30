@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export const kuntoOptions = [
-  "uusi",
-  "erinomainen",
-  "hyvä",
-  "kohtalainen",
-  "huono",
-  "ei tiedossa",
+  "Uusi",
+  "Erinomainen",
+  "Hyvä",
+  "Kohtalainen",
+  "Huono",
+  "Ei tiedossa",
 ] as const;
 
 export const furnitureDetailsSchema = z.object({
@@ -31,7 +31,9 @@ export const furnitureDetailsSchema = z.object({
   materiaalit: z.array(z.string()),
   kunto: z
     .enum(kuntoOptions)
-    .describe("Huonekalun kuntoarvio. Valitse paras arvio listalta."),
+    .describe(
+      "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella.",
+    ),
 });
 
 export const locationQuerySchema = z.object({

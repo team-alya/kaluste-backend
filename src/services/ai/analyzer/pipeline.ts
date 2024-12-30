@@ -156,6 +156,7 @@ export class AIAnalysisPipeline {
       // console.log(`Starting analysis with ${analyzer.name}`);
       const result = await analyzer.analyze(imageBuffer);
       const completionTime = Date.now() - startTime;
+
       const confidence = this.getResultConfidence(result);
       console.log(
         `${analyzer.name} completed with confidence: ${confidence} in ${completionTime}ms`,

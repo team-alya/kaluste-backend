@@ -11,13 +11,13 @@ async function testAnalyzePrice() {
       korkeus: 74,
     },
     materiaalit: ["metalli", "puu"],
-    kunto: "hyvä" as
-      | "hyvä"
-      | "uusi"
-      | "erinomainen"
-      | "kohtalainen"
-      | "huono"
-      | "ei tiedossa",
+    kunto: "Hyvä" as
+      | "Hyvä"
+      | "Uusi"
+      | "Erinomainen"
+      | "Kohtalainen"
+      | "Huono"
+      | "Ei tiedossa",
   };
 
   try {
