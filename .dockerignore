@@ -10,3 +10,6 @@ dist
 logs
 *.log
 *.tsbuildinfo
+README.md
+.vscode
+tests
