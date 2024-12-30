@@ -20,10 +20,11 @@ router.post("/", imageUploadHandler(), async (req: Request, res: Response) => {
       try {
         const finalResult = await finalAnalyze(optimizedImage.buffer);
 
-        // Päivitetään vain merkki, säilytetään muut tiedot
+        // Päivitetään vain merkki ja malli, säilytetään muut tiedot
         furnitureData = {
           ...furnitureData,
           merkki: finalResult.merkki,
+          malli: finalResult.malli,
         };
 
         console.log("Lopullinen merkki tunnistus:", finalResult.merkki);

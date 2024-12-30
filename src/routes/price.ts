@@ -1,20 +1,19 @@
 import express, { Response } from "express";
-import generateObjects from "../services/ai/generate-objects";
+import { PriceAnalysisPipeline } from "../services/ai/price-analysis-pipeline";
 import { FurnitureDetailsRequest } from "../types/common-types";
-import { PriceAnalysisResponse } from "../types/schemas";
 
 const router = express.Router();
 
 router.post("/", async (req: FurnitureDetailsRequest, res: Response) => {
   try {
     const { furnitureDetails } = req.body;
+    const pipeline = new PriceAnalysisPipeline();
+    const { combinedEstimate } = await pipeline.analyzePrices(furnitureDetails);
 
-    const priceAnalysis: PriceAnalysisResponse =
-      await generateObjects.analyzePrice(furnitureDetails);
-
-    return res.json(priceAnalysis);
+    // Palautetaan vain combinedEstimate, joka vastaa frontin odottamaa muotoa
+    return res.json(combinedEstimate);
   } catch (error) {
-    console.error("Error:");
+    console.error("Error:", error);
     return res.status(500).json({
       error: error instanceof Error ? error.message : "Price analysis failed",
     });

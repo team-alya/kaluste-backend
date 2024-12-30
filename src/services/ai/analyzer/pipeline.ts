@@ -109,21 +109,6 @@ export class AIAnalysisPipeline {
   }
 
   /**
-   * Yhdistää materiaalit taulukoista
-   */
-  private combineMaterials(results: AnalysisResult[]): string[] {
-    const allMaterials = new Set<string>();
-
-    results.forEach((result) => {
-      result.result.materiaalit
-        .filter((m) => m !== "" && m !== "Ei tiedossa")
-        .forEach((material) => allMaterials.add(material));
-    });
-
-    return Array.from(allMaterials);
-  }
-
-  /**
    * Valitsee parhaat mitat korkeimman luottamusarvon tuloksesta
    */
   private getBestDimensions(results: AnalysisResult[]) {
@@ -141,6 +126,24 @@ export class AIAnalysisPipeline {
       : { pituus: 0, leveys: 0, korkeus: 0 };
   }
 
+  /*
+   * Käytä GPT-4:n materiaalitietoja, jotta turhaa toistoa ei tule materiaali listaan
+   */
+  private getMaterialsFromGPT4(results: AnalysisResult[]): string[] {
+    // Etsi GPT-4:n tulos
+    const gpt4Result = results.find((r) => r.analyzerName === "GPT4Analyzer");
+
+    // Jos GPT-4 löysi materiaaleja, käytä niitä
+    if (gpt4Result && gpt4Result.result.materiaalit.length > 0) {
+      return gpt4Result.result.materiaalit;
+    }
+
+    // Jos GPT-4 ei löytänyt materiaaleja, käytä ensimmäisen analysoijan materiaaleja
+    const firstWithMaterials = results.find(
+      (r) => r.result.materiaalit.length > 0,
+    );
+    return firstWithMaterials ? firstWithMaterials.result.materiaalit : [];
+  }
   /**
    * Suorittaa analyysin yhdellä mallilla ja palauttaa tuloksen metatietoineen
    */
@@ -150,7 +153,7 @@ export class AIAnalysisPipeline {
   ): Promise<AnalysisResult> {
     try {
       const startTime = Date.now();
-      console.log(`Starting analysis with ${analyzer.name}`);
+      // console.log(`Starting analysis with ${analyzer.name}`);
       const result = await analyzer.analyze(imageBuffer);
       const completionTime = Date.now() - startTime;
       const confidence = this.getResultConfidence(result);
@@ -218,14 +221,14 @@ export class AIAnalysisPipeline {
 
     // Yhdistä moniosaiset kentät
     const vari = this.combineColorValues(results);
-    const materiaalit = this.combineMaterials(results);
+    const materiaalit = this.getMaterialsFromGPT4(results);
     const mitat = this.getBestDimensions(results);
 
-    console.log("Tulokset:");
-    console.log(`merkki: "${merkki}"`);
-    console.log(`malli: "${malli}"`);
-    console.log(`vari: "${vari}"`);
-    console.log(`kunto: "${kunto}"`);
+    // console.log("Tulokset:");
+    // console.log(`merkki: "${merkki}"`);
+    // console.log(`malli: "${malli}"`);
+    // console.log(`vari: "${vari}"`);
+    // console.log(`kunto: "${kunto}"`);
 
     const combinedResult: AnalyzerResult = {
       merkki,

@@ -14,7 +14,7 @@ export class ClaudeAnalyzer implements AIAnalyzer {
   async analyze(imageBuffer: Buffer): Promise<AnalyzerResult> {
     try {
       const result = await generateObject({
-        model: anthropic("claude-3-5-sonnet-20240620"),
+        model: anthropic("claude-3-5-sonnet-latest"),
         schema: furnitureDetailsSchema,
         output: "object",
         system: imgAnalyzeSystemMsg,
@@ -52,7 +52,7 @@ export class ClaudeAnalyzer implements AIAnalyzer {
   //       korkeus: 6,
   //     },
   //     materiaalit: ["puu"],
-  //     kunto: "Uusi",
+  //     kunto: "uusi",
   //   });
   // }
 }

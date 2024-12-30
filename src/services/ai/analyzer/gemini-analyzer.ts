@@ -51,7 +51,7 @@ export class GeminiAnalyzer implements AIAnalyzer {
   //       korkeus: 6,
   //     },
   //     materiaalit: ["kivi"],
-  //     kunto: "Uudenveroinen",
+  //     kunto: "uudenveroinen",
   //   });
   // }
 }

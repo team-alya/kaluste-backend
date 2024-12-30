@@ -35,6 +35,7 @@
     "@ai-sdk/anthropic": "^1.0.6",
     "@ai-sdk/google": "^1.0.12",
     "@ai-sdk/openai": "^1.0.11",
+    "@ai-sdk/openai-compatible": "^0.0.13",
     "@anthropic-ai/sdk": "^0.33.1",
     "ai": "^4.0.20",
     "axios": "^1.7.7",

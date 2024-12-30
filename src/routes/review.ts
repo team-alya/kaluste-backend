@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post("/", reviewQueryParser, async (req: ReviewQuery, res: Response) => {
   const { requestId, review } = req.body;
+  console.log("sendFeedBack", requestId, review);
 
   try {
     const result = await reviewLogger(requestId, review);

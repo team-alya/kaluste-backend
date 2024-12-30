@@ -83,7 +83,7 @@ const analyzePrice = async (furnitureDetails: FurnitureDetails) => {
         },
       ],
     });
-    console.log("result", result);
+    console.log("result", result.object);
     return result.object;
   } catch (error) {
     console.error("Error in price analysis:", error);

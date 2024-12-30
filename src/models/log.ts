@@ -14,14 +14,20 @@ const logSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  review: {
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5,
+  reviews: [
+    {
+      rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      comment: String,
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
     },
-    comment: String,
-  },
+  ],
 });
 
 const Log = mongoose.model("Log", logSchema);

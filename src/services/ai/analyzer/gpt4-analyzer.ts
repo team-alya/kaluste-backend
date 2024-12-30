@@ -50,7 +50,7 @@ export class GPT4Analyzer implements AIAnalyzer {
   //       korkeus: 4,
   //     },
   //     materiaalit: ["kivi"],
-  //     kunto: "Uusi",
+  //     kunto: "uusi",
   //   });
   // }
 }

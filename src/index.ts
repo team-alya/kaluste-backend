@@ -1,6 +1,7 @@
 import cors from "cors";
 import "dotenv/config";
 import express, { Request, Response } from "express";
+import mongoose from "mongoose";
 import chatRouter from "./routes/chat";
 import imageRouter from "./routes/image";
 import priceRouter from "./routes/price";
@@ -19,6 +20,7 @@ const app = express();
 
 const allowedOrigins = [
   "https://kalustebottifrontend-arvolaskuri-demo.2.rahtiapp.fi",
+  "https://arvolaskuri-alyakokeilut.2.rahtiapp.fi/",
   "http://localhost:5173",
   "https://localhost:5173",
   "http://localhost:3000",
@@ -26,14 +28,14 @@ const allowedOrigins = [
 
 app.use(cors({ origin: allowedOrigins }));
 
-// mongoose
-//   .connect(MONGODB_URI)
-//   .then(() => {
-//     console.log("Connected to MongoDB");
-//   })
-//   .catch((err) => {
-//     console.log("Error connecting to MongoDB", err);
-//   });
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.log("Error connecting to MongoDB", err);
+  });
 
 app.use(express.json());
 

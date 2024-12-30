@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export const kuntoOptions = [
-  "Uusi",
-  "Erinomainen",
-  "Hyvä",
-  "Kohtalainen",
-  "Huono",
-  "Ei tiedossa",
+  "uusi",
+  "erinomainen",
+  "hyvä",
+  "kohtalainen",
+  "huono",
+  "ei tiedossa",
 ] as const;
 
 export const furnitureDetailsSchema = z.object({
@@ -57,7 +57,7 @@ export const priceAnalysisSchema = z.object({
     .describe("Alin realistinen myyntihinta euroina"),
   myyntikanavat: z
     .array(z.string())
-    .describe("Lista suositelluista myyntipaikoista"),
+    .describe("Lista suositelluista suomalaisista myyntipaikoista"),
 });
 
 export const chatResponseSchema = z.object({
@@ -76,5 +76,5 @@ export const reviewSchema = z.object({
   }),
 });
 
-export type PriceAnalysisResponse = z.infer<typeof priceAnalysisSchema>;
+export type PriceAnalysis = z.infer<typeof priceAnalysisSchema>;
 export type FurnitureDetails = z.infer<typeof furnitureDetailsSchema>;
