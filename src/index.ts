@@ -1,6 +1,6 @@
 import cors from "cors";
 import "dotenv/config";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import config from "./config/startup-envs";
 import chatRouter from "./routes/chat";
@@ -29,12 +29,27 @@ mongoose
     console.log("Error connecting to MongoDB", err);
   });
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// Globaali timeout asetus
+app.use((req, res, next) => {
+  req.setTimeout(180000); // 3min
+  res.setTimeout(180000); // 3min
+  next();
+});
+
+// Globaali virheenkäsittelijä
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error("Server error:", err);
+  res.status(500).json({
+    error: err.message || "Internal server error",
+  });
+});
 
 app.get("/ping", (_req: Request, res: Response) => {
   res.send("pong");
 });
-
 app.use("/api/image", imageRouter);
 app.use("/api/price", priceRouter);
 app.use("/api/chat", chatRouter);

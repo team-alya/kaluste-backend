@@ -17,7 +17,13 @@ import {
  * Middleware to extract image from the request.
  */
 export const imageUploadHandler = () => {
-  return multer({ storage: multer.memoryStorage() }).single("image");
+  return multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 50 * 1024 * 1024, // 50MB
+      fieldSize: 50 * 1024 * 1024, // 50MB
+    },
+  }).single("image");
 };
 
 /**

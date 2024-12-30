@@ -8,43 +8,50 @@ const router = express.Router();
 
 router.post("/", imageUploadHandler(), async (req: Request, res: Response) => {
   try {
-    const optimizedImage = await resizeImage(req.file!.buffer);
-    let furnitureData = await runImageAnalysisPipeline(optimizedImage.buffer);
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "No image file provided" });
+    }
 
-    // Jos merkki puuttuu tai on "Ei tiedossa", kutsutaan finalAnalyze
-    if (!furnitureData.merkki || furnitureData.merkki === "Ei tiedossa") {
-      console.log(
-        "Merkki puuttuu, yritetään tunnistaa uudelleen GPT4-vision avulla...",
-      );
+    console.log("Starting image processing...");
 
-      try {
-        const finalResult = await finalAnalyze(optimizedImage.buffer);
+    const optimizedImage = await resizeImage(req.file.buffer);
 
-        // Päivitetään vain merkki ja malli, säilytetään muut tiedot
-        furnitureData = {
-          ...furnitureData,
-          merkki: finalResult.merkki,
-          malli: finalResult.malli,
-        };
+    try {
+      let furnitureData = await runImageAnalysisPipeline(optimizedImage.buffer);
 
-        console.log("Lopullinen merkki tunnistus:", finalResult.merkki);
-      } catch (analyzeError) {
-        console.error("Virhe lopullisessa merkki-analyysissa:", analyzeError);
-        // Jatketaan alkuperäisellä datalla jos finalAnalyze epäonnistuu
+      if (!furnitureData.merkki || furnitureData.merkki === "Ei tiedossa") {
+        console.log("Brand missing, attempting final analysis...");
+        try {
+          const finalResult = await finalAnalyze(optimizedImage.buffer);
+          // Päivitetään vain merkki ja malli. Muuten käytetään furniterDataa analyysia sellaisenaan.
+          furnitureData = {
+            ...furnitureData,
+            merkki: finalResult.merkki,
+            malli: finalResult.malli,
+          };
+        } catch (analyzeError) {
+          console.error("Final analysis error:", analyzeError);
+        }
       }
-    }
 
-    const responseData = {
-      ...furnitureData,
-      requestId: crypto.randomUUID(),
-    };
+      const responseData = {
+        ...furnitureData,
+        requestId: crypto.randomUUID(),
+      };
+      console.log("returning response data");
 
-    return res.status(200).json(responseData);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(200).json(responseData);
+    } catch (error) {
+      console.error("Pipeline error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Analysis pipeline failed";
+      throw new Error(errorMessage);
     }
-    return res.status(500).json({ error: "An unexpected error occurred." });
+  } catch (error) {
+    console.error("Server error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return res.status(500).json({ error: errorMessage });
   }
 });
 

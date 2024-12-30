@@ -5,8 +5,8 @@ import { AIAnalysisPipeline } from "./analyzer/pipeline";
 
 export const pipeline = new AIAnalysisPipeline([
   new GPT4Analyzer(),
-  new GeminiAnalyzer(),
   new ClaudeAnalyzer(),
+  new GeminiAnalyzer(),
 ]);
 
 export const runImageAnalysisPipeline = async (imageBuffer: Buffer) => {
