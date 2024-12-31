@@ -46,40 +46,6 @@ class GPT4PriceAnalyzer implements PriceAnalyzer {
   }
 }
 
-// class ClaudePriceAnalyzer implements PriceAnalyzer {
-//   name = 'Claude';
-
-//   async analyze(details: FurnitureDetails): Promise<PriceAnalysis> {
-//     const result = await generateObject({
-//       model: claude("claude-3-sonnet"),
-//       schema: priceAnalysisSchema,
-//       temperature: 0,
-//       messages: [
-//         {
-//           role: "system",
-//           content: "Olet huonekalujen hinta-analysoija Suomen markkinoilla.",
-//         },
-//         {
-//           role: "user",
-//           content: `
-//             Analysoi tämän huonekalun hinta käytettyjen tavaroiden markkinoilla:
-//             - Merkki: ${details.merkki}
-//             - Malli: ${details.malli}
-//             - Väri: ${details.vari}
-//             - Mitat: ${details.mitat.pituus}x${details.mitat.leveys}x${details.mitat.korkeus} cm
-//             - Materiaalit: ${details.materiaalit.join(", ")}
-//             - Kunto: ${details.kunto}
-
-//             Anna hinta-arvio huomioiden tuotteen ominaisuudet ja nykyiset markkinahinnat Suomessa.
-//           `,
-//         },
-//       ],
-//     });
-
-//     return result.object;
-//   }
-// }
-
 class GeminiPriceAnalyzer implements PriceAnalyzer {
   name = "Gemini";
 
@@ -118,11 +84,7 @@ export class PriceAnalysisPipeline {
   private analyzers: PriceAnalyzer[];
 
   constructor() {
-    this.analyzers = [
-      new GPT4PriceAnalyzer(),
-      //   new ClaudePriceAnalyzer(),
-      new GeminiPriceAnalyzer(),
-    ];
+    this.analyzers = [new GPT4PriceAnalyzer(), new GeminiPriceAnalyzer()];
   }
 
   private calculateAveragePrices(results: PriceAnalysis[]): PriceAnalysis {
@@ -136,15 +98,9 @@ export class PriceAnalysisPipeline {
       results.reduce((sum, result) => sum + result.korkein_hinta, 0) / total,
     );
 
-    // Yhdistä myyntikanavat ja poista duplikaatit
-    const uniqueChannels = Array.from(
-      new Set(results.flatMap((result) => result.myyntikanavat)),
-    );
-
     return {
       alin_hinta: avgAlin,
       korkein_hinta: avgKorkein,
-      myyntikanavat: uniqueChannels,
     };
   }
   async analyzePrices(details: FurnitureDetails): Promise<{

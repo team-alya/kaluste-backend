@@ -2,16 +2,16 @@ import { analyzePrice } from "./perplexity";
 
 async function testAnalyzePrice() {
   const testData = {
-    merkki: "Isku",
-    malli: "Pro",
+    merkki: "Martella",
+    malli: "Axia 2.50",
     vari: "musta",
     mitat: {
       pituus: 120,
       leveys: 60,
       korkeus: 74,
     },
-    materiaalit: ["metalli", "puu"],
-    kunto: "Hyvä" as
+    materiaalit: ["kangas", "metalli"],
+    kunto: "Uusi" as
       | "Hyvä"
       | "Uusi"
       | "Erinomainen"

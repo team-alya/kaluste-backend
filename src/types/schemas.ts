@@ -36,6 +36,90 @@ export const furnitureDetailsSchema = z.object({
     ),
 });
 
+export const priceAnalysisSchema = z.object({
+  korkein_hinta: z
+    .number()
+    .min(0)
+    .max(1000000)
+    .describe("Suurin realistinen myyntihinta euroina"),
+
+  alin_hinta: z
+    .number()
+    .min(0)
+    .max(1000000)
+    .describe("Alin realistinen myyntihinta euroina"),
+
+  perustelu: z
+    .array(z.string())
+    .min(1)
+    .max(3)
+    .describe(
+      "Huonekalun hinta-arvio perusteltuna asiakkaalle myyjän näkökulmasta lyhyesti ja ytimekkäästi. Älä mainitse triviaaleja asioita huonekalusta, jotka asikas tietää jo. Älä mainitse Perplexityä-analyysin lähteenäsi. ",
+    ),
+});
+
+export const priceEstimationSchema = z.object({
+  korkein_hinta: z.number().describe("Suurin realistinen myyntihinta euroina"),
+
+  alin_hinta: z.number().describe("Alin realistinen myyntihinta euroina"),
+
+  suositus_hinta: z
+    .number()
+    .min(0)
+    .max(1000000)
+    .describe("Suositeltu optimaalinen myyntihinta euroina"),
+
+  arvioitu_myyntiaika: z
+    .object({
+      nopea: z
+        .number()
+        .min(1)
+        .max(365)
+        .describe("Arvioitu myyntiaika päivissä alimmalla hinnalla"),
+      normaali: z
+        .number()
+        .min(1)
+        .max(365)
+        .describe("Arvioitu myyntiaika päivissä suositushinnalla"),
+      hidas: z
+        .number()
+        .min(1)
+        .max(365)
+        .describe("Arvioitu myyntiaika päivissä korkeimmalla hinnalla"),
+    })
+    .describe("Arviot myyntiajasta eri hintaluokissa"),
+
+  myyntikanavat: z
+    .array(z.string())
+    .describe("Lista suositelluista suomalaisista myyntipaikoista"),
+
+  perustelu: z
+    .array(z.string())
+    .describe(
+      "Lyhyt ja ytimekäs perustelu hinta-arviolle. Älä toista perustiedoissa mainittuja asioita. Älä mainitse Perplexityä-analyysin lähteenäsi.",
+    ),
+
+  markkinatilanne: z
+    .object({
+      kysyntä: z.string().describe("Arvio kysynnästä (korkea/normaali/matala)"),
+      kilpailu: z
+        .number()
+        .min(0)
+        .max(100)
+        .describe("Arvio kilpailevien ilmoitusten määrästä"),
+      sesonki: z.boolean().describe("Onko tuotteella nyt sesonki"),
+    })
+    .describe("Arvio markkinatilanteesta"),
+});
+
+export type PriceEstimation = z.infer<typeof priceEstimationSchema>;
+export type PriceAnalysis = z.infer<typeof priceAnalysisSchema>;
+export type FurnitureDetails = z.infer<typeof furnitureDetailsSchema>;
+
+/*
+Vanhoja schemoja opiskelijoiden projekteista.
+TODO: Poista, jos ei tarvita.
+*/
 export const locationQuerySchema = z.object({
   requestId: z.string(),
   location: z.string(),
@@ -44,27 +128,6 @@ export const locationQuerySchema = z.object({
     z.literal("recycle"),
     z.literal("repair"),
   ]),
-});
-
-export const priceAnalysisSchema = z.object({
-  korkein_hinta: z
-    .number()
-    .min(0)
-    .max(1000000)
-    .describe("Suurin realistinen myyntihinta euroina"),
-  alin_hinta: z
-    .number()
-    .min(0)
-    .max(1000000)
-    .describe("Alin realistinen myyntihinta euroina"),
-  myyntikanavat: z
-    .array(z.string())
-    .describe("Lista suositelluista suomalaisista myyntipaikoista"),
-});
-
-export const chatResponseSchema = z.object({
-  requestId: z.string(),
-  answer: z.string(),
 });
 
 export const reviewSchema = z.object({
@@ -77,6 +140,3 @@ export const reviewSchema = z.object({
     comment: z.string().optional(),
   }),
 });
-
-export type PriceAnalysis = z.infer<typeof priceAnalysisSchema>;
-export type FurnitureDetails = z.infer<typeof furnitureDetailsSchema>;
