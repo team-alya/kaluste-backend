@@ -95,10 +95,12 @@ export const analyzePrice = async (
 ): Promise<PriceEstimation> => {
   try {
     const perplexityAnalysis = await perplexityPrizeAnalyse(furnitureDetails);
+    
     const result = await generatePriceObject(
       furnitureDetails,
       perplexityAnalysis,
     );
+
     return result;
   } catch (error) {
     console.error("Error in price analysis:", error);
