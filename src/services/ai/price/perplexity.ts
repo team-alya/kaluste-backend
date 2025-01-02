@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { openai } from "@ai-sdk/openai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateObject, generateText } from "ai";
@@ -95,7 +94,7 @@ export const analyzePrice = async (
 ): Promise<PriceEstimation> => {
   try {
     const perplexityAnalysis = await perplexityPrizeAnalyse(furnitureDetails);
-    
+
     const result = await generatePriceObject(
       furnitureDetails,
       perplexityAnalysis,

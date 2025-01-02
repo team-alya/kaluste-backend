@@ -48,14 +48,6 @@ export const priceAnalysisSchema = z.object({
     .min(0)
     .max(1000000)
     .describe("Alin realistinen myyntihinta euroina"),
-
-  perustelu: z
-    .array(z.string())
-    .min(1)
-    .max(3)
-    .describe(
-      "Huonekalun hinta-arvio perusteltuna asiakkaalle myyjän näkökulmasta lyhyesti ja ytimekkäästi. Älä mainitse triviaaleja asioita huonekalusta, jotka asikas tietää jo. Älä mainitse Perplexityä-analyysin lähteenäsi. ",
-    ),
 });
 
 export const priceEstimationSchema = z.object({
