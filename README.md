@@ -251,9 +251,9 @@ flowchart TD
 
         subgraph AsyncModels[Running in Parallel]
             direction LR
-            GPT4[GPT-4 Vision]
+            GPT4[GPT-4o]
             Claude[Claude-3-5-Sonnet]
-            Gemini[Gemini Vision]
+            Gemini[Gemini-2-0-Flash]
         end
 
         AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand Found?}
@@ -266,7 +266,7 @@ flowchart TD
 
         CombineResults --> CheckBrand{Brand Found?}
         CheckBrand -->|Yes| EditableForm
-        CheckBrand -->|No| FinalGPT4[GPT-4 Vision<br>Final Attempt]
+        CheckBrand -->|No| FinalGPT4[GPT-4o-2024-11-20<br>Final Attempt]
         FinalGPT4 --> EditableForm
     end
 
@@ -300,7 +300,7 @@ flowchart TD
     Start([Verified Furniture Details]) --> Perplexity[Perplexity Analysis<br>llama-3.1-sonar-large]
 
     subgraph PriceAnalysisPipeline[Price Analysis Pipeline]
-        Perplexity -->|Market Analysis Text| GPT4[GPT-4o<br>JSON Object Generation]
+        Perplexity -->|Market Analysis Text| GPT4[GPT-4o-2024-11-20<br>JSON Object Generation]
 
         subgraph DataFlow[Data Flow]
             direction LR
