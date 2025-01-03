@@ -12,7 +12,7 @@ export const getMockFurnitureData = (): AnalyzerResult => {
       korkeus: 44,
     },
     materiaalit: ["koivu", "vaneri"],
-    kunto: "hyvä",
+    kunto: "Hyvä",
   };
 };
 

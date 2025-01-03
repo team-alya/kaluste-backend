@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { StreamTextResult, streamText } from "ai";
+import { StreamTextResult, smoothStream, streamText } from "ai";
 import express, { Request, Response } from "express";
 import { getSystemPrompt } from "../prompts/system";
 
@@ -8,7 +8,6 @@ const router = express.Router();
 router.post("/", (req: Request, res: Response) => {
   const { messages, furnitureContext } = req.body;
 
-  // Create an AbortController
   const abortController = new AbortController();
   const { signal } = abortController;
 
@@ -21,6 +20,9 @@ router.post("/", (req: Request, res: Response) => {
     temperature: 0.6,
     system: systemPrompt,
     abortSignal: signal,
+    experimental_transform: smoothStream({
+      delayInMs: 10,
+    }),
   });
 
   try {
