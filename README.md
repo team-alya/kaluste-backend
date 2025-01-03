@@ -258,7 +258,7 @@ flowchart TD
     subgraph NodeBackend[Node.js Backend]
         ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
 
-        subgraph AsyncModels[Running in Parallel]
+        subgraph AsyncModels[Running Asynchronously]
             direction LR
             GPT4[GPT-4o Vision<br>Analyze furniture details]
             Claude[Claude-3-5-Sonnet Vision<br>Analyze furniture details]
