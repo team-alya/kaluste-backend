@@ -247,7 +247,7 @@ flowchart TD
 
     subgraph FrontendProcessing[React Vite Frontend]
         User --> FrontendUI[Frontend UI]
-        FrontendUI -->|Upload image| ImageUpload[Image Upload]
+        FrontendUI -->|Upload furniture image| ImageUpload[Image Upload]
         ResultsReceived[Receive Results] --> EditableForm[Editable Form<br>for User Verification]
         EditableForm -->|User verifies/edits| SendToAnalysis[Send to Analysis]
         Chatbot[Chatbot UI<br>Display Results] --> User
