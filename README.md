@@ -246,7 +246,7 @@ flowchart TD
     User([User]) --> FrontendUI[Frontend UI]
     FrontendUI -->|Upload image| ImageProcess[Image Processing]
 
-    subgraph AsyncPipeline[Async Vision Pipeline]
+    subgraph NodeBackend[Node.js Backend]
         ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
 
         subgraph AsyncModels[Running in Parallel]
@@ -276,7 +276,7 @@ flowchart TD
     PriceAnalysis --> ResponseUI[Response to User]
     ResponseUI --> User
 
-    style AsyncPipeline fill:#f0f8ff
+    style NodeBackend fill:#f0f8ff
     style AsyncModels fill:#e6ffe6
     style ResultCheck fill:#fff0f0
     style EditableForm fill:#90EE90
