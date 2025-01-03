@@ -232,19 +232,28 @@ The Vision Pipeline process works as follows:
 2. Image is processed and sent to multiple AI vision models in parallel:
    - GPT-4o
    - Claude-3-5-Sonnet
-   - Gemini-2-0-Flash-Experimental
+   - Gemini-2-0-Flash
 3. As each model completes analysis:
-   - If a brand is found, return that result immediately
-   - If no brand is found but more results pending, wait for next result
-   - If no brand found and all results processed, combine best partial results
-4. If still no brand found after combining results, make final attempt with GPT-4 Vision which has been specifically instructed to provide its best guess for the brand.
+   - If both brand and model are found, return that result immediately
+   - If brand or model is missing but more results pending, wait for next result
+   - If no complete results found and all results processed, combine best partial results
+4. If brand is still missing after combining results, make final attempt with GPT-4o-2024-11-20 which has been specifically instructed to provide its best guess for at least the brand
 5. Present results in editable form for user verification
 6. After user verification, proceed to Price Analysis Pipeline
 
 ```mermaid
 flowchart TD
-    User([User]) --> FrontendUI[Frontend UI]
-    FrontendUI -->|Upload image| ImageProcess[Image Processing]
+    User([User])
+
+    subgraph FrontendProcessing[React Vite Frontend]
+        User --> FrontendUI[Frontend UI]
+        FrontendUI -->|Upload image| ImageUpload[Image Upload]
+        ResultsReceived[Receive Results] --> EditableForm[Editable Form<br>for User Verification]
+        EditableForm -->|User verifies/edits| SendToAnalysis[Send to Analysis]
+        Chatbot[Chatbot UI<br>Display Results] --> User
+    end
+
+    ImageUpload --> ImageProcess[Image Processing]
 
     subgraph NodeBackend[Node.js Backend]
         ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
@@ -256,7 +265,7 @@ flowchart TD
             Gemini[Gemini-2-0-Flash]
         end
 
-        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand Found?}
+        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand & Model Found?}
 
         ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
         ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
@@ -265,18 +274,20 @@ flowchart TD
         ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
 
         CombineResults --> CheckBrand{Brand Found?}
-        CheckBrand -->|Yes| EditableForm
+        CheckBrand -->|Yes| SendToFrontend[Send Results<br>to Frontend]
         CheckBrand -->|No| FinalGPT4[GPT-4o-2024-11-20<br>Final Attempt]
-        FinalGPT4 --> EditableForm
+        FinalGPT4 --> SendToFrontend
+
+        StopAndUse --> SendToFrontend
+        
+        SendToFrontend --> ResultsReceived
+        
+        SendToAnalysis --> PriceAnalysis[Price Analysis Pipeline]
+        PriceAnalysis --> Chatbot
     end
 
-    StopAndUse --> EditableForm[Editable Form]
-
-    EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis Pipeline]
-    PriceAnalysis --> ResponseUI[Response to User]
-    ResponseUI --> User
-
     style NodeBackend fill:#f0f8ff
+    style FrontendProcessing fill:#e6ffe6
     style AsyncModels fill:#e6ffe6
     style ResultCheck fill:#fff0f0
     style EditableForm fill:#90EE90
@@ -284,6 +295,9 @@ flowchart TD
     style FinalGPT4 fill:#FFB6C1
     style CheckBrand fill:#fff0f0
     style PriceAnalysis fill:#DDA0DD
+    style SendToFrontend fill:#FFE4B5
+    style ImageUpload fill:#FFE4B5
+    style SendToAnalysis fill:#FFE4B5
 ```
 
 ## Price Analysis Pipeline
