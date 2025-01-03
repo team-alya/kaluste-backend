@@ -223,7 +223,23 @@ The schema for the database documents is declared in the [log.ts](/src/models/lo
 
 ## Vision Pipeline
 
-The system uses multiple AI vision models in sequence to identify furniture from images. Below is the flow diagram of the process:
+> **Note**: This section is up to date.
+
+_Last updated: January 3, 2025_
+The Vision Pipeline process works as follows:
+
+1. User uploads a furniture image through the Frontend UI
+2. Image is processed and sent to multiple AI vision models in parallel:
+   - GPT-4 Vision
+   - Claude-3-5-Sonnet
+   - Gemini Vision
+3. As each model completes analysis:
+   - If a brand is found, return that result immediately
+   - If no brand is found but more results pending, wait for next result
+   - If no brand found and all results processed, combine best partial results
+4. If still no brand found after combining results, make final attempt with GPT-4 Vision which has been specifically instructed to provide its best guess for the brand.
+5. Present results in editable form for user verification
+6. After user verification, proceed to Price Analysis Pipeline
 
 ```mermaid
 flowchart TD
@@ -236,6 +252,7 @@ flowchart TD
         subgraph AsyncModels[Running in Parallel]
             direction LR
             GPT4[GPT-4 Vision]
+            Claude[Claude-3-5-Sonnet]
             Gemini[Gemini Vision]
         end
 
@@ -255,7 +272,7 @@ flowchart TD
 
     StopAndUse --> EditableForm[Editable Form]
 
-    EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
+    EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis Pipeline]
     PriceAnalysis --> ResponseUI[Response to User]
     ResponseUI --> User
 
@@ -266,45 +283,36 @@ flowchart TD
     style StopAndUse fill:#98FB98
     style FinalGPT4 fill:#FFB6C1
     style CheckBrand fill:#fff0f0
+    style PriceAnalysis fill:#DDA0DD
 ```
 
+## Price Analysis Pipeline
+
+The price analysis process uses Perplexity AI and GPT-4o to generate market-based price estimations for furniture. Here's how the price analysis pipeline works:
+
+1. After furniture details are verified by the user, they are sent to Perplexity AI
+2. Perplexity analyzes the furniture details and produces a market analysis
+3. The market analysis is processed by GPT-4o, which generates a structured JSON response
+4. The price estimation is returned directly to the user
+
+```mermaid
 flowchart TD
-User([User]) --> FrontendUI[Frontend UI]
-FrontendUI -->|Upload image| ImageProcess[Image Processing]
+    Start([Verified Furniture Details]) --> Perplexity[Perplexity Analysis<br>llama-3.1-sonar-large]
 
-    subgraph AsyncPipeline[Async Vision Pipeline]
-        ImageProcess --> |Start All Models| AsyncModels[Async Vision Models]
+    subgraph PriceAnalysisPipeline[Price Analysis Pipeline]
+        Perplexity -->|Market Analysis Text| GPT4[GPT-4o<br>JSON Object Generation]
 
-        subgraph AsyncModels[Running in Parallel]
+        subgraph DataFlow[Data Flow]
             direction LR
-            GPT4[GPT-4 Vision]
-            Gemini[Gemini Vision]
+            FurnitureDetails[/Furniture Details/] --> PerplexityAnalysis[/Market Analysis Result/]
+            PerplexityAnalysis --> PriceJSON[/Price Estimation JSON/]
         end
-
-        AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand Found?}
-
-        ResultCheck -->|Yes| StopAndUse[Return First<br>Valid Result]
-        ResultCheck -->|No & More Results<br>Pending| WaitNext[Wait for Next<br>Result]
-        WaitNext --> ResultCheck
-
-        ResultCheck -->|No & All Results<br>Processed| CombineResults[Combine Best<br>Partial Results]
-
-        CombineResults --> CheckBrand{Brand Found?}
-        CheckBrand -->|Yes| EditableForm
-        CheckBrand -->|No| FinalGPT4[GPT-4 Vision<br>Final Attempt]
-        FinalGPT4 --> EditableForm
     end
 
-    StopAndUse --> EditableForm[Editable Form]
+    GPT4 --> Response([Response to User])
 
-    EditableForm -->|User verifies/edits| PriceAnalysis[Price Analysis]
-    PriceAnalysis --> ResponseUI[Response to User]
-    ResponseUI --> User
-
-    style AsyncPipeline fill:#f0f8ff
-    style AsyncModels fill:#e6ffe6
-    style ResultCheck fill:#fff0f0
-    style EditableForm fill:#90EE90
-    style StopAndUse fill:#98FB98
-    style FinalGPT4 fill:#FFB6C1
-    style CheckBrand fill:#fff0f0
+    style PriceAnalysisPipeline fill:#FFE6FF
+    style DataFlow fill:#E6E6FF
+    style Perplexity fill:#B0C4DE
+    style GPT4 fill:#FFB6C1
+```
