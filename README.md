@@ -260,9 +260,9 @@ flowchart TD
 
         subgraph AsyncModels[Running in Parallel]
             direction LR
-            GPT4[GPT-4o]
-            Claude[Claude-3-5-Sonnet]
-            Gemini[Gemini-2-0-Flash]
+            GPT4[GPT-4o Vision<br>Analyze furniture details]
+            Claude[Claude-3-5-Sonnet Vision<br>Analyze furniture details]
+            Gemini[Gemini-2-0-Flash Vision<br>Analyze furniture details]
         end
 
         AsyncModels --> |As Results Complete| ResultCheck{Check Each Result<br>Brand & Model Found?}
