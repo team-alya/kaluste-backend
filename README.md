@@ -229,7 +229,7 @@ _Last updated: January 3, 2025_
 The Vision Pipeline process works as follows:
 
 1. User uploads a furniture image through the Frontend UI
-2. Image is processed and sent to multiple AI vision models in parallel:
+2. Image is processed and sent to multiple AI vision models in asynchronously:
    - GPT-4o
    - Claude-3-5-Sonnet
    - Gemini-2-0-Flash
