@@ -1,4 +1,4 @@
-import { analyzePrice } from "./perplexity";
+import { analyzePrice } from "../services/ai/priceAnalyzer/perplexity";
 
 async function testAnalyzePrice() {
   const testData = {

@@ -1,7 +1,7 @@
-import { ClaudeAnalyzer } from "./analyzer/claude-analyzer";
-import { GeminiAnalyzer } from "./analyzer/gemini-analyzer";
-import { GPT4Analyzer } from "./analyzer/gpt4-analyzer";
-import { AIAnalysisPipeline } from "./analyzer/pipeline";
+import { ClaudeAnalyzer } from "./imageAnalyzer/claude-analyzer";
+import { GeminiAnalyzer } from "./imageAnalyzer/gemini-analyzer";
+import { GPT4Analyzer } from "./imageAnalyzer/gpt4-analyzer";
+import { AIAnalysisPipeline } from "./imageAnalyzer/pipeline";
 
 export const pipeline = new AIAnalysisPipeline([
   new GPT4Analyzer(),

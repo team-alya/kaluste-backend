@@ -1,6 +1,6 @@
 # kaluste-backend
 
-⚠️ **WARNING: This documentation is outdated and corresponds to git TAG v1.0. The codebase has evolved significantly since this version. Please refer to the latest code for current implementation details.**
+⚠️ **WARNING: This documentation is outdated and corresponds to git TAG v1.0. The codebase has evolved significantly since this version. Only section [Vision Pipeline](#vision-pipeline) and text after it is up to date. Please refer to the latest code for other implementation details.**
 
 Älyä-hankkeessa KalusteArvio-projektin palvelin ja tekoälyliittymät
 
@@ -223,9 +223,8 @@ The schema for the database documents is declared in the [log.ts](/src/models/lo
 
 ## Vision Pipeline
 
-> **Note**: This section is up to date.
+> **Note**: This section is up to date. _Last updated: January 3, 2025_
 
-_Last updated: January 3, 2025_
 The Vision Pipeline process works as follows:
 
 1. User uploads a furniture image through the Frontend UI
@@ -279,9 +278,9 @@ flowchart TD
         FinalGPT4 --> SendToFrontend
 
         StopAndUse --> SendToFrontend
-        
+
         SendToFrontend --> ResultsReceived
-        
+
         SendToAnalysis --> PriceAnalysis[Price Analysis Pipeline]
         PriceAnalysis --> Chatbot
     end

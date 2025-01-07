@@ -6,7 +6,11 @@ dotenv.config();
 async function testSingleImage() {
   //   const imagePath = path.join(__dirname, "../tests", "martella-axia.png");
   //   const imagePath = path.join(__dirname, "../tests", "seminar-nikari.jpg");
-  const imagePath = path.join(__dirname, "../tests", "artek-jakkara.jpg");
+  const imagePath = path.join(
+    __dirname,
+    "../tests/images",
+    "artek-jakkara.jpg",
+  );
 
   try {
     console.log("\n=== Aloitetaan kuvan analyysi ===");
