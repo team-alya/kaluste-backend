@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { StreamTextResult, smoothStream, streamText } from "ai";
+import { smoothStream, streamText } from "ai";
 import express, { Request, Response } from "express";
 import { getSystemPrompt } from "../prompts/system";
 
@@ -13,7 +13,7 @@ router.post("/", (req: Request, res: Response) => {
 
   const systemPrompt = getSystemPrompt(furnitureContext);
 
-  const result: StreamTextResult<Record<string, never>> = streamText({
+  const result = streamText({
     model: openai("gpt-4o-2024-11-20"),
     messages,
     maxTokens: 1000,

@@ -9,7 +9,7 @@ Suomalaiset valmistajat:
 
 - Isku: Toimistokalusteet kuten Step, Matrix; julkitilakalusteet kuten Still, Mondo.
 - Martela: Toimisto- ja julkitilakalusteet kuten Kilta, Sola, Form, Plus+.
-- Artek: Design-klassikot kuten 69, Domus, Paimio.
+- Artek: Design-klassikot kuten 60, Domus, Paimio.
 - Asko: Esimerkiksi Avokas, Ateljee.
 - Lundia: Esimerkiksi Classic, Fuuga.
 - Hakola: Esimerkiksi Lazy, Day.

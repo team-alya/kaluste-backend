@@ -4,16 +4,18 @@ import dotenv from "dotenv";
 import { analyzeImagePrompt } from "../../../prompts/prompts";
 import { imgAnalyzeSystemMsg } from "../../../prompts/system";
 import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
-import { furnitureDetailsSchema } from "../../../types/schemas";
+import { furnitureDetailsSchemaGemini15 } from "../../../types/schemas";
 dotenv.config();
-export class GeminiAnalyzer implements AIAnalyzer {
+export class Gemini_1_5_Analyzer implements AIAnalyzer {
   name = "Gemini";
   async analyze(imageBuffer: Buffer): Promise<AnalyzerResult> {
     try {
       const result = await generateObject({
-        model: google("gemini-2.0-flash-exp"),
+        model: google("gemini-1.5-pro-latest", {
+          useSearchGrounding: true,
+        }),
         // model: google("gemini-1.5-pro-latest"),
-        schema: furnitureDetailsSchema,
+        schema: furnitureDetailsSchemaGemini15,
         output: "object",
         system: imgAnalyzeSystemMsg,
         messages: [

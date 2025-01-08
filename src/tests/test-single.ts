@@ -1,17 +1,27 @@
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
-import { finalAnalyze } from "../services/ai/generate-objects";
+import { AIAnalysisPipeline } from "../services/ai/imageAnalyzer";
+import { GeminiAnalyzer } from "../services/ai/imageAnalyzer/gemini-2-0-analyzer";
 dotenv.config();
 async function testSingleImage() {
-  //   const imagePath = path.join(__dirname, "../tests", "martella-axia.png");
-  //   const imagePath = path.join(__dirname, "../tests", "seminar-nikari.jpg");
   const imagePath = path.join(
     __dirname,
     "../tests/images",
-    "artek-jakkara.jpg",
+    // "akademia.png"
+    // "adde_tuoli.png"
+    // "marius.png",
+    // "seminar-nikari.jpg"
+    // "artek-jakkara.jpg"
+    // "martella-axia.png"
+    // "artek-jakkara.jpg"
+    "hay-about.webp",
   );
-
+  const aiModel = new AIAnalysisPipeline([new GeminiAnalyzer()]);
+  // new GPT4Analyzer(),
+  // new ClaudeAnalyzer(),
+  // new GeminiAnalyzer(),
+  // new Gemini_1_5_Analyzer(),
   try {
     console.log("\n=== Aloitetaan kuvan analyysi ===");
     console.log(`Testataan kuvaa: ${imagePath}`);
@@ -20,7 +30,8 @@ async function testSingleImage() {
     console.log("Kuva luettu onnistuneesti");
 
     const startTime = Date.now();
-    const result = await finalAnalyze(imageBuffer);
+    // const result = await finalAnalyze(imageBuffer);
+    const { result } = await aiModel.analyze(imageBuffer);
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
 

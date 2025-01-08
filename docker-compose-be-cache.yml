@@ -1,3 +1,4 @@
+# This file is used to run the backend with memcached as a cache. (Not in use).
 services:
   memcached:
     image: memcached:latest

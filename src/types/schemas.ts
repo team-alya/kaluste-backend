@@ -36,6 +36,35 @@ export const furnitureDetailsSchema = z.object({
     ),
 });
 
+export const furnitureDetailsSchemaGemini15 = z
+  .object({
+    merkki: z
+      .string()
+      .describe(
+        "Huonekalun valmistajan nimi tai tyylisuunta. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'.",
+      ),
+    malli: z
+      .string()
+      .describe(
+        "Palauta 'Ei tiedossa' ellet ole täysin varma mallista. Ole tarkka mallin kanssa. Esim valmistajan huonekaluja voi olla monia samanlaisia joten palauta 'Ei tiedossa' jos et ole varma.",
+      ),
+    vari: z.string(),
+    mitat: z
+      .object({
+        pituus: z.number(),
+        leveys: z.number(),
+        korkeus: z.number(),
+      })
+      .describe("Mitat senttimetreinä. Anna paras arviosi, jos et ole varma."),
+    materiaalit: z.array(z.string()),
+    kunto: z
+      .enum(kuntoOptions)
+      .describe(
+        "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella.",
+      ),
+  })
+  .describe("");
+
 export const priceAnalysisSchema = z.object({
   korkein_hinta: z
     .number()

@@ -1,7 +1,7 @@
 import express, { Response } from "express";
+import { reviewQueryParser } from "../middleware/middleware";
 import { reviewLogger } from "../services/log/logger";
 import { ReviewQuery } from "../types/middleware";
-import { reviewQueryParser } from "../utils/middleware";
 
 const router = express.Router();
 

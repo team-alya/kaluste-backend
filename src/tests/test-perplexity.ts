@@ -20,14 +20,31 @@ async function testAnalyzePrice() {
       | "Ei tiedossa",
   };
 
+  console.log("Aloitetaan hinnan analysointi...");
+  const startTime = performance.now();
+
   try {
     const result = await analyzePrice(testData);
-    console.log("Price analysis result:", result);
+    const endTime = performance.now();
+    const duration = (endTime - startTime) / 1000; // sekunneiksi
+
+    console.log("Hinnan analysointi valmis!");
+    console.log(`Analysointiin kului aikaa: ${duration.toFixed(2)} sekuntia`);
+    console.log("Analyysin tulos:", result);
   } catch (error) {
-    console.error("Error:", error);
+    const endTime = performance.now();
+    const duration = (endTime - startTime) / 1000;
+
+    console.error("Virhe analysoinnissa!");
+    console.error(
+      `Analysointi keskeytyi ${duration.toFixed(2)} sekunnin jälkeen`,
+    );
+    console.error("Virheen tiedot:", error);
   }
 }
 
 (async () => {
   await testAnalyzePrice();
-})().catch(console.error);
+})().catch((error) => {
+  console.error("Kriittinen virhe sovelluksen suorituksessa:", error);
+});

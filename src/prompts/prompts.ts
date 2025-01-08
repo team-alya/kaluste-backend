@@ -75,8 +75,15 @@ export const createRepairPrompt = (
   return null;
 };
 
+/**
+ * New prompts that are currently in use with the new pipelines & priceAnalyzer
+ */
 export const analyzeImagePrompt =
   "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'. Älä arvaa";
+
+// Hieman erillainen tiukempi prompt Gemini15 mallille, koska antaa höpö höpö vastauksia muuten malliksi välillä.
+export const analyzeImagePromptGemini15 =
+  "Analyze this most likely scandinavian furniture piece and identify its details. Be extremely precise with the model identification - if you are not completely certain about any detail, return 'Ei tiedossa'. It is critical that you do not make assumptions or guesses about the model. It is better to return 'Ei tiedossa' than to risk misidentification.";
 
 // GPT4o jättää kunnon aina ei tiedossa jos käytämme lopussa "Älä arvaa" ohjetta siksi oma prompt
 export const analyzeImagePromptGPT4o =

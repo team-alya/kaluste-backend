@@ -15,7 +15,9 @@ import {
 
 /**
  * Middleware to extract image from the request.
+ * NOTE: Most/All of these middlewares are not used in the project. They are referring to the old implementation GitHub TAG v1.0.
  */
+
 export const imageUploadHandler = () => {
   return multer({
     storage: multer.memoryStorage(),

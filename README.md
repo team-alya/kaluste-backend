@@ -329,3 +329,7 @@ flowchart TD
     style Perplexity fill:#B0C4DE
     style GPT4 fill:#FFB6C1
 ```
+
+## Lisenssi
+
+License - katso [LICENSE](LICENSE) tiedosto lisätietoja varten.

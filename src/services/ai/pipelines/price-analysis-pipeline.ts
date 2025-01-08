@@ -9,7 +9,7 @@ import {
   FurnitureDetails,
   PriceAnalysis,
   priceAnalysisSchema,
-} from "../../types/schemas";
+} from "../../../types/schemas";
 
 interface PriceAnalyzer {
   name: string;

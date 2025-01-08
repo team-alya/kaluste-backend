@@ -1,24 +1,42 @@
-// /* eslint-disable @typescript-eslint/no-misused-promises */
-// import exress, { Response } from "express";
-// import locationService from "../services/ai/locationService";
-// import { locationQueryParser } from "../utils/middleware";
-// import { LocationQuery } from "../types/middleware";
+/*
+This routes uses Gemini-2.0-flash-exp model from Google to generate responses to user messages.
+With useSreachGrounding: true, the model uses google search also to generate responses.
+Not in use atm.
+*/
+import { google } from "@ai-sdk/google";
+import { smoothStream, streamText } from "ai";
+import express, { Request, Response } from "express";
+import { getSystemPrompt } from "../prompts/system";
 
-// const router = exress.Router();
+const router = express.Router();
 
-// router.post(
-//   "/",
-//   locationQueryParser,
-//   async (req: LocationQuery, res: Response) => {
-//     try {
-//       const response = await locationService.analyzeLocation(req.body);
-//       return res.status(200).json({ result: response });
-//     } catch (error: unknown) {
-//       if (error instanceof Error)
-//         return res.status(500).json({ error: error.message });
-//     }
-//     return;
-//   },
-// );
+const generateResponse = (req: Request, res: Response) => {
+  const { messages, furnitureContext } = req.body;
+  const abortController = new AbortController();
+  const systemPrompt = getSystemPrompt(furnitureContext);
 
-// export default router;
+  try {
+    const result = streamText({
+      model: google("gemini-2.0-flash-exp", { useSearchGrounding: true }),
+      messages,
+      maxTokens: 1000,
+      temperature: 0.4,
+      system: systemPrompt,
+      abortSignal: abortController.signal,
+      experimental_transform: smoothStream({
+        delayInMs: 10,
+      }),
+    });
+
+    result.pipeDataStreamToResponse(res, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
+  } catch (error) {
+    console.error("Stream error:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+router.post("/", generateResponse);
+
+export default router;

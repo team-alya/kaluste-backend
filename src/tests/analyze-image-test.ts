@@ -1,7 +1,7 @@
 // src/services/ai/analyze-images.test.ts
 import fs from "fs/promises";
 import path from "path";
-import { pipeline } from "../services/ai/image-analysis-pipeline";
+import { pipeline } from "../services/ai/pipelines/image-analysis-pipeline";
 
 // Lista testattavista kuvista
 const TEST_IMAGES = [
