@@ -23,3 +23,4 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
 
 # Run the app
+CMD [ "npm", "start" ]
