@@ -3,6 +3,7 @@ import * as cheerio from "cheerio";
 // import { cacheData, getData } from '../../utils/cache';
 
 /**
+ * NOTE: Not in use atm
  * Returns list of product pages from the first search page
  * - Max amount of products in the first search page is 54
  * - If needed to fetch more products from the search, the function should be modified to check if there are more pages available

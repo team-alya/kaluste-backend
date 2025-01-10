@@ -14,6 +14,7 @@ export interface FurnitureDetailsRequest extends Request {
   };
 }
 
+// Only in use at the moment. Other types are not in use but kept for future reference.
 export interface ReviewQuery extends Request {
   body: {
     requestId: string;

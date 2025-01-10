@@ -1,30 +1,33 @@
+import {
+  FurnitureDetails,
+  furnitureDetailsSchemaGemini15,
+} from "@/types/schemas";
+import { AIAnalyzer } from "@/types/services";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
-import { analyzeImagePrompt } from "../../../prompts/prompts";
-import { imgAnalyzeSystemMsg } from "../../../prompts/system";
-import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
-import { furnitureDetailsSchemaGemini15 } from "../../../types/schemas";
+import { analyzeImagePromptGemini15 } from "../prompts/prompts";
+import { imgAnalyzeSystemMsgGemini1_5 } from "../prompts/system";
 dotenv.config();
+
 export class Gemini_1_5_Analyzer implements AIAnalyzer {
-  name = "Gemini";
-  async analyze(imageBuffer: Buffer): Promise<AnalyzerResult> {
+  name = "Gemini-1.5";
+  async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const result = await generateObject({
         model: google("gemini-1.5-pro-latest", {
           useSearchGrounding: true,
         }),
-        // model: google("gemini-1.5-pro-latest"),
         schema: furnitureDetailsSchemaGemini15,
         output: "object",
-        system: imgAnalyzeSystemMsg,
+        system: imgAnalyzeSystemMsgGemini1_5,
         messages: [
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: analyzeImagePrompt,
+                text: analyzeImagePromptGemini15,
               },
               {
                 type: "image",
@@ -34,14 +37,18 @@ export class Gemini_1_5_Analyzer implements AIAnalyzer {
           },
         ],
       });
-      return result.object;
+      const mapped: FurnitureDetails = {
+        ...result.object,
+        kunto: result.object.kunto as FurnitureDetails["kunto"], // We have to do this because Gemnini 1.5 returns random kunto value sometimes. Like "Käytetty" that is not in the schema.
+      };
+      return mapped;
     } catch (error) {
       console.error("Error analyzing image:", error);
       throw error;
     }
   }
 
-  // async analyze(_imageBuffer: Buffer): Promise<AnalyzerResult> {
+  // async analyze(_imageBuffer: Buffer): Promise<FurnitureDetails> {
   //   // await sleep(4000);
   //   return Promise.resolve({
   //     merkki: "Martella",

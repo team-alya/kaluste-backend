@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "dev": "ts-node-dev src/index.ts",
-    "build": "tsc",
+    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --outdir=build",
     "start": "node build/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write ."
   },
   "author": "",
@@ -24,9 +23,11 @@
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
+    "esbuild": "^0.24.2",
     "eslint": "^9.11.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.6.0"

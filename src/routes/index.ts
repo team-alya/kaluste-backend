@@ -1,7 +1,7 @@
 import { Router } from "express";
 import chatRouter from "./chat";
 import imageRouter from "./image";
-import locationRouter from "./location";
+import locationRouter from "./webchat";
 import priceRouter from "./price";
 import reviewRouter from "./review";
 
@@ -14,7 +14,7 @@ router.get("/ping", (_req, res) => {
 router.use("/image", imageRouter);
 router.use("/price", priceRouter);
 router.use("/chat", chatRouter);
-router.use("/location", locationRouter);
+router.use("/webchat", locationRouter);
 router.use("/review", reviewRouter);
 
 export default router;

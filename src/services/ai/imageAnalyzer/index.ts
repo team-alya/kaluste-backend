@@ -1,20 +1,21 @@
-import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
+import { FurnitureDetails, kuntoOptions } from "@/types/schemas";
+import { AIAnalyzer } from "@/types/services";
 
 interface AnalysisResult {
-  result: AnalyzerResult;
+  result: FurnitureDetails;
   confidence: number;
   analyzerName: string;
   completionTime: number;
 }
 
-export class AIAnalysisPipeline {
+export class ImageAnalysisPipeline {
   private analyzers: AIAnalyzer[];
 
   constructor(analyzers: AIAnalyzer[]) {
     this.analyzers = analyzers;
   }
 
-  private isValidResult(result: AnalyzerResult): boolean {
+  private isValidResult(result: FurnitureDetails): boolean {
     return (
       result.merkki !== "Ei tiedossa" &&
       result.merkki !== "" &&
@@ -23,7 +24,7 @@ export class AIAnalysisPipeline {
     );
   }
 
-  private getResultConfidence(result: AnalyzerResult): number {
+  private getResultConfidence(result: FurnitureDetails): number {
     let confidence = 0;
 
     if (result.merkki !== "Ei tiedossa" && result.merkki !== "")
@@ -41,18 +42,25 @@ export class AIAnalysisPipeline {
   /**
    * Käsittelee yksittäisen arvon kentät (merkki, malli, kunto)
    */
-  private getSingleValue(
+  private getKuntoValue(
     results: AnalysisResult[],
-    fieldName: keyof AnalyzerResult,
+  ): (typeof kuntoOptions)[number] {
+    return (
+      results.map((r) => r.result.kunto).find((k) => k !== "Ei tiedossa") ||
+      "Ei tiedossa"
+    );
+  }
+
+  private getStringValue(
+    results: AnalysisResult[],
+    fieldName: "merkki" | "malli" | "vari",
   ): string {
-    // Kerää validit arvot
     const validResults = results
-      .map((r) => r.result[fieldName] as string)
+      .map((r) => r.result[fieldName])
       .filter((value) => value !== "Ei tiedossa" && value !== "");
 
     if (validResults.length === 0) return "Ei tiedossa";
 
-    // Laske esiintymiskerrat
     const counts = validResults.reduce(
       (acc, value) => {
         acc[value] = (acc[value] || 0) + 1;
@@ -61,15 +69,11 @@ export class AIAnalysisPipeline {
       {} as Record<string, number>,
     );
 
-    // Jos jokin arvo esiintyy vähintään kahdesti, käytä sitä
     const [mostCommonValue, count] = Object.entries(counts).sort(
       (a, b) => b[1] - a[1],
     )[0];
 
-    if (count >= 2) return mostCommonValue;
-
-    // Jos ei konsensusta, ota ensimmäinen validi
-    return validResults[0];
+    return count >= 2 ? mostCommonValue : validResults[0];
   }
 
   /**
@@ -161,7 +165,6 @@ export class AIAnalysisPipeline {
       console.log(
         `${analyzer.name} completed with confidence: ${confidence} in ${completionTime}ms`,
       );
-      console.log("result.object", result);
 
       return {
         result,
@@ -181,10 +184,10 @@ export class AIAnalysisPipeline {
   }
 
   async analyze(imageBuffer: Buffer): Promise<{
-    result: AnalyzerResult;
+    result: FurnitureDetails;
     usedAnalyzers: string[];
   }> {
-    // Suorita analyysit rinnakkain
+    // Suorita asynkronisesti analyysit kaikilla analysoijilla
     const analysisPromises = this.analyzers.map((analyzer) =>
       this.analyzeWithModel(analyzer, imageBuffer),
     );
@@ -212,13 +215,13 @@ export class AIAnalysisPipeline {
     console.log("\nYhdistetään tulokset mallien konsensuksen perusteella...");
 
     // Käsittele yksittäiset arvot
-    const merkki = this.getSingleValue(results, "merkki");
+    const merkki = this.getStringValue(results, "merkki");
     // Jos merkki löytyi, yritä löytää malli
     const malli =
       merkki !== "Ei tiedossa"
-        ? this.getSingleValue(results, "malli")
+        ? this.getStringValue(results, "malli")
         : "Ei tiedossa";
-    const kunto = this.getSingleValue(results, "kunto");
+    const kunto = this.getKuntoValue(results);
 
     // Yhdistä moniosaiset kentät
     const vari = this.combineColorValues(results);
@@ -231,7 +234,7 @@ export class AIAnalysisPipeline {
     // console.log(`vari: "${vari}"`);
     // console.log(`kunto: "${kunto}"`);
 
-    const combinedResult: AnalyzerResult = {
+    const combinedResult: FurnitureDetails = {
       merkki,
       malli,
       vari,
@@ -246,7 +249,7 @@ export class AIAnalysisPipeline {
     };
   }
 
-  private createEmptyResult(): AnalyzerResult {
+  private createEmptyResult(): FurnitureDetails {
     return {
       merkki: "Ei tiedossa",
       malli: "Ei tiedossa",

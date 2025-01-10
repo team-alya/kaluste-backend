@@ -1,13 +1,14 @@
-// src/services/ai/analyze-images.test.ts
 import fs from "fs/promises";
 import path from "path";
 import { pipeline } from "../services/ai/pipelines/image-analysis-pipeline";
+
+// You can run these test with ts-node by running the following command in the terminal:: ts-node src/tests/analyze-image-test.ts
 
 // Lista testattavista kuvista
 const TEST_IMAGES = [
   // "images/marius.png",
   // "images/adde_tuoli.png",
-  // "images/martella-axia.png",
+  "images/martella-axia.png",
   // "images/seminar-nikari.jpg",
   // "images/akademia.png",
   // "images/artek-jakkara.jpg",

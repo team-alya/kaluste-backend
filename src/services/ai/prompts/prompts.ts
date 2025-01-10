@@ -1,5 +1,5 @@
+import { FurnitureDetails } from "@/types/schemas";
 import dedent from "dedent";
-import { FurnitureDetails } from "../types/schemas";
 /**
  * Creates a dontation prompt for the location service.
  */
@@ -77,6 +77,7 @@ export const createRepairPrompt = (
 
 /**
  * New prompts that are currently in use with the new pipelines & priceAnalyzer
+ * Above are the old prompts that are not in use anymore but kept for reference
  */
 export const analyzeImagePrompt =
   "Analysoi tämä suomalainen huonekalu ja tunnista sen tiedot. Mikäli et pysty tunnistamaan kenttää palauta 'Ei tiedossa'. Älä arvaa";

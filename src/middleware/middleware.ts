@@ -1,21 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import {
   FurnitureDetailsRequest,
   LocationQuery,
   ReviewQuery,
   UserQuery,
 } from "../types/middleware";
-import {
-  furnitureDetailsSchema,
-  locationQuerySchema,
-  reviewSchema,
-} from "../types/schemas";
+import { furnitureDetailsSchema } from "../types/schemas";
 
 /**
  * Middleware to extract image from the request.
  * NOTE: Most/All of these middlewares are not used in the project. They are referring to the old implementation GitHub TAG v1.0.
+ * imageUploadHandler is only in use atm
  */
 
 export const imageUploadHandler = () => {
@@ -27,6 +24,32 @@ export const imageUploadHandler = () => {
     },
   }).single("image");
 };
+
+/*
+All above this is old and not used in the project.
+TODO: Remove all the above code if not needed.
+*/
+
+export const locationQuerySchema = z.object({
+  requestId: z.string(),
+  location: z.string(),
+  source: z.union([
+    z.literal("donation"),
+    z.literal("recycle"),
+    z.literal("repair"),
+  ]),
+});
+
+export const reviewSchema = z.object({
+  requestId: z.string(),
+  review: z.object({
+    rating: z
+      .number()
+      .min(1, { message: "Rating must be between 1 and 5" })
+      .max(5, { message: "Rating must be between 1 and 5" }),
+    comment: z.string().optional(),
+  }),
+});
 
 /**
  * Middleware to validate that a file of image format was sent.

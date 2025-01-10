@@ -27,7 +27,7 @@
 
 ### Enviromental variables
 
-Create an .env file in the root folder with the following values (use the .env.template file for reference):
+Create an .env file in the root folder with the following values (use the .env.example file for reference):
 
 - OPENAI_API_KEY
 - MONGODB_URI
@@ -329,6 +329,20 @@ flowchart TD
     style Perplexity fill:#B0C4DE
     style GPT4 fill:#FFB6C1
 ```
+
+## To Developer
+
+### Environment Setup
+
+Remember to set environment variables:
+
+```bash
+cp .env.example .env
+```
+
+### Rahti Production Environment
+
+Application has been published to Rahti following [this deployment guide](https://github.com/laguagu/arvolaskuri-node-backend?tab=readme-ov-file#sovelluksen-julkaisu-csc-rahti-2ssa-github-integraatiolla).
 
 ## Lisenssi
 

@@ -1,13 +1,13 @@
+import {
+  FurnitureDetails,
+  PriceEstimation,
+  priceEstimationSchema,
+} from "@/types/schemas";
 import { openai } from "@ai-sdk/openai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateObject, generateText } from "ai";
 import dedent from "dedent";
 import dotenv from "dotenv";
-import {
-  FurnitureDetails,
-  PriceEstimation,
-  priceEstimationSchema,
-} from "../../../types/schemas";
 dotenv.config();
 
 const perplexity = createOpenAICompatible({
@@ -89,12 +89,12 @@ async function generatePriceObject(
 
   return result.object;
 }
+
 export const analyzePrice = async (
   furnitureDetails: FurnitureDetails,
 ): Promise<PriceEstimation> => {
   try {
     const perplexityAnalysis = await perplexityPrizeAnalyse(furnitureDetails);
-    console.log("perplexityAnalysis", perplexityAnalysis);
 
     const result = await generatePriceObject(
       furnitureDetails,

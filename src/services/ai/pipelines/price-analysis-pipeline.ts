@@ -2,14 +2,14 @@
 This was the first version of price analyzer. Arvolaskuri uses priceAnalyzer from kaluste-backend/src/services/ai/priceAnalyzer currently.
 Which is a bit different from this one. It uses Perplexity API for price analysis.
 */
-import { google } from "@ai-sdk/google";
-import { openai } from "@ai-sdk/openai";
-import { generateObject } from "ai";
 import {
   FurnitureDetails,
   PriceAnalysis,
   priceAnalysisSchema,
-} from "../../../types/schemas";
+} from "@/types/schemas";
+import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
+import { generateObject } from "ai";
 
 interface PriceAnalyzer {
   name: string;

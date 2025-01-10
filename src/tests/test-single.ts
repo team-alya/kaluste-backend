@@ -1,8 +1,8 @@
+import { Gemini_1_5_Analyzer } from "@/services/ai/imageAnalyzer/gemini-1.5-analyzer";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
-import { AIAnalysisPipeline } from "../services/ai/imageAnalyzer";
-import { GeminiAnalyzer } from "../services/ai/imageAnalyzer/gemini-2-0-analyzer";
+import { ImageAnalysisPipeline } from "../services/ai/imageAnalyzer";
 dotenv.config();
 async function testSingleImage() {
   const imagePath = path.join(
@@ -10,14 +10,14 @@ async function testSingleImage() {
     "../tests/images",
     // "akademia.png"
     // "adde_tuoli.png"
-    // "marius.png",
+    "marius.png",
     // "seminar-nikari.jpg"
     // "artek-jakkara.jpg"
     // "martella-axia.png"
     // "artek-jakkara.jpg"
-    "hay-about.webp",
+    // "hay-about.webp",
   );
-  const aiModel = new AIAnalysisPipeline([new GeminiAnalyzer()]);
+  const aiModel = new ImageAnalysisPipeline([new Gemini_1_5_Analyzer()]);
   // new GPT4Analyzer(),
   // new ClaudeAnalyzer(),
   // new GeminiAnalyzer(),

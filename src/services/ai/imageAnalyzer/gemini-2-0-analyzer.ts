@@ -1,20 +1,19 @@
+import { FurnitureDetails, furnitureDetailsSchema } from "@/types/schemas";
+import { AIAnalyzer } from "@/types/services";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
-import { analyzeImagePromptGemini15 } from "../../../prompts/prompts";
-import { imgAnalyzeSystemMsg } from "../../../prompts/system";
-import { AIAnalyzer, AnalyzerResult } from "../../../types/analyzer";
-import { furnitureDetailsSchema } from "../../../types/schemas";
+import { analyzeImagePrompt } from "../prompts/prompts";
+import { imgAnalyzeSystemMsg } from "../prompts/system";
 dotenv.config();
 export class GeminiAnalyzer implements AIAnalyzer {
-  name = "Gemini";
-  async analyze(imageBuffer: Buffer): Promise<AnalyzerResult> {
+  name = "Gemini-2-0";
+  async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const result = await generateObject({
         model: google("gemini-2.0-flash-exp", {
           useSearchGrounding: true,
         }),
-        // model: google("gemini-1.5-pro-latest"),
         schema: furnitureDetailsSchema,
         output: "object",
         system: imgAnalyzeSystemMsg,
@@ -24,7 +23,7 @@ export class GeminiAnalyzer implements AIAnalyzer {
             content: [
               {
                 type: "text",
-                text: analyzeImagePromptGemini15,
+                text: analyzeImagePrompt,
               },
               {
                 type: "image",
@@ -41,19 +40,19 @@ export class GeminiAnalyzer implements AIAnalyzer {
     }
   }
 
-  // async analyze(_imageBuffer: Buffer): Promise<AnalyzerResult> {
+  // async analyze(_imageBuffer: Buffer): Promise<FurnitureDetails> {
   //   // await sleep(4000);
   //   return Promise.resolve({
   //     merkki: "Martella",
   //     malli: "",
   //     vari: "keltainen",
   //     mitat: {
-  //       pituus: 6,
-  //       leveys: 6,
-  //       korkeus: 6,
+  //       pituus: 2,
+  //       leveys: 2,
+  //       korkeus: 2,
   //     },
   //     materiaalit: ["kivi"],
-  //     kunto: "Uudenveroinen",
+  //     kunto: "Uusi",
   //   });
   // }
 }

@@ -1,4 +1,4 @@
-# This file is used to run the backend with memcached as a cache. (Not in use).
+# This file is used to run the backend with memcached as a cache. (Not in use, can be deleted). Better to use reddis as a cache in Rahti environment IMO.
 services:
   memcached:
     image: memcached:latest

@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { smoothStream, streamText } from "ai";
 import express, { Request, Response } from "express";
-import { getSystemPrompt } from "../prompts/system";
+import { getSystemPrompt } from "../services/ai/prompts/system";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import express, { Response } from "express";
 import { analyzePrice } from "../services/ai/priceAnalyzer/perplexity";
-import { FurnitureDetailsRequest } from "../types/common";
+import { FurnitureDetailsRequest } from "../types/api";
 
 const router = express.Router();
 

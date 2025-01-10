@@ -9,34 +9,7 @@ export const kuntoOptions = [
   "Ei tiedossa",
 ] as const;
 
-export const furnitureDetailsSchema = z.object({
-  merkki: z
-    .string()
-    .describe(
-      "Huonekalun valmistajan nimi tai tyylisuunta. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'.",
-    ),
-  malli: z
-    .string()
-    .describe(
-      "Huonekalun mallinimi, sarja tai tyylillinen kuvaus. Voi olla tarkka mallisarja (esim. 'Kilta', 'Mondo'). Jos mallia ei voi tunnistaa varmuudella, palauta 'Ei tiedossa'.",
-    ),
-  vari: z.string(),
-  mitat: z
-    .object({
-      pituus: z.number(),
-      leveys: z.number(),
-      korkeus: z.number(),
-    })
-    .describe("Mitat senttimetreinä. Anna paras arviosi, jos et ole varma."),
-  materiaalit: z.array(z.string()),
-  kunto: z
-    .enum(kuntoOptions)
-    .describe(
-      "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella.",
-    ),
-});
-
-export const furnitureDetailsSchemaGemini15 = z
+export const furnitureDetailsSchema = z
   .object({
     merkki: z
       .string()
@@ -46,7 +19,7 @@ export const furnitureDetailsSchemaGemini15 = z
     malli: z
       .string()
       .describe(
-        "Palauta 'Ei tiedossa' ellet ole täysin varma mallista. Ole tarkka mallin kanssa. Esim valmistajan huonekaluja voi olla monia samanlaisia joten palauta 'Ei tiedossa' jos et ole varma.",
+        "Huonekalun mallinimi, sarja tai tyylillinen kuvaus. Voi olla tarkka mallisarja (esim. 'Kilta', 'Mondo'). Jos mallia ei voi tunnistaa varmuudella, palauta 'Ei tiedossa'. Älä arvaa.",
       ),
     vari: z.string(),
     mitat: z
@@ -63,7 +36,36 @@ export const furnitureDetailsSchemaGemini15 = z
         "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella.",
       ),
   })
-  .describe("");
+  .describe(
+    "Jos et ole varma jostain kentästä, palauta 'Ei tiedossa'. Älä arvaa.",
+  );
+
+export const furnitureDetailsSchemaGemini15 = z.object({
+  merkki: z
+    .string()
+    .describe(
+      "Huonekalun valmistajan nimi tai tyylisuunta. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'. Älä arvaa.",
+    ),
+  malli: z
+    .string()
+    .describe(
+      "Palauta 'Ei tiedossa' ellet ole täysin varma mallista. Ole tarkka mallin kanssa. Esim valmistajan huonekaluja voi olla monia samanlaisia joten palauta 'Ei tiedossa' jos olet epävarma",
+    ),
+  vari: z.string(),
+  mitat: z
+    .object({
+      pituus: z.number(),
+      leveys: z.number(),
+      korkeus: z.number(),
+    })
+    .describe("Mitat senttimetreinä. Anna paras arviosi, jos et ole varma."),
+  materiaalit: z.array(z.string()),
+  kunto: z
+    .string()
+    .describe(
+      "Huonekalun kuntoarvio. Valitse paras arvio seuraavista vaihtoehdoista: Uusi, Erinomainen, Hyvä, Kohtalainen, Huono, Ei tiedossa. Isolla alkukirjaimella.",
+    ),
+});
 
 export const priceAnalysisSchema = z.object({
   korkein_hinta: z
@@ -136,28 +138,3 @@ export const priceEstimationSchema = z.object({
 export type PriceEstimation = z.infer<typeof priceEstimationSchema>;
 export type PriceAnalysis = z.infer<typeof priceAnalysisSchema>;
 export type FurnitureDetails = z.infer<typeof furnitureDetailsSchema>;
-
-/*
-Vanhoja schemoja opiskelijoiden projekteista.
-TODO: Poista, jos ei tarvita.
-*/
-export const locationQuerySchema = z.object({
-  requestId: z.string(),
-  location: z.string(),
-  source: z.union([
-    z.literal("donation"),
-    z.literal("recycle"),
-    z.literal("repair"),
-  ]),
-});
-
-export const reviewSchema = z.object({
-  requestId: z.string(),
-  review: z.object({
-    rating: z
-      .number()
-      .min(1, { message: "Rating must be between 1 and 5" })
-      .max(5, { message: "Rating must be between 1 and 5" }),
-    comment: z.string().optional(),
-  }),
-});

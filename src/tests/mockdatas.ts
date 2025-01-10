@@ -1,7 +1,6 @@
-import { AnalyzerResult } from "../types/analyzer";
-import { PriceEstimation } from "../types/schemas";
+import { FurnitureDetails, PriceEstimation } from "../types/schemas";
 
-export const getMockFurnitureData = (): AnalyzerResult => {
+export const getMockFurnitureData = (): FurnitureDetails => {
   return {
     merkki: "Artek",
     malli: "Jakkara 60",
