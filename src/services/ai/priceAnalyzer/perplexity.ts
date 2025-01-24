@@ -27,7 +27,7 @@ async function perplexityPrizeAnalyse(furnitureDetails: FurnitureDetails) {
   });
 
   const result = await generateText({
-    model: perplexity("llama-3.1-sonar-large-128k-online"),
+    model: perplexity("sonar"),
     prompt: `
       Analysoi tämän huonekalun hinta käytettyjen tavaroiden markkinoilla Suomessa.
       Analyysi tehty: ${formattedDate}
@@ -95,7 +95,7 @@ export const analyzePrice = async (
 ): Promise<PriceEstimation> => {
   try {
     const perplexityAnalysis = await perplexityPrizeAnalyse(furnitureDetails);
-
+    
     const result = await generatePriceObject(
       furnitureDetails,
       perplexityAnalysis,

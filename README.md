@@ -301,8 +301,6 @@ flowchart TD
 
 ## Price Analysis Pipeline
 
-⚠️ **TODO:** February 22, 2025 llama-3.1-sonar-large will no longer be accessible. Update LLM-model e.g to 'sonar' and test it [Perplexity-API](https://docs.perplexity.ai/guides/model-cards#supported-models)
-
 The price analysis process uses Perplexity AI and GPT-4o to generate market-based price estimations for furniture. Here's how the price analysis pipeline works:
 
 1. After furniture details are verified by the user, they are sent to Perplexity AI
@@ -312,7 +310,7 @@ The price analysis process uses Perplexity AI and GPT-4o to generate market-base
 
 ```mermaid
 flowchart TD
-    Start([Verified Furniture Details]) --> Perplexity[Perplexity Analysis<br>llama-3.1-sonar-large]
+    Start([Verified Furniture Details]) --> Perplexity[Perplexity Analysis<br>sonar]
 
     subgraph PriceAnalysisPipeline[Price Analysis Pipeline]
         Perplexity -->|Market Analysis Text| GPT4[GPT-4o-2024-11-20<br>JSON Object Generation]
