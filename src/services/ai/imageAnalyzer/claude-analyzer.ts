@@ -1,20 +1,20 @@
+import { FurnitureDetails, furnitureDetailsSchema } from "@/types/schemas";
+import { AIAnalyzer } from "@/types/services";
 import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
-import { FurnitureDetails, furnitureDetailsSchema } from "@/types/schemas";
-import { AIAnalyzer } from "@/types/services";
 import { analyzeImagePrompt } from "../prompts/prompts";
 import { imgAnalyzeSystemMsg } from "../prompts/system";
 
 dotenv.config();
 
 export class ClaudeAnalyzer implements AIAnalyzer {
-  name = "CLAUDE-3-5-SONNET";
+  name = "CLAUDE-3-7-SONNET";
 
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const result = await generateObject({
-        model: anthropic("claude-3-5-sonnet-latest"),
+        model: anthropic("claude-3-7-sonnet-latest"),
         schema: furnitureDetailsSchema,
         output: "object",
         system: imgAnalyzeSystemMsg,

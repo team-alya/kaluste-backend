@@ -8,11 +8,11 @@ import { imgAnalyzeSystemMsg } from "../prompts/system";
 dotenv.config();
 
 export class GPT4Analyzer implements AIAnalyzer {
-  name = "GPT-4";
+  name = "GPT-4.1";
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const result = await generateObject({
-        model: openai("gpt-4o"),
+        model: openai("gpt-4.1-2025-04-14"),
         schema: furnitureDetailsSchema,
         output: "object",
         system: imgAnalyzeSystemMsg,

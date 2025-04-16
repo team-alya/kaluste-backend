@@ -7,11 +7,11 @@ import { analyzeImagePrompt } from "../prompts/prompts";
 import { imgAnalyzeSystemMsg } from "../prompts/system";
 dotenv.config();
 export class GeminiAnalyzer implements AIAnalyzer {
-  name = "Gemini-2-0";
+  name = "Gemini-2-5";
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const result = await generateObject({
-        model: google("gemini-2.0-flash-exp", {
+        model: google("gemini-2.5-pro-exp-03-25", {
           useSearchGrounding: true,
         }),
         schema: furnitureDetailsSchema,
@@ -34,6 +34,7 @@ export class GeminiAnalyzer implements AIAnalyzer {
         ],
       });
       return result.object;
+      
     } catch (error) {
       console.error("Error analyzing image:", error);
       throw error;
