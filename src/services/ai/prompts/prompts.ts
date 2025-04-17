@@ -102,5 +102,5 @@ Analyysin vaiheet:
 `;
 
 // Optimoitu prompt fine-tuning-käyttöön
-export const analyzeImagePromptFineTuning = 
+export const analyzeImagePromptFineTuning =
   "Analysoi tämä huonekalu ja tunnista sen merkki ja malli. Vastaa JSON-muodossa ja käytä 'Ei tiedossa', jos et ole varma.";

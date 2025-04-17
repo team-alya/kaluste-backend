@@ -95,7 +95,7 @@ export const analyzePrice = async (
 ): Promise<PriceEstimation> => {
   try {
     const perplexityAnalysis = await perplexityPrizeAnalyse(furnitureDetails);
-    
+
     const result = await generatePriceObject(
       furnitureDetails,
       perplexityAnalysis,

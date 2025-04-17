@@ -80,7 +80,7 @@ function main() {
     .sort((a, b) => b[1] - a[1])
     .forEach(([brand, count]) => {
       console.log(
-        `${brand}: ${count} kpl (${((count / labels.length) * 100).toFixed(1)}%)`
+        `${brand}: ${count} kpl (${((count / labels.length) * 100).toFixed(1)}%)`,
       );
     });
 
@@ -99,7 +99,7 @@ function main() {
   out.end();
   console.log(`✅ Wrote ${conversationsWritten} conversations to ${OUT_PATH}`);
   console.log(
-    `Using ${USE_SHORT_SYSTEM_MSG ? "shortened" : "full"} system message`
+    `Using ${USE_SHORT_SYSTEM_MSG ? "shortened" : "full"} system message`,
   );
 }
 

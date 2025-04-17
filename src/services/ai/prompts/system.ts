@@ -100,6 +100,6 @@ Tiedät paljon erityisesti suomalaisista ja pohjoismaisista huonekaluvalmistajis
 
 `;
 
-// Minimaalinen system-viesti fine-tuningia varten - 
+// Minimaalinen system-viesti fine-tuningia varten -
 // Vain roolin määrittely, muu ohjeistus käyttäjän promptissa
 export const imgAnalyzeSystemMsgFineTuning = `Olet huonekaluasiantuntija, joka tunnistaa huonekalujen merkkejä ja malleja.`;
