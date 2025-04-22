@@ -103,3 +103,7 @@ Tiedät paljon erityisesti suomalaisista ja pohjoismaisista huonekaluvalmistajis
 Älä arvaa, jos et ole varma huonekalun merkistä, mallista tai kunnosta. Palauta 'Ei tiedossa' jos et tiedä jotain tietoa varmasti.
 
 `;
+
+// Minimaalinen system-viesti fine-tuningia varten -
+// Vain roolin määrittely, muu ohjeistus käyttäjän promptissa
+export const imgAnalyzeSystemMsgFineTuning = `Olet huonekaluasiantuntija, joka tunnistaa huonekalujen merkkejä ja malleja.`;

@@ -34,7 +34,6 @@ export class GeminiAnalyzer implements AIAnalyzer {
         ],
       });
       return result.object;
-      
     } catch (error) {
       console.error("Error analyzing image:", error);
       throw error;

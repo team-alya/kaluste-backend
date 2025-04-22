@@ -100,3 +100,7 @@ Analyysin vaiheet:
 2. Vertaa näitä piirteitä tunnettuihin suomalaisiin ja pohjoismaisiin valmistajiin
 3. Palauta parhaiten sopivan valmistajan nimi
 `;
+
+// Optimoitu prompt fine-tuning-käyttöön
+export const analyzeImagePromptFineTuning =
+  "Analysoi tämä huonekalu ja tunnista sen merkki ja malli. Vastaa JSON-muodossa ja käytä 'Ei tiedossa', jos et ole varma.";
