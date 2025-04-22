@@ -72,6 +72,10 @@ Pohjoismaiset valmistajat:
 
 `;
 
+export const finalImgAnalyzeSystemMsg = `
+Olet huonekaluasiantuntija, joka erikoistuu huonekalujen tunnistamiseen ja arviointiin.
+`;
+
 export const getSystemPrompt = (furnitureContext: any) => dedent`
   Olet avulias assistentti joka neuvoo käytetyn kalusteen myymisessä, lahjoittamisessa, kierrättämisessä ja kunnostamisessa.
   ${

@@ -3,18 +3,20 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
 import { finalAnalyzePromptGPT4o } from "./prompts/prompts";
-import { imgAnalyzeSystemMsg } from "./prompts/system";
+import {
+  finalImgAnalyzeSystemMsg
+} from "./prompts/system";
 dotenv.config();
 
 export const finalAnalyze = async (
-  imageBuffer: Buffer,
+  imageBuffer: Buffer
 ): Promise<FurnitureDetails> => {
   try {
     const result = await generateObject({
       model: openai("gpt-4o-2024-11-20"),
       schema: furnitureDetailsSchema,
       output: "object",
-      system: imgAnalyzeSystemMsg,
+      system: finalImgAnalyzeSystemMsg,
       messages: [
         {
           role: "user",
