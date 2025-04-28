@@ -22,3 +22,4 @@ build/
 src/services/ai/fineTuning/new_labels.json
 src/services/ai/fineTuning/labels.json
 src/services/ai/fineTuning/furniture_dataset.json
+src/services/ai/fineTuning/furniture_dataset.jsonl
