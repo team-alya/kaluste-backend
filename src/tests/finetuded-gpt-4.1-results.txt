@@ -1,0 +1,16 @@
+Kuva, Merkki, Malli, Kesto (s)
+lukki-ilmari.jpg, Artek, Aino Aalto, 3.33
+aino-aalto-606.png, Artek, Aino Aalto, 2.477
+ilmari-tapiovaara-pirkka.jpg, Artek - Alvar Aalto, 66, 3.826
+adde_tuoli.png, IKEA, Ei tiedossa, 3.097
+seminar-nikari.jpg, Artek, Ei tiedossa, 3.401
+artek-jakkara.jpg, Artek, Aalto 60, 7.125
+martella-axia.png, IKEA, Ei tiedossa, 3.059
+hay-about.webp, Artek, Aalto 69, 2.456
+artek-65.jpg, Artek, K65, 3.506
+artek-611.jpg, Artek, Ei tiedossa, 4.127
+artek-domus.jpg, Artek, Ei tiedossa, 2.857
+akademia.png, Artek - Alvar Aalto, 69, 2.816
+marius.png, IKEA, Marius, 4.533
+remmi-yrjo-kukkapuro.jpg, Yrjö Kukkapuro, Avarte Plaano, 3.432
+chair.jpg, Ei tiedossa, Ei tiedossa, 2.346

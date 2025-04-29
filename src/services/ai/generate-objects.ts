@@ -13,7 +13,7 @@ export const finalAnalyze = async (
 ): Promise<FurnitureDetails> => {
   try {
     const result = await generateObject({
-      model: openai("gpt-4o-2024-11-20"),
+      model: openai("ft:gpt-4.1-2025-04-14:alya:alya-v1:BRHByWMF"),
       schema: furnitureDetailsSchema,
       output: "object",
       system: finalImgAnalyzeSystemMsg,

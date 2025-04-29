@@ -1,0 +1,16 @@
+Kuva, Merkki, Malli, Kesto (s)
+lukki-ilmari.jpg, IKEA, Mahdollisesti IKEA Odger -tyylinen, mutta ei varma, 4.575
+aino-aalto-606.png, IKEA, Ei tiedossa, 2.384
+ilmari-tapiovaara-pirkka.jpg, Artek, Arvaus: 1950-60-luku, mahdollisesti Ilmari Tapiovaaran suunnittelema, 5.495
+adde_tuoli.png, IKEA, ADDE, 3.206
+seminar-nikari.jpg, Nikari, Mahdollisesti 'Perch' tai vastaava minimalistinen malli, 3.977
+artek-jakkara.jpg, Artek, Aalto-jakkara (Stool 60), 4.17
+martella-axia.png, Martela, Ei tiedossa, 5.205
+hay-about.webp, Muuto, Fiber Armchair (arvaus), 7.811
+artek-65.jpg, Artek, Hyvä arvaus: K65 baarituoli, 5.821
+artek-611.jpg, Artek, Hyvä arvaus: 611 tuoli, 5.601
+artek-domus.jpg, Artek, Hyvä arvaus: Aalto-tyylinen tuoli, 9.109
+akademia.png, Carl Hansen & Søn, CH36 (arvaus), 4.445
+marius.png, IKEA, MARIUS, 2.938
+remmi-yrjo-kukkapuro.jpg, Poikolainen, Hyvä epäilys: Mondo, 4.359
+chair.jpg, Asko, Perinteinen puutuoli, 2.786
