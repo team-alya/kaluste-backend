@@ -15,7 +15,7 @@ export class GeminiAnalyzer implements AIAnalyzer {
       console.log(`[${timestamp}] Starting ${this.name} analysis...`);
       
       const result = await generateObject({
-        model: google("gemini-2.5-pro-exp-03-25", {
+        model: google("gemini-2.5-pro-preview-03-25", {
           useSearchGrounding: true,
         }),
         schema: furnitureDetailsSchema,
