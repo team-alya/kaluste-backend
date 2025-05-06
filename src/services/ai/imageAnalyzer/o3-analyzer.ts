@@ -1,17 +1,13 @@
-import {
-  FurnitureDetails,
-  StrictfurnitureDetailsSchema,
-} from "@/types/schemas";
+import { FurnitureDetails, furnitureDetailsSchema } from "@/types/schemas";
 import { AIAnalyzer } from "@/types/services";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
-import { analyzeImagePrompt } from "../prompts/prompts";
-import { imgAnalyzeSystemMsgStrict } from "../prompts/system";
+import { analyzeImagePromptGPTO3 } from "../prompts/prompts";
 dotenv.config();
 
-export class GPT4Analyzer implements AIAnalyzer {
-  name = "GPT-4.1";
+export class O3Analyzer implements AIAnalyzer {
+  name = "O3-Reasoning";
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const startTime = Date.now();
@@ -19,17 +15,17 @@ export class GPT4Analyzer implements AIAnalyzer {
       console.log(`[${timestamp}] Starting ${this.name} analysis...`);
 
       const result = await generateObject({
-        model: openai("gpt-4.1-2025-04-14"),
-        schema: StrictfurnitureDetailsSchema,
+        model: openai.responses("o3"),
+        schema: furnitureDetailsSchema,
         output: "object",
-        system: imgAnalyzeSystemMsgStrict,
+        // system: imgAnalyzeSystemMsgStrict,
         messages: [
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: analyzeImagePrompt,
+                text: analyzeImagePromptGPTO3,
               },
               {
                 type: "image",
@@ -38,6 +34,12 @@ export class GPT4Analyzer implements AIAnalyzer {
             ],
           },
         ],
+        providerOptions: {
+          openai: {
+            reasoningEffort: "medium", // 'low', 'medium', 'high'
+            reasoningSummary: "auto", // 'auto' tai 'detailed'
+          },
+        },
       });
 
       const endTime = Date.now();
@@ -61,19 +63,4 @@ export class GPT4Analyzer implements AIAnalyzer {
       throw error;
     }
   }
-
-  // analyze(_imageBuffer: Buffer): Promise<FurnitureDetails> {
-  //   return Promise.resolve({
-  //     merkki: "Isku",
-  //     malli: "",
-  //     vari: "musta,punainen",
-  //     mitat: {
-  //       pituus: 5,
-  //       leveys: 4,
-  //       korkeus: 4,
-  //     },
-  //     materiaalit: ["kivi"],
-  //     kunto: "Uusi",
-  //   });
-  // }
 }

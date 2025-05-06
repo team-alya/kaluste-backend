@@ -1,4 +1,7 @@
-import { FurnitureDetails, furnitureDetailsSchema } from "@/types/schemas";
+import {
+  FurnitureDetails,
+  StrictfurnitureDetailsSchema,
+} from "@/types/schemas";
 import { AIAnalyzer } from "@/types/services";
 import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
@@ -16,10 +19,10 @@ export class ClaudeAnalyzer implements AIAnalyzer {
       const startTime = Date.now();
       const timestamp = new Date().toISOString();
       console.log(`[${timestamp}] Starting ${this.name} analysis...`);
-      
+
       const result = await generateObject({
         model: anthropic("claude-3-7-sonnet-latest"),
-        schema: furnitureDetailsSchema,
+        schema: StrictfurnitureDetailsSchema,
         output: "object",
         system: imgAnalyzeSystemMsgStrict,
         messages: [
@@ -38,13 +41,21 @@ export class ClaudeAnalyzer implements AIAnalyzer {
           },
         ],
       });
-      
+
       const endTime = Date.now();
       const duration = endTime - startTime;
-      console.log(`[${timestamp}] ${this.name} completed in ${duration}ms`);
-      console.log(`[${timestamp}] ${this.name} detected brand: "${result.object.merkki}"`);
-      console.log(`[${timestamp}] ${this.name} detected model: "${result.object.malli}"`);
-      
+      const durationSeconds = (duration / 1000).toFixed(2) + "s";
+      const timestampEnd = new Date().toISOString();
+      console.log(
+        `[${timestampEnd}] ${this.name} completed in ${durationSeconds}`,
+      );
+      console.log(
+        `[${timestampEnd}] ${this.name} detected brand: "${result.object.merkki}"`,
+      );
+      console.log(
+        `[${timestampEnd}] ${this.name} detected model: "${result.object.malli}"`,
+      );
+
       return result.object;
     } catch (error) {
       const timestamp = new Date().toISOString();

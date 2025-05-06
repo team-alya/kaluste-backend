@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import {
   analyzeImagePromptFineTuning,
-  analyzeImagePromptGPT4o,
+  analyzeImagePromptGPTO3,
 } from "../prompts/prompts";
 import {
   imgAnalyzeSystemMsg,
@@ -32,7 +32,7 @@ function buildConversation(item: any) {
       type: "text",
       text: USE_SHORT_SYSTEM_MSG
         ? analyzeImagePromptFineTuning
-        : analyzeImagePromptGPT4o,
+        : analyzeImagePromptGPTO3,
     },
     { type: "image_url", image_url: { url: item.url } },
   ];
