@@ -12,11 +12,22 @@ export const pipeline = new ImageAnalysisPipeline([
 
 export const runImageAnalysisPipeline = async (imageBuffer: Buffer) => {
   try {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] Starting image analysis pipeline...`);
+    
     const { result, usedAnalyzers } = await pipeline.analyze(imageBuffer);
-    console.log("Used analyzers:", usedAnalyzers);
+    
+    console.log(`[${timestamp}] Analysis complete`);
+    console.log(`[${timestamp}] Used analyzers: ${usedAnalyzers.join(', ')}`);
+    console.log(`[${timestamp}] Furniture brand: "${result.merkki}"`);
+    console.log(`[${timestamp}] Furniture model: "${result.malli}"`);
+    console.log(`[${timestamp}] Furniture color: "${result.vari}"`);
+    console.log(`[${timestamp}] Furniture condition: "${result.kunto}"`);
+    
     return result;
   } catch (error) {
-    console.error("Error in analysis pipeline:", error);
+    const timestamp = new Date().toISOString();
+    console.error(`[${timestamp}] Error in analysis pipeline:`, error);
     throw error;
   }
 };

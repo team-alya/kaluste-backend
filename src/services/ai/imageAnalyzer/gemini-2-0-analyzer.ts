@@ -4,19 +4,23 @@ import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
 import { analyzeImagePrompt } from "../prompts/prompts";
-import { imgAnalyzeSystemMsg } from "../prompts/system";
+import { imgAnalyzeSystemMsgStrict } from "../prompts/system";
 dotenv.config();
 export class GeminiAnalyzer implements AIAnalyzer {
-  name = "Gemini-2-5";
+  name = "Gemini-2.5";
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
+      const startTime = Date.now();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] Starting ${this.name} analysis...`);
+      
       const result = await generateObject({
         model: google("gemini-2.5-pro-exp-03-25", {
           useSearchGrounding: true,
         }),
         schema: furnitureDetailsSchema,
         output: "object",
-        system: imgAnalyzeSystemMsg,
+        system: imgAnalyzeSystemMsgStrict,
         messages: [
           {
             role: "user",
@@ -33,9 +37,18 @@ export class GeminiAnalyzer implements AIAnalyzer {
           },
         ],
       });
+      
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      const timestampEnd = new Date().toISOString();
+      console.log(`[${timestampEnd}] ${this.name} completed in ${duration}ms`);
+      console.log(`[${timestampEnd}] ${this.name} detected brand: "${result.object.merkki}"`);
+      console.log(`[${timestampEnd}] ${this.name} detected model: "${result.object.malli}"`);
+      
       return result.object;
     } catch (error) {
-      console.error("Error analyzing image:", error);
+      const timestamp = new Date().toISOString();
+      console.error(`[${timestamp}] Error in ${this.name} analysis:`, error);
       throw error;
     }
   }

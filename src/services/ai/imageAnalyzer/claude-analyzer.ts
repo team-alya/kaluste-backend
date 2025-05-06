@@ -4,7 +4,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
 import { analyzeImagePrompt } from "../prompts/prompts";
-import { imgAnalyzeSystemMsg } from "../prompts/system";
+import { imgAnalyzeSystemMsgStrict } from "../prompts/system";
 
 dotenv.config();
 
@@ -13,11 +13,15 @@ export class ClaudeAnalyzer implements AIAnalyzer {
 
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
+      const startTime = Date.now();
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] Starting ${this.name} analysis...`);
+      
       const result = await generateObject({
         model: anthropic("claude-3-7-sonnet-latest"),
         schema: furnitureDetailsSchema,
         output: "object",
-        system: imgAnalyzeSystemMsg,
+        system: imgAnalyzeSystemMsgStrict,
         messages: [
           {
             role: "user",
@@ -34,9 +38,17 @@ export class ClaudeAnalyzer implements AIAnalyzer {
           },
         ],
       });
+      
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      console.log(`[${timestamp}] ${this.name} completed in ${duration}ms`);
+      console.log(`[${timestamp}] ${this.name} detected brand: "${result.object.merkki}"`);
+      console.log(`[${timestamp}] ${this.name} detected model: "${result.object.malli}"`);
+      
       return result.object;
     } catch (error) {
-      console.error("Error analyzing image:", error);
+      const timestamp = new Date().toISOString();
+      console.error(`[${timestamp}] Error in ${this.name} analysis:`, error);
       throw error;
     }
   }
