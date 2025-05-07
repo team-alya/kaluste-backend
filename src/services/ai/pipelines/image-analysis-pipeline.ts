@@ -11,7 +11,7 @@ export const createPipeline = (options?: ModelSelectionOptions) => {
   if (!options?.model || options.model === "all") {
     return new ImageAnalysisPipeline([
       new GPT4Analyzer(),
-      new O3Analyzer(options?.reasoningEffort || "medium"),
+      new O3Analyzer(options?.reasoningEffort || "high"),
       new ClaudeAnalyzer(),
       new GeminiAnalyzer(),
     ]);
@@ -24,7 +24,7 @@ export const createPipeline = (options?: ModelSelectionOptions) => {
       return new ImageAnalysisPipeline([new GPT4Analyzer()]);
     case "o3":
       return new ImageAnalysisPipeline([
-        new O3Analyzer(options.reasoningEffort || "medium"),
+        new O3Analyzer(options.reasoningEffort || "high"),
       ]);
     case "claude":
       return new ImageAnalysisPipeline([new ClaudeAnalyzer()]);
@@ -34,7 +34,7 @@ export const createPipeline = (options?: ModelSelectionOptions) => {
       // Fallback to all models if an invalid model is specified
       return new ImageAnalysisPipeline([
         new GPT4Analyzer(),
-        new O3Analyzer(options?.reasoningEffort || "medium"),
+        new O3Analyzer(options?.reasoningEffort || "high"),
         new ClaudeAnalyzer(),
         new GeminiAnalyzer(),
       ]);
