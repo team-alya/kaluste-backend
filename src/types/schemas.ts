@@ -10,8 +10,14 @@ export const kuntoOptions = [
 ] as const;
 
 export const furnitureDetailsSchema = z.object({
-  merkki: z.string().describe("Huonekalun valmistajan nimi"),
-  malli: z.string().describe("Huonekalun mallinimi"),
+  merkki: z
+    .string()
+    .describe("Esineen (huonekalun tai koriste-esineen) valmistajan nimi"),
+  malli: z
+    .string()
+    .describe(
+      "Esineen (huonekalun tai koriste-esineen) mallinimi tai tuotemalli"
+    ),
   vari: z.string(),
   mitat: z
     .object({
@@ -24,7 +30,7 @@ export const furnitureDetailsSchema = z.object({
   kunto: z
     .enum(kuntoOptions)
     .describe(
-      "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella.",
+      "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella."
     ),
 });
 
@@ -33,12 +39,12 @@ export const StrictfurnitureDetailsSchema = z
     merkki: z
       .string()
       .describe(
-        "Huonekalun virallinen valmistajan nimi. Jos et ole 100% varma, palauta tarkalleen 'Ei tiedossa'. On erittäin tärkeää palauttaa 'Ei tiedossa' arvaamisen sijaan.",
+        "Huonekalun virallinen valmistajan nimi. Jos et ole 100% varma, palauta tarkalleen 'Ei tiedossa'. On erittäin tärkeää palauttaa 'Ei tiedossa' arvaamisen sijaan."
       ),
     malli: z
       .string()
       .describe(
-        "Huonekalun tarkka mallinimi tai sarja. ÄLÄ MISSÄÄN NIMESSÄ ARVAA mallia - palauta aina 'Ei tiedossa' jos et ole TÄYSIN VARMA mallista. Monilla valmistajilla on samankaltaisia huonekaluja eri mallinimisinä.",
+        "Huonekalun tarkka mallinimi tai sarja. ÄLÄ MISSÄÄN NIMESSÄ ARVAA mallia - palauta aina 'Ei tiedossa' jos et ole TÄYSIN VARMA mallista. Monilla valmistajilla on samankaltaisia huonekaluja eri mallinimisinä."
       ),
     vari: z.string(),
     mitat: z
@@ -48,17 +54,17 @@ export const StrictfurnitureDetailsSchema = z
         korkeus: z.number(),
       })
       .describe(
-        "Dimensions in centimeters. Provide your best estimate if uncertain.",
+        "Dimensions in centimeters. Provide your best estimate if uncertain."
       ),
     materiaalit: z.array(z.string()),
     kunto: z
       .enum(kuntoOptions)
       .describe(
-        "Condition assessment of the furniture. Choose the best evaluation from the list. With capitalized first letter.",
+        "Condition assessment of the furniture. Choose the best evaluation from the list. With capitalized first letter."
       ),
   })
   .describe(
-    "If you are uncertain about any field, return 'Ei tiedossa'. Do not make guesses.",
+    "If you are uncertain about any field, return 'Ei tiedossa'. Do not make guesses."
   );
 
 export const StrictfurnitureDetailsSchemaEn = z
@@ -66,12 +72,12 @@ export const StrictfurnitureDetailsSchemaEn = z
     merkki: z
       .string()
       .describe(
-        "Official manufacturer name of the furniture. If you're not 100% sure, return exactly 'Ei tiedossa'. It's extremely important to return 'Ei tiedossa' instead of guessing.",
+        "Official manufacturer name of the furniture. If you're not 100% sure, return exactly 'Ei tiedossa'. It's extremely important to return 'Ei tiedossa' instead of guessing."
       ),
     malli: z
       .string()
       .describe(
-        "Exact model name or series of the furniture. NEVER UNDER ANY CIRCUMSTANCES guess the model - always return 'Ei tiedossa' if you are not COMPLETELY CERTAIN about the model. Many manufacturers have similar furniture with different model names.",
+        "Exact model name or series of the furniture. NEVER UNDER ANY CIRCUMSTANCES guess the model - always return 'Ei tiedossa' if you are not COMPLETELY CERTAIN about the model. Many manufacturers have similar furniture with different model names."
       ),
     vari: z.string(),
     mitat: z
@@ -81,17 +87,17 @@ export const StrictfurnitureDetailsSchemaEn = z
         korkeus: z.number(),
       })
       .describe(
-        "Dimensions in centimeters. Provide your best estimate if uncertain.",
+        "Dimensions in centimeters. Provide your best estimate if uncertain."
       ),
     materiaalit: z.array(z.string()),
     kunto: z
       .enum(kuntoOptions)
       .describe(
-        "Condition assessment of the furniture. Choose the best evaluation from the list. With capitalized first letter.",
+        "Condition assessment of the furniture. Choose the best evaluation from the list. With capitalized first letter."
       ),
   })
   .describe(
-    "If you are uncertain about any field, return 'Ei tiedossa'. Do not make guesses.",
+    "If you are uncertain about any field, return 'Ei tiedossa'. Do not make guesses."
   );
 
 export const StrictfurnitureDetailsSchemaGemini25Pro = z
@@ -99,12 +105,12 @@ export const StrictfurnitureDetailsSchemaGemini25Pro = z
     merkki: z
       .string()
       .describe(
-        "Official manufacturer name of the furniture. If you're not 100% sure, return exactly 'Ei tiedossa'. It's extremely important to return 'Ei tiedossa' instead of guessing.",
+        "Official manufacturer name of the furniture. If you're not 100% sure, return exactly 'Ei tiedossa'. It's extremely important to return 'Ei tiedossa' instead of guessing."
       ),
     malli: z
       .string()
       .describe(
-        "EXTREMELY IMPORTANT: NEVER guess the model name under ANY circumstances. ALWAYS return 'Ei tiedossa' unless you are 100% CERTAIN of the EXACT model name. Many manufacturers have nearly identical furniture with different model names. Do NOT attempt to identify based on visual similarity alone. When in doubt - which should be most cases - return 'Ei tiedossa'. This is a critical requirement.",
+        "EXTREMELY IMPORTANT: NEVER guess the model name under ANY circumstances. ALWAYS return 'Ei tiedossa' unless you are 100% CERTAIN of the EXACT model name. Many manufacturers have nearly identical furniture with different model names. Do NOT attempt to identify based on visual similarity alone. When in doubt - which should be most cases - return 'Ei tiedossa'. This is a critical requirement."
       ),
     vari: z.string(),
     mitat: z
@@ -114,29 +120,29 @@ export const StrictfurnitureDetailsSchemaGemini25Pro = z
         korkeus: z.number(),
       })
       .describe(
-        "Dimensions in centimeters. Provide your best estimate if uncertain.",
+        "Dimensions in centimeters. Provide your best estimate if uncertain."
       ),
     materiaalit: z.array(z.string()),
     kunto: z
       .enum(kuntoOptions)
       .describe(
-        "Condition assessment of the furniture. Choose the best evaluation from the list. With capitalized first letter.",
+        "Condition assessment of the furniture. Choose the best evaluation from the list. With capitalized first letter."
       ),
   })
   .describe(
-    "If you are uncertain about any field, return 'Ei tiedossa'. Do not make guesses. EXTREMELY IMPORTANT: NEVER guess the model name under ANY circumstances.",
+    "If you are uncertain about any field, return 'Ei tiedossa'. Do not make guesses. EXTREMELY IMPORTANT: NEVER guess the model name under ANY circumstances."
   );
 
 export const furnitureDetailsSchemaGemini15 = z.object({
   merkki: z
     .string()
     .describe(
-      "Huonekalun valmistajan nimi tai tyylisuunta. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'. Älä arvaa.",
+      "Huonekalun valmistajan nimi tai tyylisuunta. Tunnettujen valmistajien kohdalla palauta valmistajan nimi (esim. Isku, Martela, Artek, Asko, IKEA). Jos et pysty tunnistamaan merkkiä tai tyyliä varmuudella, palauta 'Ei tiedossa'. Älä arvaa."
     ),
   malli: z
     .string()
     .describe(
-      "Palauta 'Ei tiedossa' ellet ole täysin varma mallista. Ole tarkka mallin kanssa. Esim valmistajan huonekaluja voi olla monia samanlaisia joten palauta 'Ei tiedossa' jos olet epävarma",
+      "Palauta 'Ei tiedossa' ellet ole täysin varma mallista. Ole tarkka mallin kanssa. Esim valmistajan huonekaluja voi olla monia samanlaisia joten palauta 'Ei tiedossa' jos olet epävarma"
     ),
   vari: z.string(),
   mitat: z
@@ -150,7 +156,7 @@ export const furnitureDetailsSchemaGemini15 = z.object({
   kunto: z
     .string()
     .describe(
-      "Huonekalun kuntoarvio. Valitse paras arvio seuraavista vaihtoehdoista: Uusi, Erinomainen, Hyvä, Kohtalainen, Huono, Ei tiedossa. Isolla alkukirjaimella.",
+      "Huonekalun kuntoarvio. Valitse paras arvio seuraavista vaihtoehdoista: Uusi, Erinomainen, Hyvä, Kohtalainen, Huono, Ei tiedossa. Isolla alkukirjaimella."
     ),
 });
 
@@ -206,7 +212,7 @@ export const priceEstimationSchema = z.object({
   perustelu: z
     .array(z.string())
     .describe(
-      "Lyhyt ja ytimekäs perustelu hinta-arviolle. Älä toista perustiedoissa mainittuja asioita. Älä mainitse Perplexityä-analyysin lähteenäsi.",
+      "Lyhyt ja ytimekäs perustelu hinta-arviolle. Älä toista perustiedoissa mainittuja asioita. Älä mainitse Perplexityä-analyysin lähteenäsi."
     ),
 
   markkinatilanne: z

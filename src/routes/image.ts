@@ -18,14 +18,12 @@ router.post("/", imageUploadHandler(), async (req: Request, res: Response) => {
       model: req.body.model,
       reasoningEffort: req.body.reasoningEffort,
     };
-    console.log("Model selection options:", modelSelection);
-
     const optimizedImage = await resizeImage(req.file.buffer);
 
     try {
       let furnitureData = await runImageAnalysisPipeline(
         optimizedImage.buffer,
-        modelSelection,
+        modelSelection
       );
       // Oliko tarvetta käyttää fallbackia?
       let usedFallbackRecognition = false;
