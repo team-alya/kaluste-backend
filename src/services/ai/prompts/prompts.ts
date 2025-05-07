@@ -21,8 +21,8 @@ export const analyzeImagePromptGemini25 =
 
 // GPT4o jättää kunnon aina ei tiedossa jos käytämme lopussa "Älä arvaa" ohjetta siksi oma prompt
 export const analyzeImagePromptGPTO3 =
-  "Analysoi tämä suomalainen esine (huonekalu tai koriste-esine) ja tunnista sen tiedot: merkki, malli sekä muut määritellyt kentät. Merkki ja malli ovat tärkeimmät; pyri aina antamaan niistä paras arvio. Jos et pysty tunnistamaan jotain kenttää, palauta kyseisen kentän arvoksi 'Ei tiedossa'.";
-
+  "Tunnista tämän sisustustuotteen tiedot. Anna paras arvio merkistä ja mallista; jos et pysty päättelemään jotakin kenttää, palauta 'Ei tiedossa'.";
+  
 // Jos pipeline ei ole löytänyt vastausta kutsumme vielä kerran GPT4o uusinta mallia tällä promptilla ja pyydämme antamaan parhaan arvionsa huonekalun brändille vähintään
 export const finalAnalyzePromptGPT4o = `Analysoi tämä huonekalu mahdollisimman tarkasti ja palauta valmistajan nimi merkki-kenttään. 
 

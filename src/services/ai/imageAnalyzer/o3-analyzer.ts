@@ -19,7 +19,7 @@ export class O3Analyzer implements AIAnalyzer {
       const startTime = Date.now();
       const timestamp = new Date().toISOString();
       console.log(
-        `[${timestamp}] Starting ${this.name} analysis with reasoning effort: ${this.reasoningEffort}...`,
+        `[${timestamp}] Starting ${this.name} analysis with reasoning effort: ${this.reasoningEffort}...`
       );
 
       const result = await generateObject({
@@ -55,13 +55,13 @@ export class O3Analyzer implements AIAnalyzer {
       const durationSeconds = (duration / 1000).toFixed(2) + "s";
       const timestampEnd = new Date().toISOString();
       console.log(
-        `[${timestampEnd}] ${this.name} completed in ${durationSeconds}`,
+        `[${timestampEnd}] ${this.name} completed in ${durationSeconds}`
       );
       console.log(
-        `[${timestampEnd}] ${this.name} detected brand: "${result.object.merkki}"`,
+        `[${timestampEnd}] ${this.name} detected brand: "${result.object.merkki}"`
       );
       console.log(
-        `[${timestampEnd}] ${this.name} detected model: "${result.object.malli}"`,
+        `[${timestampEnd}] ${this.name} detected model: "${result.object.malli}"`
       );
 
       return result.object;

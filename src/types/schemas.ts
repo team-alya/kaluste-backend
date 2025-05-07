@@ -10,14 +10,8 @@ export const kuntoOptions = [
 ] as const;
 
 export const furnitureDetailsSchema = z.object({
-  merkki: z
-    .string()
-    .describe("Esineen (huonekalun tai koriste-esineen) valmistajan nimi"),
-  malli: z
-    .string()
-    .describe(
-      "Esineen (huonekalun tai koriste-esineen) mallinimi tai tuotemalli"
-    ),
+  merkki: z.string().describe("Valmistajan nimi"),
+  malli: z.string().describe("Tuotteen mallinimi"),
   vari: z.string(),
   mitat: z
     .object({
@@ -25,13 +19,11 @@ export const furnitureDetailsSchema = z.object({
       leveys: z.number(),
       korkeus: z.number(),
     })
-    .describe("Mitat senttimetreinä. Anna paras arviosi, jos et ole varma."),
+    .describe("Mitat senttimetreinä"),
   materiaalit: z.array(z.string()),
   kunto: z
     .enum(kuntoOptions)
-    .describe(
-      "Huonekalun kuntoarvio. Valitse paras arvio listalta. Isolla alkukirjaimella."
-    ),
+    .describe("Huonekalun kuntoarvio. Valitse paras arvio listalta"),
 });
 
 export const StrictfurnitureDetailsSchema = z
