@@ -1,5 +1,5 @@
 /*
-This routes uses Gemini-2.0-flash-exp model from Google to generate responses to user messages.
+This routes uses Gemini-2.5-flash model from Google to generate responses to user messages.
 With useSreachGrounding: true, the model uses google search also to generate responses.
 Currently use in the chatbot page.
 */
@@ -18,7 +18,9 @@ const generateResponse = (req: Request, res: Response) => {
 
   try {
     const result = streamText({
-      model: google("gemini-2.0-flash-exp", { useSearchGrounding: true }),
+      model: google("gemini-2.5-flash-preview-04-17", {
+        useSearchGrounding: true,
+      }),
       messages,
       maxTokens: 1000,
       temperature: 0.5,

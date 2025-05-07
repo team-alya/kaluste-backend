@@ -1,22 +1,63 @@
+import { ModelSelectionOptions } from "../../../types/api";
 import { ImageAnalysisPipeline } from "../imageAnalyzer";
 import { ClaudeAnalyzer } from "../imageAnalyzer/claude-analyzer";
 import { GeminiAnalyzer } from "../imageAnalyzer/gemini-2-5-analyzer";
 import { GPT4Analyzer } from "../imageAnalyzer/gpt4-analyzer";
 import { O3Analyzer } from "../imageAnalyzer/o3-analyzer";
 
-export const pipeline = new ImageAnalysisPipeline([
-  new GPT4Analyzer(), // GPT-4.1
-  new O3Analyzer(), // OpenAI o3 with reasoning
-  new ClaudeAnalyzer(), // Sonnet 3.7
-  new GeminiAnalyzer(), // Gemini 2.5-flash
-  // new Gemini_1_5_Analyzer(), // I dont think Gemini 1.5 is needed here 2.0 is better and more accurate. Maybe some different variations of the same model could be used? Modify prompt and schema descriptions?
-]);
+// Default pipeline with all analyzers
+export const createPipeline = (options?: ModelSelectionOptions) => {
+  // If no specific model is selected or "all" is selected, use all analyzers
+  if (!options?.model || options.model === "all") {
+    return new ImageAnalysisPipeline([
+      new GPT4Analyzer(),
+      new O3Analyzer(options?.reasoningEffort || "medium"),
+      new ClaudeAnalyzer(),
+      new GeminiAnalyzer(),
+    ]);
+  }
+  console.log("Creating pipeline with selected model:", options.model);
 
-export const runImageAnalysisPipeline = async (imageBuffer: Buffer) => {
+  // Otherwise, create a pipeline with just the selected model
+  switch (options.model) {
+    case "gpt4-1":
+      return new ImageAnalysisPipeline([new GPT4Analyzer()]);
+    case "o3":
+      return new ImageAnalysisPipeline([
+        new O3Analyzer(options.reasoningEffort || "medium"),
+      ]);
+    case "claude":
+      return new ImageAnalysisPipeline([new ClaudeAnalyzer()]);
+    case "gemini-2-5":
+      return new ImageAnalysisPipeline([new GeminiAnalyzer()]);
+    default:
+      // Fallback to all models if an invalid model is specified
+      return new ImageAnalysisPipeline([
+        new GPT4Analyzer(),
+        new O3Analyzer(options?.reasoningEffort || "medium"),
+        new ClaudeAnalyzer(),
+        new GeminiAnalyzer(),
+      ]);
+  }
+};
+
+export const runImageAnalysisPipeline = async (
+  imageBuffer: Buffer,
+  options?: ModelSelectionOptions,
+) => {
   try {
     const timestamp = new Date().toISOString();
     console.log(`[${timestamp}] Starting image analysis pipeline...`);
+    if (options?.model) {
+      console.log(`[${timestamp}] Using model: ${options.model}`);
+    }
+    if (options?.model === "o3" && options?.reasoningEffort) {
+      console.log(
+        `[${timestamp}] O3 reasoning effort: ${options.reasoningEffort}`,
+      );
+    }
 
+    const pipeline = createPipeline(options);
     const { result, usedAnalyzers } = await pipeline.analyze(imageBuffer);
 
     console.log(`[${timestamp}] Analysis complete`);

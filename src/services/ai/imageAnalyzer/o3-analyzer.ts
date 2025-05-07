@@ -8,11 +8,19 @@ dotenv.config();
 
 export class O3Analyzer implements AIAnalyzer {
   name = "O3-Reasoning";
+  reasoningEffort: "low" | "medium" | "high";
+
+  constructor(reasoningEffort: "low" | "medium" | "high" = "medium") {
+    this.reasoningEffort = reasoningEffort;
+  }
+
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
       const startTime = Date.now();
       const timestamp = new Date().toISOString();
-      console.log(`[${timestamp}] Starting ${this.name} analysis...`);
+      console.log(
+        `[${timestamp}] Starting ${this.name} analysis with reasoning effort: ${this.reasoningEffort}...`,
+      );
 
       const result = await generateObject({
         model: openai.responses("o3"),
@@ -36,8 +44,8 @@ export class O3Analyzer implements AIAnalyzer {
         ],
         providerOptions: {
           openai: {
-            reasoningEffort: "medium", // 'low', 'medium', 'high'
-            reasoningSummary: "auto", // 'auto' tai 'detailed'
+            reasoningEffort: this.reasoningEffort,
+            // reasoningSummary: "auto", // 'auto' tai 'detailed'
           },
         },
       });

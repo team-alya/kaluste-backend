@@ -28,6 +28,8 @@ export const finalAnalyzePromptGPT4o = `Analysoi tämä huonekalu mahdollisimman
 
 Tämä on viimeinen tunnistusyritys, joten anna aina jokin valmistajan nimi vähintään. Mallia ei tarvitse tunnistaa ellet ole varma, mutta anna paraus arvauksesi jos sinulla on hyvä epäilys - älä palauta "Ei tiedossa" merkille.
 
+Älä mainitse että kyseessä on arvaus kuitenkaan.
+
 Analyysin vaiheet:
 1. Tutki huonekalun muotokieltä, materiaaleja ja yksityiskohtia
 2. Vertaa näitä piirteitä tunnettuihin suomalaisiin ja pohjoismaisiin valmistajiin
