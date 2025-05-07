@@ -20,9 +20,10 @@ export const analyzeImagePromptGemini25 =
   "Analyze this most likely scandinavian furniture piece and identify its details. Be extremely precise with the model identification - if you are not completely certain about any detail, return 'Ei tiedossa'. It is critical that you do NOT make assumptions or guesses about the model. Many manufacturers produce similar furniture, so it is ESSENTIAL to return 'Ei tiedossa' rather than risk misidentification. DO NOT attempt to guess the model under any circumstances if you have even the slightest doubt.";
 
 // GPT4o jättää kunnon aina ei tiedossa jos käytämme lopussa "Älä arvaa" ohjetta siksi oma prompt
+// export const analyzeImagePromptGPTO3 =
+//   "Tunnista tämän sisustustuotteen tiedot. Anna paras arvio merkistä ja mallista; jos et pysty päättelemään jotakin kenttää, palauta 'Ei tiedossa'.";
 export const analyzeImagePromptGPTO3 =
-  "Tunnista tämän sisustustuotteen tiedot. Anna paras arvio merkistä ja mallista; jos et pysty päättelemään jotakin kenttää, palauta 'Ei tiedossa'.";
-  
+  "Tunnista tämän sisustustuotteen suomalaisen (huonekalu tai koriste-esine) tiedot. Anna paras arvio merkistä ja mallista; jos et pysty päättelemään jotakin kenttää, palauta 'Ei tiedossa'.";
 // Jos pipeline ei ole löytänyt vastausta kutsumme vielä kerran GPT4o uusinta mallia tällä promptilla ja pyydämme antamaan parhaan arvionsa huonekalun brändille vähintään
 export const finalAnalyzePromptGPT4o = `Analysoi tämä huonekalu mahdollisimman tarkasti ja palauta valmistajan nimi merkki-kenttään. 
 
