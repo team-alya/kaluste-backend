@@ -10,7 +10,7 @@ export const kuntoOptions = [
 ] as const;
 
 export const furnitureDetailsSchema = z.object({
-  merkki: z.string().describe("Valmistajan nimi"),
+  merkki: z.string().describe("Valmistajan nimi tai suunnittelijan nimi"),
   malli: z.string().describe("Tuotteen mallinimi"),
   vari: z.string(),
   mitat: z
