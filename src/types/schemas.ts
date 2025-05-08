@@ -11,8 +11,8 @@ export const kuntoOptions = [
 
 // Simple schema just for brand and model identification
 export const brandModelSchema = z.object({
-  brand: z.string().describe("Manufacturer name or designer name"),
-  model: z.string().describe("Product model name"),
+  merkki: z.string().describe("Valmistajan nimi tai suunnittelijan nimi"),
+  malli: z.string().describe("Tuotteen mallinimi"),
 });
 
 export const furnitureDetailsSchema = z.object({

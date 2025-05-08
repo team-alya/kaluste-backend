@@ -38,7 +38,8 @@ export class O3Analyzer implements AIAnalyzer {
             content: [
               {
                 type: "text",
-                text: "Identify the brand and model of this furniture or interior design item as precisely as possible. Respond in Finnish.",
+                // text: "Tunnista merkki ja malli",
+                text: "Tunnista tämän sisustustuotteen suomalaisen (huonekalu tai koriste-esine) tiedot. Anna paras arvio merkistä ja mallista;",
               },
               {
                 type: "image",
@@ -55,7 +56,7 @@ export class O3Analyzer implements AIAnalyzer {
       });
 
       console.log(
-        `[${new Date().toISOString()}] O3 identified brand: "${brandModelResult.object.brand}", model: "${brandModelResult.object.model}"`
+        `[${new Date().toISOString()}] O3 identified brand: "${brandModelResult.object.merkki}", model: "${brandModelResult.object.malli}"`
       );
 
       // Step 2: Use web search to find measurements and specifications
@@ -65,7 +66,7 @@ export class O3Analyzer implements AIAnalyzer {
 
       const searchResult = await generateText({
         model: openai.responses("gpt-4.1"),
-        prompt: `Etsi internetistä esineen "${brandModelResult.object.brand} ${brandModelResult.object.model}" tarkat mitat, materiaalit ja muut tekniset tiedot. 
+        prompt: `Etsi internetistä esineen "${brandModelResult.object.merkki} ${brandModelResult.object.malli}" tarkat mitat, materiaalit ja muut tekniset tiedot. 
         Keskity erityisesti mittoihin (leveys, korkeus, syvyys) ja materiaaleihin. Vastaa suomeksi lyhyesti vain faktoilla ilman ylimääräistä selitystä.`,
         tools: {
           web_search_preview: openai.tools.webSearchPreview(),
@@ -87,7 +88,7 @@ export class O3Analyzer implements AIAnalyzer {
               {
                 type: "text",
                 text: `Analysoi tämä sisustustuote ja täytä scheman kentät. Vastaa VAIN suomen kielellä.
-            Tiedämme että merkki on "${brandModelResult.object.brand}" ja malli on "${brandModelResult.object.model}".
+            Tiedämme että merkki on "${brandModelResult.object.merkki}" ja malli on "${brandModelResult.object.malli}".
             
             Tässä internetistä löydetyt tiedot tuotteesta:
             ${searchResult.text}
