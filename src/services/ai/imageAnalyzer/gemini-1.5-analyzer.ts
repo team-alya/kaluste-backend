@@ -3,6 +3,7 @@ import {
   furnitureDetailsSchemaGemini15,
 } from "@/types/schemas";
 import { AIAnalyzer } from "@/types/services";
+import { AnalysisTimer } from "@/utils/timer";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
@@ -14,6 +15,8 @@ export class Gemini_1_5_Analyzer implements AIAnalyzer {
   name = "Gemini-1.5";
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
+      const timer = new AnalysisTimer(this.name);
+      
       const result = await generateObject({
         model: google("gemini-1.5-pro-latest", {
           useSearchGrounding: true,
@@ -41,9 +44,12 @@ export class Gemini_1_5_Analyzer implements AIAnalyzer {
         ...result.object,
         kunto: result.object.kunto as FurnitureDetails["kunto"], // We have to do this because Gemnini 1.5 returns random kunto value sometimes. Like "Käytetty" that is not in the schema.
       };
+      
+      timer.stop(mapped.merkki, mapped.malli);
       return mapped;
     } catch (error) {
-      console.error("Error analyzing image:", error);
+      const timer = new AnalysisTimer(this.name);
+      timer.logError(error);
       throw error;
     }
   }

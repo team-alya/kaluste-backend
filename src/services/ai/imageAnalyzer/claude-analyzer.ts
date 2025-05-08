@@ -3,6 +3,7 @@ import {
   StrictfurnitureDetailsSchema,
 } from "@/types/schemas";
 import { AIAnalyzer } from "@/types/services";
+import { AnalysisTimer } from "@/utils/timer";
 import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import dotenv from "dotenv";
@@ -16,9 +17,7 @@ export class ClaudeAnalyzer implements AIAnalyzer {
 
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
-      const startTime = Date.now();
-      const timestamp = new Date().toISOString();
-      console.log(`[${timestamp}] Starting ${this.name} analysis...`);
+      const timer = new AnalysisTimer(this.name);
 
       const result = await generateObject({
         model: anthropic("claude-3-7-sonnet-latest"),
@@ -42,24 +41,11 @@ export class ClaudeAnalyzer implements AIAnalyzer {
         ],
       });
 
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      const durationSeconds = (duration / 1000).toFixed(2) + "s";
-      const timestampEnd = new Date().toISOString();
-      console.log(
-        `[${timestampEnd}] ${this.name} completed in ${durationSeconds}`,
-      );
-      console.log(
-        `[${timestampEnd}] ${this.name} detected brand: "${result.object.merkki}"`,
-      );
-      console.log(
-        `[${timestampEnd}] ${this.name} detected model: "${result.object.malli}"`,
-      );
-
+      timer.stop(result.object.merkki, result.object.malli);
       return result.object;
     } catch (error) {
-      const timestamp = new Date().toISOString();
-      console.error(`[${timestamp}] Error in ${this.name} analysis:`, error);
+      const timer = new AnalysisTimer(this.name);
+      timer.logError(error);
       throw error;
     }
   }

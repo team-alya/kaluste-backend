@@ -1,39 +1,44 @@
-import { FurnitureDetails, furnitureDetailsSchema } from "@/types/schemas";
+import {
+  brandModelSchema,
+  FurnitureDetails,
+  furnitureDetailsSchema,
+} from "@/types/schemas";
 import { AIAnalyzer } from "@/types/services";
+import { AnalysisTimer } from "@/utils/timer";
 import { openai } from "@ai-sdk/openai";
-import { generateObject } from "ai";
+import { generateObject, generateText } from "ai";
 import dotenv from "dotenv";
-import { analyzeImagePromptGPTO3 } from "../prompts/prompts";
 dotenv.config();
 
 export class O3Analyzer implements AIAnalyzer {
   name = "O3-Reasoning";
   reasoningEffort: "low" | "medium" | "high";
 
-  constructor(reasoningEffort: "low" | "medium" | "high" = "medium") {
+  constructor(reasoningEffort: "low" | "medium" | "high" = "high") {
     this.reasoningEffort = reasoningEffort;
   }
 
   async analyze(imageBuffer: Buffer): Promise<FurnitureDetails> {
     try {
-      const startTime = Date.now();
-      const timestamp = new Date().toISOString();
-      console.log(
-        `[${timestamp}] Starting ${this.name} analysis with reasoning effort: ${this.reasoningEffort}...`
+      const timer = new AnalysisTimer(
+        `${this.name} with reasoning effort: ${this.reasoningEffort}`
       );
 
-      const result = await generateObject({
+      // Step 1: Use O3 to identify just the brand and model
+      console.log(
+        `[${new Date().toISOString()}] Step 1: Identifying brand and model with O3...`
+      );
+      const brandModelResult = await generateObject({
         model: openai.responses("o3"),
-        schema: furnitureDetailsSchema,
+        schema: brandModelSchema,
         output: "object",
-        // system: imgAnalyzeSystemMsgStrict,
         messages: [
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: analyzeImagePromptGPTO3,
+                text: "Identify the brand and model of this furniture or interior design item as precisely as possible. Respond in Finnish.",
               },
               {
                 type: "image",
@@ -45,29 +50,65 @@ export class O3Analyzer implements AIAnalyzer {
         providerOptions: {
           openai: {
             reasoningEffort: this.reasoningEffort,
-            // reasoningSummary: "auto", // 'auto' tai 'detailed'
           },
         },
       });
 
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      const durationSeconds = (duration / 1000).toFixed(2) + "s";
-      const timestampEnd = new Date().toISOString();
       console.log(
-        `[${timestampEnd}] ${this.name} completed in ${durationSeconds}`
-      );
-      console.log(
-        `[${timestampEnd}] ${this.name} detected brand: "${result.object.merkki}"`
-      );
-      console.log(
-        `[${timestampEnd}] ${this.name} detected model: "${result.object.malli}"`
+        `[${new Date().toISOString()}] O3 identified brand: "${brandModelResult.object.brand}", model: "${brandModelResult.object.model}"`
       );
 
+      // Step 2: Use web search to find measurements and specifications
+      console.log(
+        `[${new Date().toISOString()}] Step 2: Searching web for furniture measurements...`
+      );
+
+      const searchResult = await generateText({
+        model: openai.responses("gpt-4.1"),
+        prompt: `Etsi internetistä esineen "${brandModelResult.object.brand} ${brandModelResult.object.model}" tarkat mitat, materiaalit ja muut tekniset tiedot. 
+        Keskity erityisesti mittoihin (leveys, korkeus, syvyys) ja materiaaleihin. Vastaa suomeksi lyhyesti vain faktoilla ilman ylimääräistä selitystä.`,
+        tools: {
+          web_search_preview: openai.tools.webSearchPreview(),
+        },
+      });
+
+      // Step 3: Use GPT-4.1 to generate the full details using all information
+      console.log(
+        `[${new Date().toISOString()}] Step 3: Generating full furniture details with GPT-4.1...`
+      );
+      const result = await generateObject({
+        model: openai("gpt-4.1"),
+        schema: furnitureDetailsSchema,
+        output: "object",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Analysoi tämä sisustustuote ja täytä scheman kentät. Vastaa VAIN suomen kielellä.
+            Tiedämme että merkki on "${brandModelResult.object.brand}" ja malli on "${brandModelResult.object.model}".
+            
+            Tässä internetistä löydetyt tiedot tuotteesta:
+            ${searchResult.text}
+            
+            Käytä näitä tietoja täydentämään analyysia. Jos internetistä löydetyt tiedot ovat ristiriidassa kuvan kanssa, 
+            priorisoi kuvan tietoja. Keskity analysoimaan väri, mitat, materiaalit ja kunto tarkasti. Kaikki kentät tulee täyttää suomeksi.`,
+              },
+              {
+                type: "image",
+                image: imageBuffer,
+              },
+            ],
+          },
+        ],
+      });
+
+      timer.stop(result.object.merkki, result.object.malli);
       return result.object;
     } catch (error) {
-      const timestamp = new Date().toISOString();
-      console.error(`[${timestamp}] Error in ${this.name} analysis:`, error);
+      const timer = new AnalysisTimer(this.name);
+      timer.logError(error);
       throw error;
     }
   }

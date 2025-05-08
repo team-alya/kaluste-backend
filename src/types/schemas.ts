@@ -9,6 +9,12 @@ export const kuntoOptions = [
   "Ei tiedossa",
 ] as const;
 
+// Simple schema just for brand and model identification
+export const brandModelSchema = z.object({
+  brand: z.string().describe("Manufacturer name or designer name"),
+  model: z.string().describe("Product model name"),
+});
+
 export const furnitureDetailsSchema = z.object({
   merkki: z.string().describe("Valmistajan nimi tai suunnittelijan nimi"),
   malli: z.string().describe("Tuotteen mallinimi"),
