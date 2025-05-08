@@ -51,6 +51,7 @@ export class O3Analyzer implements AIAnalyzer {
         providerOptions: {
           openai: {
             reasoningEffort: this.reasoningEffort,
+            store: false,
           },
         },
       });
